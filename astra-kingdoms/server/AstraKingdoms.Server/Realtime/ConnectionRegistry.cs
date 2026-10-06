@@ -75,8 +75,9 @@ public sealed class ClientConnection
                 await Socket.CloseOutputAsync(status, CloseReason ?? "bye", timeout.Token).ConfigureAwait(false);
             }
         }
-        catch (Exception e) when (e is OperationCanceledException || e is WebSocketException || e is ObjectDisposedException)
+        catch (Exception e) when (e is OperationCanceledException || e is WebSocketException || e is IOException || e is ObjectDisposedException)
         {
+            // The peer is gone; the receive loop ends and the connection is unregistered.
         }
         finally
         {

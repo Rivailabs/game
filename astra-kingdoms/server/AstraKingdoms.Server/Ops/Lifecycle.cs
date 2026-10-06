@@ -13,9 +13,11 @@ namespace AstraKingdoms.Server.Ops;
 /// <summary>Set when shutdown begins: /readyz turns 503 and new connections, rooms and queue entries are refused.</summary>
 public sealed class DrainState
 {
-    private volatile bool _draining;
-    public bool IsDraining => _draining;
-    public void Begin() => _draining = true;
+    private int _draining;
+    public bool IsDraining => Volatile.Read(ref _draining) == 1;
+
+    /// <summary>Starts draining; true only for the first caller.</summary>
+    public bool Begin() => Interlocked.Exchange(ref _draining, 1) == 0;
 }
 
 /// <summary>
@@ -67,8 +69,7 @@ public sealed class LifecycleService : IHostedService
     /// <summary>Runs the shutdown sequence (idempotent).</summary>
     public void DrainNow()
     {
-        if (_drain.IsDraining) return;
-        _drain.Begin();
+        if (!_drain.Begin()) return;
         _log.LogInformation("Draining: {Matches} active matches, policy {Policy}", _matches.ActiveCount, _options.Lifecycle.ShutdownPolicy);
         _lobby.CloseAll();
         _matches.OnShutdown(_options.Lifecycle.ShutdownPolicy);

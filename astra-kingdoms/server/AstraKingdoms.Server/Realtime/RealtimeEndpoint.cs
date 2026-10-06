@@ -126,9 +126,9 @@ public sealed class RealtimeEndpoint
                     conn.RequestClose(CloseReasons.ProtocolError);
                     return;
                 }
-                catch (Exception e) when (e is OperationCanceledException || e is WebSocketException)
+                catch (Exception e) when (e is OperationCanceledException || e is WebSocketException || e is IOException || e is ObjectDisposedException)
                 {
-                    return;
+                    return; // the peer went away
                 }
             }
             if (text == null) return;

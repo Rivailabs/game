@@ -25,17 +25,19 @@ internal sealed class TestPlayer : IAsyncDisposable
     private int _autopilotSeed;
 
     public string Name { get; }
-    public string Uid => "dev-" + Name;
-    public string Token => "dev:" + Name;
+    public string Uid { get; private set; }
+    public string Token { get; private set; }
     public OnlineClient Client { get; }
     public OnlineMatchSession Match => Client.Match;
     /// <summary>Key (revision/phase) of a view for which the autopilot decided not to act (a declined cut).</summary>
     public string DeclinedKey { get; private set; }
     public int Rejections;
 
-    private TestPlayer(ServerHarness h, string name)
+    private TestPlayer(ServerHarness h, string name, string token = null, string uid = null)
     {
         Name = name;
+        Token = token ?? "dev:" + name;
+        Uid = uid ?? "dev-" + name;
         Client = new OnlineClient(new OnlineClientOptions
         {
             ServerUri = new Uri("ws://localhost"),
@@ -65,6 +67,15 @@ internal sealed class TestPlayer : IAsyncDisposable
         return p;
     }
 
+    /// <summary>Connects with an arbitrary bearer token (Firebase tests); <paramref name="uid"/> is the expected account ID.</summary>
+    public static async Task<TestPlayer> ConnectWithTokenAsync(ServerHarness h, string name, string token, string uid)
+    {
+        var p = new TestPlayer(h, name, token, uid);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        await p.Client.ConnectAsync(cts.Token);
+        return p;
+    }
+
     public IReadOnlyList<JsonNode> Messages => _inbox.ToArray();
     public IEnumerable<JsonNode> OfType(string type) => Messages.Where(m => m.Type() == type);
     public IEnumerable<ErrorMessage> Errors => OfType(MessageTypes.Error).Select(ErrorMessage.Parse);
@@ -75,6 +86,8 @@ internal sealed class TestPlayer : IAsyncDisposable
     public IEnumerable<MatchStartMessage> Starts => OfType(MessageTypes.MatchStart).Select(MatchStartMessage.Parse);
     public IEnumerable<MatchEndMessage> Ends => OfType(MessageTypes.MatchEnd).Select(MatchEndMessage.Parse);
     public IEnumerable<ReceiptMessage> Receipts => OfType(MessageTypes.MatchReceipt).Select(ReceiptMessage.Parse);
+    /// <summary>Receipts for LockInput commands only (loadout and cut receipts excluded).</summary>
+    public IEnumerable<ReceiptMessage> LockReceipts => Receipts.Where(r => r.Kind == nameof(Rules.Match.CommandKind.LockInput));
 
     /// <summary>Turns the autopilot on (also for a match already running).</summary>
     public void EnableAutopilot(BotDifficulty level = BotDifficulty.Normal)
@@ -172,6 +185,22 @@ internal static class Play
         await ServerHarness.Until(() => a.Match.View != null && (b == null || b.Match.View != null), "first view");
         return host;
     }
+
+    /// <summary>Submits a legal Starter loadout for a player without an autopilot.</summary>
+    public static void SubmitLoadout(TestPlayer p) => p.Match.SubmitLoadout(p.Match.LocalSide, new[] { 1, 2, 3 }, 0);
+
+    /// <summary>A legal lock for the open volley of <paramref name="v"/> (chosen by a rules bot), with an optional request ID.</summary>
+    public static LockInputCommand LockFor(PlayerView v, string requestId = null, int seed = 5)
+    {
+        var bot = new BotPlayer(v.Viewer, new BotPolicy(BotDifficulty.Normal, new BotRng((ulong)seed)), new BotRng((ulong)seed + 1));
+        var cmd = (LockInputCommand)bot.Decide(v);
+        return requestId == null ? cmd : new LockInputCommand(cmd.Header.WithRequestId(requestId), cmd.VolleyIndex, cmd.ToChoice());
+    }
+
+    /// <summary>Waits until the player's view shows <paramref name="phase"/> at the server's current revision.</summary>
+    public static Task ViewAt(MatchHost host, TestPlayer p, MatchPhase phase) =>
+        ServerHarness.Until(() => p.Match?.View != null && p.Match.View.Phase == phase && p.Match.View.StateRevision == host.Engine.StateRevision,
+            p.Name + " to see " + phase);
 
     /// <summary>A friend room created by <paramref name="host"/> and joined/confirmed by both: the match starts.</summary>
     public static async Task<MatchHost> FriendMatch(ServerHarness h, TestPlayer host, TestPlayer guest, CatalogPreset catalog = CatalogPreset.Starter)

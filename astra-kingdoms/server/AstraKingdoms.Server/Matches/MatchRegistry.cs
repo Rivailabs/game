@@ -151,7 +151,10 @@ public sealed class MatchRegistry
     public void RecoverAtStartup()
     {
         DateTimeOffset now = _services.Time.GetUtcNow();
-        foreach (StoredMatch s in _repo.ListByStatus(MatchStatus.Suspended))
+        // Read both lists first: resuming a suspended match marks it active again.
+        IReadOnlyList<StoredMatch> suspended = _repo.ListByStatus(MatchStatus.Suspended);
+        IReadOnlyList<StoredMatch> interrupted = _repo.ListByStatus(MatchStatus.Active);
+        foreach (StoredMatch s in suspended)
         {
             bool fresh = s.SuspendedAt.HasValue && now - s.SuspendedAt.Value <= TimeSpan.FromMinutes(_options.Lifecycle.MaxSuspendMinutes);
             MatchHost host = Rebuild(s);
@@ -167,7 +170,7 @@ public sealed class MatchRegistry
                 host.TechnicalVoid("suspended_too_long");
             }
         }
-        foreach (StoredMatch s in _repo.ListByStatus(MatchStatus.Active))
+        foreach (StoredMatch s in interrupted)
         {
             MatchHost host = Rebuild(s);
             if (host == null) continue;
