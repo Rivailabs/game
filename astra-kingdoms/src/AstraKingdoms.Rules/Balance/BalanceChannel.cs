@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AstraKingdoms.Rules.Core;
 using AstraKingdoms.Rules.Match;
 
 namespace AstraKingdoms.Rules.Balance
@@ -18,6 +19,19 @@ namespace AstraKingdoms.Rules.Balance
         public string EffectiveRulesHashHex { get; }
         /// <summary>Channel history position that was active when the match was pinned.</summary>
         public int PublicationIndex { get; }
+
+        /// <summary>The engine parameters the pinned match runs with (immutable, shared).</summary>
+        public RulesParameters Parameters => Bundle.ToParameters();
+
+        /// <summary>
+        /// The room configuration pinned to this snapshot: <paramref name="room"/> with
+        /// <see cref="Parameters"/> applied (see <see cref="MatchConfig.WithParameters"/>).
+        /// </summary>
+        public MatchConfig Pin(MatchConfig room)
+        {
+            if (room == null) throw new ArgumentNullException(nameof(room));
+            return room.WithParameters(Parameters);
+        }
 
         internal BalanceSnapshot(string matchId, BalanceBundle bundle, int publicationIndex)
         {
@@ -85,12 +99,12 @@ namespace AstraKingdoms.Rules.Balance
     /// affects matches created afterwards. A bundle ID is bound to its content forever: republishing
     /// the same ID with different content is refused.
     /// <para>
-    /// <b>Executability.</b> AK-TR-1's engine compiles its constants, so this build can only
-    /// <i>resolve</i> the baseline. The channel therefore refuses to activate a bundle that the
-    /// supplied <c>isExecutable</c> check rejects (default: only effective rules hashes equal to
-    /// the compiled <see cref="RulesBundle.Hash"/>). A parameterized engine is required before a
-    /// tuned bundle can go live; until then tuned bundles can be validated, hashed, simulated
-    /// against a fake executor in tests and reviewed, but not served.
+    /// <b>Executability.</b> The AK-TR-1 engine reads every schema tunable from the
+    /// <see cref="RulesParameters"/> pinned in its <see cref="MatchConfig"/>, so any valid bundle on
+    /// the AK-TR-1 base is executable (<see cref="ParameterizedEngine"/>, the default). A
+    /// deployment can still pass a stricter <c>isExecutable</c> check (for example
+    /// <see cref="CompiledEngineOnly"/> while some clients cannot yet display tuned values); a
+    /// bundle it rejects is refused with <c>NOT_EXECUTABLE</c>.
     /// </para>
     /// Thread-safe.
     /// </summary>
@@ -110,7 +124,7 @@ namespace AstraKingdoms.Rules.Balance
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             if (initial == null) throw new ArgumentNullException(nameof(initial));
-            _isExecutable = isExecutable ?? CompiledEngineOnly;
+            _isExecutable = isExecutable ?? ParameterizedEngine;
             var issues = BalanceValidator.Validate(initial);
             if (issues.Count > 0) throw new ArgumentException("Initial bundle is invalid: " + string.Join("; ", issues), nameof(initial));
             if (!_isExecutable(initial)) throw new ArgumentException("Initial bundle " + initial.BundleId + " is not executable by this engine.", nameof(initial));
@@ -119,8 +133,26 @@ namespace AstraKingdoms.Rules.Balance
             _log.Add(new PublicationEntry(0, PublicationAction.Initial, initial, actor, atUnixMs, null));
         }
 
-        /// <summary>Default executability: the compiled AK-TR-1 engine runs exactly its own rules hash.</summary>
+        /// <summary>Strict executability: only the AK-TR-1 baseline (the compiled rules hash).</summary>
         public static bool CompiledEngineOnly(BalanceBundle b) => b != null && b.EffectiveRulesHashHex == RulesBundle.HashHex;
+
+        /// <summary>
+        /// Default executability (ticket 24): the parameterized AK-TR-1 engine runs any bundle that
+        /// validates on the AK-TR-1 base, because every tunable it may override is read from the
+        /// match's pinned <see cref="RulesParameters"/>.
+        /// </summary>
+        public static bool ParameterizedEngine(BalanceBundle b)
+        {
+            if (b == null || b.BaseRulesVersion != RulesConstants.RulesVersion || !BalanceValidator.IsValid(b)) return false;
+            try
+            {
+                return b.ToParameters().RulesHashHex == b.EffectiveRulesHashHex;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+        }
 
         public BalanceBundle Active
         {
@@ -206,7 +238,10 @@ namespace AstraKingdoms.Rules.Balance
             lock (_gate) return matchId != null && _pins.TryGetValue(matchId, out BalanceSnapshot s) ? s : null;
         }
 
-        /// <summary>A published bundle by ID (for replaying a pinned match), or null.</summary>
+        /// <summary>
+        /// A published bundle by ID (for replaying a pinned match), or null. Usable directly as the
+        /// replayer's bundle resolver: <c>Replayer.Verify(record, channel.Find)</c>.
+        /// </summary>
         public BalanceBundle Find(string bundleId)
         {
             lock (_gate) return bundleId != null && _known.TryGetValue(bundleId, out BalanceBundle b) ? b : null;

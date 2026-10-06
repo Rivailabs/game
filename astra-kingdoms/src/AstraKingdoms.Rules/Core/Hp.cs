@@ -5,10 +5,14 @@ namespace AstraKingdoms.Rules.Core
     {
         public static int FromWhole(int hp) => hp * RulesConstants.HpUnitsPerHp;
 
-        public static int Clamp(long units)
+        /// <summary>Clamps to 0..AK-TR-1 starting HP (100.00).</summary>
+        public static int Clamp(long units) => Clamp(units, RulesConstants.StartHpUnits);
+
+        /// <summary>Clamps to 0..<paramref name="maxUnits"/> (the match's starting HP, ticket 24).</summary>
+        public static int Clamp(long units, int maxUnits)
         {
             if (units < 0) return 0;
-            if (units > RulesConstants.StartHpUnits) return RulesConstants.StartHpUnits;
+            if (units > maxUnits) return maxUnits;
             return (int)units;
         }
 

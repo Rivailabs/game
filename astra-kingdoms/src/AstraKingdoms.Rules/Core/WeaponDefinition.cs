@@ -10,16 +10,16 @@ namespace AstraKingdoms.Rules.Core
         public string Name { get; }
         public Element Element { get; }
         /// <summary>Base damage per projectile in HP units (30 HP = 3000).</summary>
-        public int DamagePerProjectileUnits { get; }
+        public int DamagePerProjectileUnits { get; private set; }
         public int ProjectileCount { get; }
         public SpeedProfile Speed { get; }
         public TrajectoryProfile Trajectory { get; }
-        public int MassPerProjectile { get; }
+        public int MassPerProjectile { get; private set; }
         /// <summary>Projectile radius in millimetres (0.04 m = 40).</summary>
         public int RadiusMm { get; }
         public WeaponAbility Ability { get; }
         /// <summary>Account level at which the weapon is permanently unlocked (presentation/practice only).</summary>
-        public int UnlockLevel { get; }
+        public int UnlockLevel { get; private set; }
 
         public WeaponDefinition(int id, string name, Element element, int damagePerProjectileHp, int projectileCount,
             SpeedProfile speed, TrajectoryProfile trajectory, int massPerProjectile, int radiusMm,
@@ -36,6 +36,23 @@ namespace AstraKingdoms.Rules.Core
             RadiusMm = radiusMm;
             Ability = ability;
             UnlockLevel = unlockLevel;
+        }
+
+        /// <summary>
+        /// A copy of this weapon with the balance-tunable fields replaced (ticket 24). Everything
+        /// else (element, projectile count, launch profile, radius, ability) is structural and kept.
+        /// Returns this instance when nothing changes, so the default parameters share the catalog's
+        /// objects.
+        /// </summary>
+        internal WeaponDefinition WithTunables(int damagePerProjectileUnits, int massPerProjectile, int unlockLevel)
+        {
+            if (damagePerProjectileUnits == DamagePerProjectileUnits && massPerProjectile == MassPerProjectile && unlockLevel == UnlockLevel)
+                return this;
+            var copy = (WeaponDefinition)MemberwiseClone();
+            copy.DamagePerProjectileUnits = damagePerProjectileUnits;
+            copy.MassPerProjectile = massPerProjectile;
+            copy.UnlockLevel = unlockLevel;
+            return copy;
         }
 
         /// <summary>

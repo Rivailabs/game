@@ -70,11 +70,12 @@ namespace AstraKingdoms.Rules.Combat
 
             // ---- 1. Snapshot ----
             DuelState next = state.Clone();
+            RulesParameters P = state.Parameters ?? RulesParameters.Default;
             int n = state.VolleyIndex;
             int round = state.RoundIndex;
             var log = new CombatEventLog();
-            var a = NewSide(PlayerSide.A, inputA, state);
-            var b = NewSide(PlayerSide.B, inputB, state);
+            var a = NewSide(PlayerSide.A, inputA, state, P);
+            var b = NewSide(PlayerSide.B, inputB, state, P);
             Side[] sides = { a, b };
             Side Other(Side s) => s == a ? b : a;
 
@@ -129,7 +130,7 @@ namespace AstraKingdoms.Rules.Combat
                     s.Report.IronWallRaised = true;
                     log.Add(Pre(CombatEventType.IronWallRaised, s.Id, status: StatusKind.IronWall, amount: n + 1));
                 }
-                if (s.Id == state.Defender && state.Terrain == TerrainType.River) s.River = DamageCalculator.RiverHealUnits;
+                if (s.Id == state.Defender && state.Terrain == TerrainType.River) s.River = P.RiverHealUnits;
             }
 
             // ---- 5. Dodge resolution ----
@@ -256,7 +257,7 @@ namespace AstraKingdoms.Rules.Combat
                 bool bodyHit = c.Kind == ContactKind.Core || c.Kind == ContactKind.Graze;
                 if (bodyHit && covered && atk.Has(WeaponAbility.ChainBonus))
                 {
-                    report.ChainBonusUnits = DamageCalculator.ChainBonusUnits;
+                    report.ChainBonusUnits = P.ChainBonusUnits;
                     tgt.Direct += report.ChainBonusUnits;
                     log.Add(Res(CombatEventType.ChainBonus, tgt.Id, c, amount: report.ChainBonusUnits));
                 }
@@ -273,7 +274,7 @@ namespace AstraKingdoms.Rules.Combat
                     case WeaponAbility.Veil: queued.Add(Tuple.Create(StatusKind.Veil, atk.Id)); break;
                     case WeaponAbility.Net: queued.Add(Tuple.Create(StatusKind.Net, tgt.Id)); break;
                     case WeaponAbility.Quake: queued.Add(Tuple.Create(StatusKind.Quake, tgt.Id)); break;
-                    case WeaponAbility.OceanHeal: atk.Ocean = DamageCalculator.OceanHealUnits; break;
+                    case WeaponAbility.OceanHeal: atk.Ocean = P.OceanHealUnits; break;
                 }
             }
 
@@ -281,9 +282,9 @@ namespace AstraKingdoms.Rules.Combat
             foreach (var s in sides)
             {
                 PlayerDuelState p = next[s.Id];
-                int burn = s.BurnDue ? DamageCalculator.BurnUnits : 0;
+                int burn = s.BurnDue ? P.BurnUnits : 0;
                 int before = state[s.Id].HpUnits;
-                p.HpUnits = DamageCalculator.ApplyHealthBatch(before, s.Direct, burn, s.Ocean, s.River);
+                p.HpUnits = DamageCalculator.ApplyHealthBatch(before, s.Direct, burn, s.Ocean, s.River, P.StartHpUnits);
                 if (burn > 0) log.Add(Post(CombatEventType.BurnDamage, s.Id, status: StatusKind.Burn, amount: burn));
                 if (s.Ocean > 0) log.Add(Post(CombatEventType.Heal, s.Id, heal: HealSource.Ocean, amount: s.Ocean));
                 if (s.River > 0) log.Add(Post(CombatEventType.Heal, s.Id, heal: HealSource.River, amount: s.River));
@@ -299,7 +300,7 @@ namespace AstraKingdoms.Rules.Combat
             }
 
             // ---- 10. Settle ----
-            next.Result = Decide(next.A.HpUnits, next.B.HpUnits, n);
+            next.Result = Decide(next.A.HpUnits, next.B.HpUnits, n, P.MaxVolleys);
             if (next.Result == DuelResult.InProgress)
             {
                 int v = n + 1;
@@ -339,19 +340,23 @@ namespace AstraKingdoms.Rules.Combat
         }
 
         /// <summary>Sole survivor wins; both at zero is a draw; after volley 3 higher HP wins, equal is a draw.</summary>
-        public static DuelResult Decide(int hpA, int hpB, int volley)
+        public static DuelResult Decide(int hpA, int hpB, int volley) => Decide(hpA, hpB, volley, RulesConstants.MaxVolleys);
+
+        /// <summary>As <see cref="Decide(int, int, int)"/> with the match's volley limit (ticket 24).</summary>
+        public static DuelResult Decide(int hpA, int hpB, int volley, int maxVolleys)
         {
             if (hpA == 0 && hpB == 0) return DuelResult.Draw;
             if (hpA == 0) return DuelResult.BWins;
             if (hpB == 0) return DuelResult.AWins;
-            if (volley < RulesConstants.MaxVolleys) return DuelResult.InProgress;
+            if (volley < maxVolleys) return DuelResult.InProgress;
             if (hpA == hpB) return DuelResult.Draw;
             return hpA > hpB ? DuelResult.AWins : DuelResult.BWins;
         }
 
-        private static Side NewSide(PlayerSide id, VolleyInput input, DuelState state)
+        private static Side NewSide(PlayerSide id, VolleyInput input, DuelState state, RulesParameters parameters)
         {
-            WeaponDefinition w = input.IsRegular ? WeaponCatalog.Get(input.WeaponId) : null;
+            // The pinned snapshot's weapon record: tuned damage and mass flow into launch and damage.
+            WeaponDefinition w = input.IsRegular ? parameters.Weapon(input.WeaponId) : null;
             var report = new PlayerVolleyReport
             {
                 Side = id,

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AstraKingdoms.Rules.Balance;
 using AstraKingdoms.Rules.Bots;
 using AstraKingdoms.Rules.Core;
 using AstraKingdoms.Rules.Replay;
@@ -70,7 +71,15 @@ public static class PlaytestRecord
     }
 
     /// <summary>Parses and verifies one playtest file. Returns null and a reason when it is unusable.</summary>
-    public static MatchObservation? Read(string json, bool allowSynthetic, out string? reason)
+    public static MatchObservation? Read(string json, bool allowSynthetic, out string? reason) =>
+        Read(json, allowSynthetic, null, out reason);
+
+    /// <summary>
+    /// As <see cref="Read(string, bool, out string?)"/>, resolving the balance bundle of a tuned
+    /// match record (ticket 24) through <paramref name="bundleResolver"/>; records of bundles it
+    /// does not know are excluded as unverifiable.
+    /// </summary>
+    public static MatchObservation? Read(string json, bool allowSynthetic, Func<string, BalanceBundle?>? bundleResolver, out string? reason)
     {
         reason = null;
         JsonNode root;
@@ -101,7 +110,7 @@ public static class PlaytestRecord
             }
             SeatInfo a = ReadSeat(root["seats"]["A"]);
             SeatInfo b = ReadSeat(root["seats"]["B"]);
-            ReplayReport report = Replayer.Verify(root["match_record"].ToCanonicalString());
+            ReplayReport report = Replayer.Verify(root["match_record"].ToCanonicalString(), bundleResolver!);
             if (!report.Success)
             {
                 reason = "record failed verification: " + report.Failure + " - " + report.Detail;
@@ -145,12 +154,15 @@ public static class PlaytestRecord
     }
 
     /// <summary>Reads every *.json file in a folder (sorted by name for a stable report).</summary>
-    public static IngestResult IngestDirectory(string directory, bool allowSynthetic)
+    public static IngestResult IngestDirectory(string directory, bool allowSynthetic) => IngestDirectory(directory, allowSynthetic, null);
+
+    /// <summary>Reads every *.json file, verifying tuned records against the bundles <paramref name="bundleResolver"/> knows.</summary>
+    public static IngestResult IngestDirectory(string directory, bool allowSynthetic, Func<string, BalanceBundle?>? bundleResolver)
     {
         var result = new IngestResult();
         foreach (string file in Directory.GetFiles(directory, "*.json", SearchOption.AllDirectories).OrderBy(f => f, StringComparer.Ordinal))
         {
-            MatchObservation? o = Read(File.ReadAllText(file), allowSynthetic, out string? reason);
+            MatchObservation? o = Read(File.ReadAllText(file), allowSynthetic, bundleResolver, out string? reason);
             if (o == null) result.Excluded.Add(new IngestExclusion(Path.GetRelativePath(directory, file), reason ?? "unknown"));
             else result.Observations.Add(o);
         }

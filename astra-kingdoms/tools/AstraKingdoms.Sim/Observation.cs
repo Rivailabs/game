@@ -112,7 +112,7 @@ public sealed class MatchObservation
         };
         foreach (RoundRecord r in engine.Rounds)
         {
-            int hpA = RulesConstants.StartHpUnits, hpB = RulesConstants.StartHpUnits;
+            int hpA = engine.Parameters.StartHpUnits, hpB = engine.Parameters.StartHpUnits; // the match's pinned starting HP
             var usedA = new SortedSet<int>();
             var usedB = new SortedSet<int>();
             foreach (VolleyRecord v in r.Volleys)

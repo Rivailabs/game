@@ -32,6 +32,13 @@ namespace AstraKingdoms.Rules.Replay
 
         public string RulesVersion;
         public string RulesHashHex;
+        /// <summary>
+        /// Content hash of the balance bundle the match was pinned to (ticket 24); null for AK-TR-1
+        /// itself, whose records stay byte-identical to the compiled engine's. For a tuned match
+        /// <see cref="RulesVersion"/> is the bundle ID and <see cref="RulesHashHex"/> its effective
+        /// rules hash.
+        /// </summary>
+        public string BalanceContentHashHex;
         public string MatchId;
         public string SeedHex;
         public string SeedCommitmentHex;
@@ -51,6 +58,7 @@ namespace AstraKingdoms.Rules.Replay
             {
                 RulesVersion = engine.Config.RulesVersion,
                 RulesHashHex = Hex.Encode(engine.RulesHash),
+                BalanceContentHashHex = engine.Config.Parameters.IsDefault ? null : engine.Config.Parameters.BalanceContentHashHex,
                 MatchId = engine.MatchId,
                 SeedHex = Hex.Encode(engine.SeedForRecord),
                 SeedCommitmentHex = Hex.Encode(engine.SeedCommitment),
@@ -80,8 +88,10 @@ namespace AstraKingdoms.Rules.Replay
             JsonNode root = JsonNode.Object()
                 .Add("format", MatchRecord.Format)
                 .Add("rules_version", r.RulesVersion)
-                .Add("rules_hash", r.RulesHashHex)
-                .Add("match_id", r.MatchId)
+                .Add("rules_hash", r.RulesHashHex);
+            // Present only for tuned matches, so AK-TR-1 records keep their exact canonical bytes.
+            if (r.BalanceContentHashHex != null) root.Add("balance_content_hash", r.BalanceContentHashHex);
+            root.Add("match_id", r.MatchId)
                 .Add("seed", r.SeedHex)
                 .Add("seed_commitment", r.SeedCommitmentHex)
                 .Add("config", JsonNode.Object()
@@ -192,6 +202,7 @@ namespace AstraKingdoms.Rules.Replay
             {
                 RulesVersion = root["rules_version"].AsString(),
                 RulesHashHex = root["rules_hash"].AsString(),
+                BalanceContentHashHex = HasKey(root, "balance_content_hash") ? root["balance_content_hash"].AsString() : null,
                 MatchId = root["match_id"].AsString(),
                 SeedHex = root["seed"].AsString(),
                 SeedCommitmentHex = root["seed_commitment"].AsString(),
@@ -302,6 +313,13 @@ namespace AstraKingdoms.Rules.Replay
                 });
             }
             return r;
+        }
+
+        private static bool HasKey(JsonNode obj, string key)
+        {
+            foreach (var m in obj.Members)
+                if (m.Key == key) return true;
+            return false;
         }
 
         private static T ParseEnum<T>(JsonNode n) where T : struct => ParseEnum<T>(n.AsString());
