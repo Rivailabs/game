@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    V3 candidate modes built on top of ruleset AK-TR-1 without changing it (plan: "V3 broader
+    competition through independent gates"): the PROPOSED four-player territory mode
+    (AK-4P-0-proposed), round-robin community tournaments of two-player matches, and the bot-only
+    real-time discovery prototype. Same constraints as the rules assembly: netstandard2.1, C# 9,
+    no UnityEngine, no System.Random and no floating point in authoritative paths.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>AstraKingdoms.Modes</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Only for the four-player geometry fixtures (FourPlayerMatch.CreateWithBoard). -->
+    <InternalsVisibleTo Include="AstraKingdoms.Modes.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+  </ItemGroup>
+
+</Project>
