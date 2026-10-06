@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Scripts/Meta/Store/Iap (Unity IAP adapter) with AK_UNITY_IAP set,
+    against the Unity IAP stubs in tools/UnityStubs/UnityEngine.Purchasing.cs. In Unity this assembly
+    exists only when com.unity.purchasing is installed (asmdef version define + define constraint).
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Meta.Iap</AssemblyName>
+    <AkMeta>$(MSBuildThisFileDirectory)../../../src/AstraKingdoms.Meta/AstraKingdoms.Meta.csproj</AkMeta>
+    <RootNamespace>AstraKingdoms.Client.Meta.Store</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_ANDROID;UNITY_6000_0_OR_NEWER;AK_UNITY_IAP</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Meta/Store/Iap/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkMeta)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../MetaAndroidRelease/AstraKingdoms.Client.Meta.AndroidRelease.Check.csproj" />
+  </ItemGroup>
+
+</Project>

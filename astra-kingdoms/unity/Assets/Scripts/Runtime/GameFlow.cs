@@ -70,6 +70,15 @@ namespace AstraKingdoms.Client
         /// <summary>Raised when a match ends (automation listens).</summary>
         public event Action<LocalMatchHost, MatchResult> MatchFinished;
 
+        /// <summary>
+        /// Raised after the UI is (re)built so optional modules (the V1 meta screens in
+        /// Assets/Scripts/Meta) can add their entry points without this class knowing about them.
+        /// </summary>
+        public static event Action<GameFlow> UiBuilt;
+
+        public HomeScreen Home => _home;
+        public UiFactory Ui => _ui;
+
         public void Init(ClientContext ctx, ArenaView arena, MatchController controller, bool developmentTools)
         {
             _ctx = ctx;
@@ -141,6 +150,7 @@ namespace AstraKingdoms.Client
             _result.Home += GoHome;
             _hud.PauseToggled += TogglePause;
             _replay.Closed += ShowHome;
+            UiBuilt?.Invoke(this);
         }
 
         private T Add<T>(T screen) where T : UiScreen

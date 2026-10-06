@@ -1,0 +1,78 @@
+# Astra Kingdoms meta screens (profile, tasks, locker, shop, privacy) - English reference table.
+# Kept apart from Resources/Localization so the V1 meta module stays self-contained; hi/kn
+# translations are still to be written and reviewed by fluent speakers (missing keys fall back to English).
+# Format: key = value. {0}, {1}... are parameters; \n is a line break.
+
+meta.home.button = Profile and shop
+meta.back = Back
+
+meta.profile.title = Your profile
+meta.profile.guest = Playing as a guest on this phone. Progress stays on this device.
+meta.profile.level = Level {0}
+meta.profile.levelMax = Level {0} (maximum) - {1} mastery XP
+meta.profile.xp = {0} / 300 XP to the next level
+meta.profile.coins = {0} coins (earned by playing)
+meta.profile.next = Next level unlocks: {0}
+meta.profile.nextNone = All weapons and level rewards are unlocked.
+meta.profile.weapons = Weapons you own for practice: {0} of 20. Every online and friend match uses the room's catalogue, so levels never give a combat advantage.
+meta.profile.mastery = Mastery: {0}
+meta.profile.masteryNone = Mastery: finish matches with a weapon to earn badges.
+meta.profile.tasks = Daily tasks
+meta.profile.locker = Locker
+meta.profile.shop = Shop
+meta.profile.privacy = Privacy and account
+
+meta.unlock.weapon = weapon: {0}
+meta.unlock.cosmetic = reward: {0}
+
+meta.tasks.title = Daily tasks (optional)
+meta.tasks.hint = Tasks reset at midnight India time. They never need ads or purchases.
+meta.tasks.row = {0}: {1}/{2} - {3} coins
+meta.tasks.claim = Claim
+meta.tasks.claimed = Claimed
+meta.tasks.notDone = Not done yet
+meta.tasks.result = {0}
+
+meta.locker.title = Locker
+meta.locker.hint = Cosmetics change how you look. They never change combat, land or matchmaking.
+meta.locker.slot = {0}: {1}
+meta.locker.equip = Wear
+meta.locker.equipped = Wearing
+meta.locker.locked = Not owned
+meta.locker.next = Next
+meta.locker.prev = Previous
+
+meta.shop.title = Shop
+meta.shop.hint = Everything here is cosmetic only. Paid items are one-time purchases; coins are earned by playing.
+meta.shop.offer = {0} - {1}
+meta.shop.contents = Contains: {0}
+meta.shop.provisional = Coin prices are provisional.
+meta.shop.buy = Buy
+meta.shop.owned = Owned
+meta.shop.state = {0}
+meta.shop.restore = Restore purchases
+meta.shop.testStore = TEST STORE (development build): no real payment is taken.
+meta.shop.flow = {0}
+
+meta.ads.offer = Optional: watch an ad for {0} coins
+meta.ads.result = {0}
+
+meta.privacy.title = Privacy and account
+meta.privacy.age = How old are you? {0}
+meta.privacy.ageUnknown = not answered
+meta.privacy.ageMinus = -
+meta.privacy.agePlus = +
+meta.privacy.ageConfirm = Confirm age
+meta.privacy.ageSkip = Prefer not to say
+meta.privacy.analytics = Share anonymous gameplay statistics: {0}
+meta.privacy.crash = Send crash reports: {0}
+meta.privacy.personalisedAds = Personalised ads (adults only): {0}
+meta.privacy.on = on
+meta.privacy.off = off
+meta.privacy.delete = Delete my data
+meta.privacy.deleteConfirm = Tap again to permanently delete your progress, coins and settings on this phone.
+meta.privacy.deleteDone = Your data was deleted. A new guest profile has started.
+meta.privacy.deleteWeb = Request deletion on the web
+meta.privacy.policy = Privacy policy
+meta.privacy.grievance = Help and grievances
+meta.privacy.path = In-app path: {0}

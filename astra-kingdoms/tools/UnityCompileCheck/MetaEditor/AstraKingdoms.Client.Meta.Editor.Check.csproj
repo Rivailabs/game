@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Scripts/Meta (the V1 meta screens) against tools/UnityStubs.
+    Variant: Editor play mode / development build (test store, fake rewarded ads).
+    The Unity IAP adapter (Store/Iap) is its own assembly and is checked by MetaIap.
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Meta.Editor</AssemblyName>
+    <AkMeta>$(MSBuildThisFileDirectory)../../../src/AstraKingdoms.Meta/AstraKingdoms.Meta.csproj</AkMeta>
+    <RootNamespace>AstraKingdoms.Client.Meta</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_EDITOR;DEVELOPMENT_BUILD;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Meta/**/*.cs" Exclude="$(AkUnityAssets)Scripts/Meta/Store/Iap/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="$(AkMeta)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+    <ProjectReference Include="../RuntimeEditor/AstraKingdoms.Client.RuntimeEditor.Check.csproj" />
+  </ItemGroup>
+
+</Project>

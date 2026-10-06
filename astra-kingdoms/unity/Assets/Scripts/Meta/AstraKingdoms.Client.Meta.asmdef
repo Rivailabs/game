@@ -1,0 +1,20 @@
+{
+    "name": "AstraKingdoms.Client.Meta",
+    "rootNamespace": "AstraKingdoms.Client.Meta",
+    "references": [
+        "AstraKingdoms.Rules",
+        "AstraKingdoms.Meta",
+        "AstraKingdoms.Client.Core",
+        "AstraKingdoms.Client",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

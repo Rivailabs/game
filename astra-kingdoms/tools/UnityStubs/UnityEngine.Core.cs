@@ -370,6 +370,7 @@ namespace UnityEngine
         public static int targetFrameRate { get; set; }
         public static void Quit() { }
         public static void Quit(int exitCode) { }
+        public static void OpenURL(string url) { }
     }
 
     public sealed class SleepTimeout

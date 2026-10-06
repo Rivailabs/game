@@ -35,6 +35,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.Meta", "src\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.Meta.Tests", "tests\AstraKingdoms.Meta.Tests\AstraKingdoms.Meta.Tests.csproj", "{882CCD46-718D-46D3-B39B-63B19DBFC590}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.Client.Meta.Editor.Check", "tools\UnityCompileCheck\MetaEditor\AstraKingdoms.Client.Meta.Editor.Check.csproj", "{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.Client.Meta.AndroidRelease.Check", "tools\UnityCompileCheck\MetaAndroidRelease\AstraKingdoms.Client.Meta.AndroidRelease.Check.csproj", "{68D51C43-C517-43EB-8F95-C3DA48116DFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.Client.Meta.Iap.Check", "tools\UnityCompileCheck\MetaIap\AstraKingdoms.Client.Meta.Iap.Check.csproj", "{DF2A56BF-4BA3-400B-A2EC-C4625A68632B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +102,18 @@ Global
 		{882CCD46-718D-46D3-B39B-63B19DBFC590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{882CCD46-718D-46D3-B39B-63B19DBFC590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{882CCD46-718D-46D3-B39B-63B19DBFC590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68D51C43-C517-43EB-8F95-C3DA48116DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68D51C43-C517-43EB-8F95-C3DA48116DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68D51C43-C517-43EB-8F95-C3DA48116DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68D51C43-C517-43EB-8F95-C3DA48116DFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF2A56BF-4BA3-400B-A2EC-C4625A68632B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF2A56BF-4BA3-400B-A2EC-C4625A68632B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF2A56BF-4BA3-400B-A2EC-C4625A68632B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF2A56BF-4BA3-400B-A2EC-C4625A68632B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EED833A6-335B-4B92-9AEB-8B90EC98A24E} = {81FDD592-A258-4BDD-83CA-A16908863F1E}
@@ -111,5 +129,8 @@ Global
 		{BE722E5B-C861-47AF-9549-92CD8EF9B5FA} = {19192187-92B5-4EDE-9FF7-0221D9E51B10}
 		{DCE9ED9D-F25C-4C6D-932D-D4A1ECFBADAB} = {81FDD592-A258-4BDD-83CA-A16908863F1E}
 		{882CCD46-718D-46D3-B39B-63B19DBFC590} = {19192187-92B5-4EDE-9FF7-0221D9E51B10}
+		{4539E3EE-8E2B-447A-B23B-EB2FC4A3671C} = {91F3B0A8-D8B1-4926-B1B6-B47B92B30C1F}
+		{68D51C43-C517-43EB-8F95-C3DA48116DFF} = {91F3B0A8-D8B1-4926-B1B6-B47B92B30C1F}
+		{DF2A56BF-4BA3-400B-A2EC-C4625A68632B} = {91F3B0A8-D8B1-4926-B1B6-B47B92B30C1F}
 	EndGlobalSection
 EndGlobal
