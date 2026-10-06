@@ -122,11 +122,11 @@ request tests.
 - **Network/UI.** The review server binds only to localhost, uses CSRF tokens and a strict
   CSP, and loads no external assets. Project policy (vendors, regions, data classes,
   hosted review, retention) is checked before every dispatch.
-- **Not yet enforced (be aware).** R1 does **not** run generated code inside a container or
-  VM, or under a dedicated OS account. Checks such as `dotnet test` run as your user, with a
-  scrubbed environment but full filesystem and network access. The plan requires a dedicated
-  worker account plus container/VM for unattended use, so treat R1 as supervised until that
-  exists.
+- **Containment (see [Worker containment](#worker-containment-sandbox)).** A check with
+  `sandbox = "generated_code_check"` runs inside rootless podman/docker or bubblewrap when one is
+  usable. With no usable backend it runs **supervised** on your account, its evidence says
+  "NOT CONTAINED", and the candidate always waits for the owner. A dedicated OS account for the
+  worker is still an owner setup step (not created by Forge).
 
 ## Catalogue asset lane (find a free model before generating one)
 
@@ -212,6 +212,102 @@ Briefs: `briefs/astra_v1/` holds 29 briefs:
 
 There are no briefs for weapon effects, cards, the land map, icons or sound.
 
+## Worker containment (sandbox)
+
+`forge/sandbox/` runs protected checks (and local model routes) inside an isolation backend:
+
+- **Backends**, probed honestly by `forge sandbox detect`: rootless **podman** (`host.security.rootless`),
+  **rootless docker** (`SecurityOptions` contains `rootless`; a rootful daemon is refused) and
+  **bubblewrap** (namespace probe). The container image must be pinned in the owner's config.
+- **Mounts**: only the candidate worktree (read-write, at its own path) plus configured read-only
+  toolchain paths. Refused before anything runs: the home directory or any ancestor of it, hidden
+  directories under home (`~/.ssh`, `~/.config/game-forge`, `~/.android` ...), Docker/Podman sockets,
+  `/run`, and any mount that contains a keystore (`*.jks`, `*.keystore`, `*.p12`, ...).
+- **Network per worker role**: deny by default (`--network none` / `--unshare-net`). Only
+  `dependency_restore` has an allow-list (NuGet, PyPI), enforced by an owner-run filtering proxy on an
+  *internal* container network (`egress_proxy` + `restore_network`). Bubblewrap cannot enforce host
+  allow-lists, so allow-list roles never run under it.
+- **Config ownership**: `~/.config/game-forge/sandbox.toml` (or `FORGE_SANDBOX_CONFIG`) is refused
+  when it sits inside the repository or data directory, or is group/world-writable.
+- **No backend** -> the command runs supervised, the evidence says so, and verification routes the
+  candidate to AWAITING_APPROVAL ("supervised mode"). `require_containment = true` turns that into
+  BLOCKED instead.
+
+```toml
+# project.toml (owner-controlled)
+[checks.rules]
+type = "dotnet_test"
+project_dir = "astra-kingdoms"
+sandbox = "generated_code_check"
+restore_argv = ["dotnet", "restore"]        # runs first under dependency_restore (allow-list)
+
+# ~/.config/game-forge/sandbox.toml (outside the repository, chmod 600)
+[sandbox]
+backend = "auto"                            # auto | podman | docker | bwrap | none
+image = "registry.example/forge-worker@sha256:..."
+egress_proxy = "http://10.89.0.2:3128"
+restore_network = "forge-restore"           # internal network that reaches only the proxy
+```
+
+**Cloud link** (`forge/sandbox/link.py`): a worker polls outbound and accepts a hosted job message
+only when it is HMAC-signed with a short-lived project-scoped key, names an allow-listed workflow
+(signing and store publishing can never be allow-listed), a full commit hash and sha256-addressed
+artifacts, is inside a validity window of at most 15 minutes and carries a nonce never seen before
+(stored durably, so replays fail after a restart too). There is no field for a shell command.
+
+**Active-work timeout watchdog** (`forge/sandbox/watchdog.py`): `active_work_timeout_s` is now
+enforced. A provider call still running at the deadline is abandoned (charge pending) and the task
+pauses; a sandboxed check's process group is killed; a scheduler sweep pauses attempts stuck in
+RUNNING/VERIFYING past their deadline (provider job cancelled where possible). The timed-out attempt
+counts against the attempt limit.
+
+## Backups, restore drill and retention
+
+```bash
+export FORGE_BACKUP_PASSPHRASE=...           # or --passphrase-file outside every repository (chmod 600)
+forge backup create [--out /mnt/backup/astra.fgbk]
+forge backup verify /mnt/backup/astra.fgbk
+forge backup restore /mnt/backup/astra.fgbk --to /tmp/astra-restore   # never over the live project
+forge backup drill                           # back up, restore into scratch space, compare, record the result
+forge retention plan | forge retention apply [--export DIR] --yes
+forge retention hold <task> --reason "defect investigation"
+```
+
+A backup is one AES-256-GCM (scrypt key) archive with the SQLite database (online backup API), a
+`git bundle` of every branch, the artifact store, approvals/decisions/provenance as plain JSON and the
+owner config. Key files, keystores, `.env` files and config that contains secrets are excluded and
+listed in the manifest. `verify` checks every hash, `PRAGMA integrity_check`, row counts and the bundle.
+Retention: failed candidates (artifacts and `forge/cand/*` branches) after 14 days, raw diagnostics and
+video of accepted work after 30 days, accepted results and provenance kept; unresolved tasks and held
+tasks are never touched; the project's `retention_days_*` override the defaults.
+
+## Release 2: controlled assets
+
+`forge/assets/` implements the plan's asset lane. Each asset task runs **one segment** of
+brief -> concept approval -> generation -> Blender normalization -> technical report + turntable ->
+visual approval -> rig -> deformation review -> motion/retarget -> contact/transition review -> Unity
+prefab -> device evidence, up to the next owner gate. The segment's files become a normal candidate
+under `<workdir>/assets/source/<id>/`; the owner approves the exact hash on the review page (panel 4
+shows before/after renders, budget lines, contract problems, clips and provenance) and integration
+checkpoints it. The next task for the same brief continues after that gate. A "repair" with a
+correction re-runs the stages that produced what was rejected, with the correction in the prompt.
+
+| Piece | Where | Status |
+|---|---|---|
+| Contracts (geometry, materials, skeleton, motion, audio, provenance) + validators | `contracts.py` | Done, tested |
+| Budgets (archer 8k tris / 50 bones / 4 weights / 2 materials, bow, arrow, arena, scene) and the archer clip set | `budgets.py`, `clips.py` | Done, tested |
+| `astra_archer_v1` skeleton, `forge-retarget/1` mapping format, Mixamo + SMPL mappings | `skeleton.py`, `data/` | Done; SMPL naming for HY-Motion is an assumption to verify |
+| Route table (FLUX schnell, API image, Hunyuan3D 2.1, TRELLIS, TRELLIS.2, HY-Motion 1.0, UniRig, commercial rigging, GVHMR, Meshy, Tripo, DeepMotion, Mixamo, stock animation, sound library) with VRAM, OS, licence/territory flags, destinations, billing | `routes.py` | Done; selection refuses EU/UK/KR distribution for Hunyuan3D/HY-Motion, GVHMR without permission, unqualified hardware (no VRAM pooling), missing licence gate, uncertified API routes and manual steps when unattended |
+| GPU capability records (nvidia-smi), one lease per GPU, live free-VRAM recheck, benchmarks | `gpu.py`, `forge assets worker-preflight / benchmark` | Done, tested with fake nvidia-smi |
+| Adapters: Meshy, Tripo, DeepMotion (REST, host allow-list, no redirects), configured image API, local model routes (pinned command in the sandbox), Mixamo manual inbox, licensed libraries | `adapters/` | Implemented; **never called a live API or GPU** (certify with `forge assets certify <route>`) |
+| Blender scripts: normalize (units/axes/pivot, decimate, textures, FBX, technical report, turntable), rig (rename to the archer skeleton, sockets, 4 weights, deformation poses), motion (retarget, loop cleanup, root-motion conversion, markers, contact sheet) | `blender/*.py` | Written for Blender 4.2; **never run on a real Blender here** |
+| Unity prefab step (`-executeMethod Forge.Assets.PrefabAssembler.AssembleFromManifest` with a `forge-prefab/1` manifest) | `unity_prefab.py` | Forge side done; the editor script in the Unity project is **not written** (BLOCKED without it) |
+| Provenance per asset version/stage, `provenance.json` beside the asset, licence inventory (JSON + CSV, includes catalogue credits) | `provenance.py`, `forge assets inventory` | Done, tested |
+| Seed | `briefs/astra_v1/production/*.asset.json`, `projects/astra-kingdoms/tasks/r2_assets.toml` | Archer, bow, arrow, barricade briefs; R2 exit-gate tasks |
+
+The bowstring is never generated: it is driven at runtime from the draw state and the bow's
+attachment points. Provider GLBs are intermediates kept in the artifact store, not committed.
+
 ## What is NOT implemented yet (honest list)
 
 R1 gaps:
@@ -223,22 +319,23 @@ R1 gaps:
   route to a pricier model.
 - The scheduler is a synchronous, single-process loop (`forge run`). Leases, heartbeats and
   recovery are real, but there is no multi-process worker pool.
-- `active_work_timeout_s` is recorded. Enforcement relies on lease expiry and per-request
-  timeouts, not a watchdog that interrupts a running call.
-- Nothing enforces retention yet (14/30-day policies are stored only), and there is no backup
-  or restore drill command.
+- The sandbox has been exercised only with fake backends here (no podman/bwrap, docker daemon
+  absent), so on this machine every sandboxed check runs supervised. The allow-list proxy is an
+  owner-run component Forge does not ship. No dedicated worker OS account is created.
+- Backups are tested end to end locally (create/verify/restore/drill); off-machine copies and
+  scheduled daily backups are the owner's job (no scheduler is installed).
 - Visual/play evidence capture (screenshots/video judging) is limited to what the device check
   collects. The `visual_judge` role is wired only to the catalogue lane. It has never made a live call.
 - The catalogue lane has run only against a fake index, a fake downloader and a fake Blender. The real
   `objaverse` package, Hugging Face data and Blender script have not been exercised here, and several field
-  names are third-party or unconfirmed (see `docs/catalogue_fields.md`). No generation lane exists yet.
+  names are third-party or unconfirmed (see `docs/catalogue_fields.md`).
 - Performance budgets (frame time, PSS, download size) have no dedicated check type yet. Use a
   command check.
 
 Later releases (by design not in R1):
-- **R2** controlled assets: asset contracts, Blender normalization, rig/motion, provenance, GPU
-  capability scheduler and model-route benchmarks. `TaskType.ASSET` runs only the catalogue lane
-  (above); `gpu_vram_gb` leases exist only as schema.
+- **R2** (implemented above, unverified against real tools): no live provider call, GPU job,
+  Blender run or Unity prefab assembly has happened; the R2 exit gate (prop + archer approved in the
+  running phone build) needs those plus a phone.
 - **R3** document-to-spec intake, ambiguity handling, release packaging and the separate signer.
   `release_approval` exists as a field but has no signing flow.
 - **R4** installer, update channels, rollback, backup/restore, diagnostic export, licence inventory.
