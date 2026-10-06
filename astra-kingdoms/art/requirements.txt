@@ -1,0 +1,4 @@
+# Offline placeholder generators and their tests (art/placeholders, art/tests)
+numpy>=1.26
+pillow>=10.1
+pytest>=8
