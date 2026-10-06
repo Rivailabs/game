@@ -1,0 +1,813 @@
+# Astra Kingdoms task register for Game Forge.
+# Generated verbatim from docs/PLAN.md "Pilot and V1 delivery register" (deliverable and acceptance
+# text copied exactly). Everything imports as DRAFT; nothing runs until the owner approves it.
+#
+# Pilot dependencies: the plan says "Dependencies determine order" but does not list them per
+# ticket. The depends_on values for tickets 1-10 below are Forge's INFERRED proposal - confirm or
+# edit them before approving. V1 tickets 11-82 carry no dependencies yet: the plan only states group
+# ordering (73-75 start during the pilot; H begins after the pilot gate and supplies C/D assets).
+
+[defaults]
+milestone = "pilot"
+permitted_routes = ["claude-api"]
+max_attempts = 3
+reservation_ceiling_usd = 45
+
+[[tasks]]
+ticket = "1"
+group = "Pilot"
+title = "Pure C# rules/configuration skeleton and validated pilot data"
+deliverable = "Pure C# rules/configuration skeleton and validated pilot data"
+acceptance = "Invalid data fails clearly; all five element counter relationships pass tests."
+depends_on = []
+task_type = "code"
+permitted_paths = ["astra-kingdoms/src/AstraKingdoms.Rules/**", "astra-kingdoms/tests/AstraKingdoms.Rules.Tests/**"]
+verification_checks = ["rules"]
+integration_checks = ["rules"]
+visual_review_required = false
+
+[[tasks]]
+ticket = "2"
+group = "Pilot"
+title = "Duel state machine, legal locks, resolution, ties and margin"
+deliverable = "Duel state machine, legal locks, resolution, ties and margin"
+acceptance = "Approved hit, miss, clash, dodge, timeout and tie examples reproduce expected results."
+depends_on = ["1"]
+task_type = "code"
+permitted_paths = ["astra-kingdoms/src/AstraKingdoms.Rules/**", "astra-kingdoms/tests/AstraKingdoms.Rules.Tests/**"]
+verification_checks = ["rules"]
+integration_checks = ["rules"]
+visual_review_required = false
+
+[[tasks]]
+ticket = "3"
+group = "Pilot"
+title = "Authoritative arrow trajectory and collision calculations"
+deliverable = "Authoritative arrow trajectory and collision calculations"
+acceptance = "Known inputs reproduce landing/collision events independently of rendering frame rate."
+depends_on = ["1"]
+task_type = "code"
+permitted_paths = ["astra-kingdoms/src/AstraKingdoms.Rules/**", "astra-kingdoms/tests/AstraKingdoms.Rules.Tests/**"]
+verification_checks = ["rules"]
+integration_checks = ["rules"]
+visual_review_required = false
+
+[[tasks]]
+ticket = "4"
+group = "Pilot"
+title = "Script-created grey-box duel scene and Android build"
+deliverable = "Script-created grey-box duel scene and Android build"
+acceptance = "Both fighters display on the named physical phone; commit and build configuration are recorded."
+depends_on = ["1"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+[[tasks]]
+ticket = "5"
+group = "Pilot"
+title = "Touch input, aim/power controls and private shared-phone handoff"
+deliverable = "Touch input, aim/power controls and private shared-phone handoff"
+acceptance = "Two players can submit legal choices without the normal UI revealing the first choice."
+depends_on = ["2", "4"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+[[tasks]]
+ticket = "6"
+group = "Pilot"
+title = "Result presentation from resolved events"
+deliverable = "Result presentation from resolved events"
+acceptance = "Video and event record agree on arrows, damage, winner and explanation."
+depends_on = ["2", "3", "4"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+[[tasks]]
+ticket = "7"
+group = "Pilot"
+title = "Logical-cell ownership, cut rasterization and area accounting"
+deliverable = "Logical-cell ownership, cut rasterization and area accounting"
+acceptance = "Ownership totals exactly 51,040 cells; invalid gestures fail safely and transfers obey whole-board quotas."
+depends_on = ["1"]
+task_type = "code"
+permitted_paths = ["astra-kingdoms/src/AstraKingdoms.Rules/**", "astra-kingdoms/tests/AstraKingdoms.Rules.Tests/**"]
+verification_checks = ["rules"]
+integration_checks = ["rules"]
+visual_review_required = false
+
+[[tasks]]
+ticket = "8"
+group = "Pilot"
+title = "Card-constrained cut input with visible legal boundary"
+deliverable = "Card-constrained cut input with visible legal boundary"
+acceptance = "Finger input produces the permitted region and previews the actual transfer."
+depends_on = ["4", "7"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+[[tasks]]
+ticket = "9"
+group = "Pilot"
+title = "Complete shared-phone match and rematch"
+deliverable = "Complete shared-phone match and rematch"
+acceptance = "Two people finish the full loop; reset removes previous secret inputs and match state."
+depends_on = ["5", "6", "8"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+[[tasks]]
+ticket = "10"
+group = "Pilot"
+title = "Replay regression, physical-phone autoplay and baseline measurements"
+deliverable = "Replay regression, physical-phone autoplay and baseline measurements"
+acceptance = "Multiple approved seeds finish; logs, video, frame pacing, memory and download size are attached."
+depends_on = ["9"]
+task_type = "unity_scene"
+permitted_paths = ["astra-kingdoms/unity/Assets/**", "astra-kingdoms/unity/Packages/manifest.json", "astra-kingdoms/unity/ProjectSettings/**"]
+verification_checks = ["rules"]
+integration_checks = ["android-build", "device-smoke"]
+visual_review_required = true
+acceptance_evidence_class = "device"
+resource_profile = { needs_unity = true, needs_device = true }
+
+# ---- A. Rules (10 tickets) ----
+[[tasks]]
+ticket = "11"
+group = "A"
+title = "Complete weapon registry and schema"
+deliverable = "Complete weapon registry and schema"
+acceptance = "All 20 records validate; units, identifiers and unlock references are complete."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "12"
+group = "A"
+title = "Damage, counter, hit/miss and dodge ordering"
+deliverable = "Damage, counter, hit/miss and dodge ordering"
+acceptance = "Approved interaction fixtures produce exact expected results."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "13"
+group = "A"
+title = "Multi-arrow, clash, cover and trajectory interactions"
+deliverable = "Multi-arrow, clash, cover and trajectory interactions"
+acceptance = "Each affected weapon has positive, boundary and incompatible-action cases."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "14"
+group = "A"
+title = "Status-effect lifecycle and special-effect handlers"
+deliverable = "Status-effect lifecycle and special-effect handlers"
+acceptance = "Application, duration, cleansing, expiry and combination rules are tested."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "15"
+group = "A"
+title = "Symmetric catalogues, loadouts and special-astra flags"
+deliverable = "Symmetric catalogues, loadouts and special-astra flags"
+acceptance = "Starter/Full loans are equal; illegal selections fail identically offline/server-side."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "16"
+group = "A"
+title = "Duel lifecycle with up to three volleys"
+deliverable = "Duel lifecycle with up to three volleys"
+acceptance = "Early victory, ties, simultaneous outcomes and timeout cases terminate correctly."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "17"
+group = "A"
+title = "Card eligibility, margin and cell-transfer calculation"
+deliverable = "Card eligibility, margin and cell-transfer calculation"
+acceptance = "Every card follows the whole-board quota formula and minimum/maximum constraints."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "18"
+group = "A"
+title = "Terrain definitions and combat modifiers"
+deliverable = "Terrain definitions and combat modifiers"
+acceptance = "Each terrain triggers only in its documented place and phase."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "19"
+group = "A"
+title = "Eight-round match progression and scoring"
+deliverable = "Eight-round match progression and scoring"
+acceptance = "Alternation, early finish, final ties and terminal rewards are unambiguous."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "20"
+group = "A"
+title = "Deterministic records and rules snapshots"
+deliverable = "Deterministic records and rules snapshots"
+acceptance = "Golden matches replay consistently and reject unavailable/incompatible versions."
+milestone = "v1"
+task_type = "code"
+
+# ---- B. Bots and balance (5 tickets) ----
+[[tasks]]
+ticket = "21"
+group = "B"
+title = "Bot observation/action interface"
+deliverable = "Bot observation/action interface"
+acceptance = "Tests prove unrevealed opponent choices are inaccessible to policy inputs."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "22"
+group = "B"
+title = "Three bounded bot difficulties"
+deliverable = "Three bounded bot difficulties"
+acceptance = "Each produces legal play; difficulty differences are documented and observable."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "23"
+group = "B"
+title = "Configurable 10,000-match simulation harness"
+deliverable = "Configurable 10,000-match simulation harness"
+acceptance = "Runs report seeds, policy pairings, uncertainty and stratified outcomes."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "24"
+group = "B"
+title = "Versioned balance publication and rollback"
+deliverable = "Versioned balance publication and rollback"
+acceptance = "Only new matches adopt settings; invalid releases fail validation."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "25"
+group = "B"
+title = "Human/bot balance review report"
+deliverable = "Human/bot balance review report"
+acceptance = "Matchups, first-player effects, unlock cohorts and comeback behaviour are inspectable."
+milestone = "v1"
+task_type = "code"
+
+# ---- C. Duel presentation (11 tickets) ----
+[[tasks]]
+ticket = "26"
+group = "C"
+title = "Runtime archer prefab and rig import"
+deliverable = "Runtime archer prefab and rig import"
+acceptance = "Approved mesh deforms correctly within the asset budget."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "27"
+group = "C"
+title = "Archer animation controller"
+deliverable = "Archer animation controller"
+acceptance = "Idle, draw, release, hit and terminal transitions have no visible discontinuity."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "28"
+group = "C"
+title = "Bow, arrow and procedural string attachment"
+deliverable = "Bow, arrow and procedural string attachment"
+acceptance = "Grip and release align across approved poses and aiming ranges."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "29"
+group = "C"
+title = "Aim and power preview"
+deliverable = "Aim and power preview"
+acceptance = "Preview uses compatible trajectory parameters and clear touch feedback."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "30"
+group = "C"
+title = "Selection, lock and reveal presentation"
+deliverable = "Selection, lock and reveal presentation"
+acceptance = "Secret information appears only in the permitted phase."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "31"
+group = "C"
+title = "Projectile playback from authoritative events"
+deliverable = "Projectile playback from authoritative events"
+acceptance = "Playback agrees with hit, miss and collision records."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "32"
+group = "C"
+title = "Pooled weapon/element effects"
+deliverable = "Pooled weapon/element effects"
+acceptance = "Every effect is identifiable and respects the measured concurrent-effect budget."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "33"
+group = "C"
+title = "Clash, impact and damage feedback"
+deliverable = "Clash, impact and damage feedback"
+acceptance = "Cancelled/surviving arrows and damage remain understandable without sound."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "34"
+group = "C"
+title = "Dodge and cover presentation"
+deliverable = "Dodge and cover presentation"
+acceptance = "Timing and visible protection match resolved rules."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "35"
+group = "C"
+title = "Health, timer and combat status HUD"
+deliverable = "Health, timer and combat status HUD"
+acceptance = "States remain readable at reference-device size and supported text scaling."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "36"
+group = "C"
+title = "Camera and two-arena integration"
+deliverable = "Camera and two-arena integration"
+acceptance = "Controls remain stable; both arenas pass representative frame-time checks."
+milestone = "v1"
+task_type = "unity_scene"
+
+# ---- D. Land presentation (6 tickets) ----
+[[tasks]]
+ticket = "37"
+group = "D"
+title = "Cell-circle map and rendered ownership contours"
+deliverable = "Cell-circle map and rendered ownership contours"
+acceptance = "Displayed ownership agrees with logical cells; contour rendering cannot alter totals."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "38"
+group = "D"
+title = "Legal card choices and explanation"
+deliverable = "Legal card choices and explanation"
+acceptance = "Eligible choices and their limits match the rule record."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "39"
+group = "D"
+title = "Finger-cut capture, quantization and cell validation"
+deliverable = "Finger-cut capture, quantization and cell validation"
+acceptance = "Bad gestures cannot exceed whole-board quotas or corrupt logical ownership."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "40"
+group = "D"
+title = "Land transfer and warrior-jump presentation"
+deliverable = "Land transfer and warrior-jump presentation"
+acceptance = "Animation finishes at the actual updated ownership state."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "41"
+group = "D"
+title = "Totals, boundaries and terrain labels"
+deliverable = "Totals, boundaries and terrain labels"
+acceptance = "Areas reconcile; ownership works without colour alone."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "42"
+group = "D"
+title = "Match result and rematch flow"
+deliverable = "Match result and rematch flow"
+acceptance = "Winner/reason is correct; rematch creates fresh state once."
+milestone = "v1"
+task_type = "unity_scene"
+
+# ---- E. Screens and usability (6 tickets) ----
+[[tasks]]
+ticket = "43"
+group = "E"
+title = "Bootstrap, menu and mode selection"
+deliverable = "Bootstrap, menu and mode selection"
+acceptance = "Shared-phone mode works under its documented offline conditions."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "44"
+group = "E"
+title = "Loadout and mastery/practice screens"
+deliverable = "Loadout and mastery/practice screens"
+acceptance = "Room loans are clear; account progression never restricts the opponent's equivalent catalogue."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "45"
+group = "E"
+title = "Playable tutorial and loss explanation"
+deliverable = "Playable tutorial and loss explanation"
+acceptance = "New testers complete the core loop without continuous coaching."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "46"
+group = "E"
+title = "Settings, accessibility and data controls"
+deliverable = "Settings, accessibility and data controls"
+acceptance = "Audio, motion, input and permitted deletion flows work."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "47"
+group = "E"
+title = "Pause, background and connection-state UI"
+deliverable = "Pause, background and connection-state UI"
+acceptance = "Returning users see authoritative phase and appropriate recovery choices."
+milestone = "v1"
+task_type = "unity_scene"
+
+[[tasks]]
+ticket = "48"
+group = "E"
+title = "English, Hindi and Kannada localization"
+deliverable = "English, Hindi and Kannada localization"
+acceptance = "All strings and glyphs render; key screens receive fluent-speaker review."
+milestone = "v1"
+task_type = "unity_scene"
+
+# ---- F. Online systems (8 tickets) ----
+[[tasks]]
+ticket = "49"
+group = "F"
+title = "Authentication and participant authorization"
+deliverable = "Authentication and participant authorization"
+acceptance = "Unauthenticated/nonparticipant requests cannot read or mutate private match state."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "50"
+group = "F"
+title = "Authoritative C# match service"
+deliverable = "Authoritative C# match service"
+acceptance = "Accepted intents resolve through the shared versioned rules assembly."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "51"
+group = "F"
+title = "Private locks, deadlines and reveal protocol"
+deliverable = "Private locks, deadlines and reveal protocol"
+acceptance = "Late/duplicate inputs and disconnects cannot alter an accepted outcome."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "52"
+group = "F"
+title = "Two-player friend rooms"
+deliverable = "Two-player friend rooms"
+acceptance = "Codes expire; capacity, joining, leaving and host disappearance work."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "53"
+group = "F"
+title = "Match queue and optional labelled bot match"
+deliverable = "Match queue and optional labelled bot match"
+acceptance = "After 20 seconds, player consent starts an unranked bot match; waiting/cancelling creates no duplicate."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "54"
+group = "F"
+title = "Reconnection and idempotent action recovery"
+deliverable = "Reconnection and idempotent action recovery"
+acceptance = "Snapshots/events restore correct state through scripted interruption cases."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "55"
+group = "F"
+title = "Server validation, rate limits and audit trail"
+deliverable = "Server validation, rate limits and audit trail"
+acceptance = "Tampered actions fail; useful diagnostics do not expose secrets."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "56"
+group = "F"
+title = "Deployment, health and failure handling"
+deliverable = "Deployment, health and failure handling"
+acceptance = "Load/fault checks meet a declared initial capacity; rollback and recovery are rehearsed."
+milestone = "v1"
+task_type = "code"
+
+# ---- G. Progression and monetization (8 tickets) ----
+[[tasks]]
+ticket = "57"
+group = "G"
+title = "Levels, mastery/practice unlocks and saved progression"
+deliverable = "Levels, mastery/practice unlocks and saved progression"
+acceptance = "One match grants once; competitive room catalogues remain symmetric."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "58"
+group = "G"
+title = "Daily cosmetic tasks"
+deliverable = "Daily cosmetic tasks"
+acceptance = "Claim, expiry and retry cannot duplicate rewards."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "59"
+group = "G"
+title = "Cosmetic catalogue and equipment"
+deliverable = "Cosmetic catalogue and equipment"
+acceptance = "Cosmetics change appearance without combat-stat effects."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "60"
+group = "G"
+title = "Shop presentation and eligibility"
+deliverable = "Shop presentation and eligibility"
+acceptance = "Prices/terms are clear; audience-dependent purchase restrictions are enforced."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "61"
+group = "G"
+title = "Play Billing and entitlement verification"
+deliverable = "Play Billing and entitlement verification"
+acceptance = "Test purchases, pending outcomes, restores and revoked entitlements are handled."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "62"
+group = "G"
+title = "Ad policy and conditional remove-ads entitlement"
+deliverable = "Ad policy and conditional remove-ads entitlement"
+acceptance = "No remove-ads SKU with rewarded-only ads; if non-rewarded ads are approved, entitlement removes those across reinstalls."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "63"
+group = "G"
+title = "Optional rewarded ads outside matches"
+deliverable = "Optional rewarded ads outside matches"
+acceptance = "Decline/failure is safe; verified rewards are granted once."
+milestone = "v1"
+task_type = "code"
+
+[[tasks]]
+ticket = "64"
+group = "G"
+title = "Analytics and crash reporting"
+deliverable = "Analytics and crash reporting"
+acceptance = "Permitted events reconcile with match records and cohort definitions."
+milestone = "v1"
+task_type = "code"
+
+# ---- H. Art and sound (8 tickets) ----
+[[tasks]]
+ticket = "65"
+group = "H"
+title = "Archer asset, rig and three outfits"
+deliverable = "Archer asset, rig and three outfits"
+acceptance = "Visual/technical brief, deformation and licence provenance are approved."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "66"
+group = "H"
+title = "Bow and arrow asset set"
+deliverable = "Bow and arrow asset set"
+acceptance = "Attachments, scale and silhouette pass actual combat-view review."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "67"
+group = "H"
+title = "Twenty weapon-effect assets"
+deliverable = "Twenty weapon-effect assets"
+acceptance = "Readable visual identities fit the runtime effects contract."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "68"
+group = "H"
+title = "Two arena sets and terrain props"
+deliverable = "Two arena sets and terrain props"
+acceptance = "Assets meet budgets and avoid misleading collision/cover cues."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "69"
+group = "H"
+title = "Forty UI/store icons"
+deliverable = "Forty UI/store icons"
+acceptance = "Sizes, contrast, consistency and usage rights are verified."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "70"
+group = "H"
+title = "Sound-effect library"
+deliverable = "Sound-effect library"
+acceptance = "Required cues are distinct, licensed and mixed appropriately."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "71"
+group = "H"
+title = "Two music tracks"
+deliverable = "Two music tracks"
+acceptance = "Rights, looping, volume controls and mobile import settings pass review."
+milestone = "v1"
+task_type = "asset"
+
+[[tasks]]
+ticket = "72"
+group = "H"
+title = "Store art and screenshots"
+deliverable = "Store art and screenshots"
+acceptance = "Captures match the shipped game and supported languages."
+milestone = "v1"
+task_type = "asset"
+
+# ---- I. Performance and release (10 tickets) ----
+[[tasks]]
+ticket = "73"
+group = "I"
+title = "Device performance baseline and regression checks"
+deliverable = "Device performance baseline and regression checks"
+acceptance = "Both reference phones complete the defined frame-pacing scenarios."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "74"
+group = "I"
+title = "Download/build-size control"
+deliverable = "Download/build-size control"
+acceptance = "Defined compressed initial download meets the approved 80 MB budget."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "75"
+group = "I"
+title = "Memory and sustained-play checks"
+deliverable = "Memory and sustained-play checks"
+acceptance = "Peak PSS, lifecycle recovery and leak/thermal evidence are recorded."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "76"
+group = "I"
+title = "Reproducible signed Android packaging"
+deliverable = "Reproducible signed Android packaging"
+acceptance = "Artifact, source, dependencies and signing authority are traceable."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "77"
+group = "I"
+title = "Privacy implementation and store data declarations"
+deliverable = "Privacy implementation and store data declarations"
+acceptance = "Actual SDK/network behaviour agrees with disclosures and consent choices."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "78"
+group = "I"
+title = "Content rating and store-page review"
+deliverable = "Content rating and store-page review"
+acceptance = "Audience, permissions, wording and regional availability match the product."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "79"
+group = "I"
+title = "Closed-test operations"
+deliverable = "Closed-test operations"
+acceptance = "Current account-specific store requirements and tester feedback actions are satisfied."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "80"
+group = "I"
+title = "Controlled soft launch and cohort observation"
+deliverable = "Controlled soft launch and cohort observation"
+acceptance = "Four-week observation is scheduled; sufficient mature cohorts exist before judging goals."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "81"
+group = "I"
+title = "Priority patch and rollout procedure"
+deliverable = "Priority patch and rollout procedure"
+acceptance = "Fixes have reproducible evidence; rollout/rollback avoids incompatible active matches."
+milestone = "v1"
+task_type = "measurement"
+
+[[tasks]]
+ticket = "82"
+group = "I"
+title = "Operational handover and release decision"
+deliverable = "Operational handover and release decision"
+acceptance = "Restore rehearsal, support runbook, known issues and gate decision are complete."
+milestone = "v1"
+task_type = "measurement"
