@@ -13,6 +13,8 @@ from .base import (
     ProviderResult,
     ReconcileResult,
     ReviewRequest,
+    JudgeRequest,
+    JudgeResult,
     ReviewResult,
     TransportError,
     Usage,
@@ -39,12 +41,16 @@ class FakeBehaviour:
 class FakeProvider(ProviderAdapter):
     def __init__(self, script: dict[int, FakeBehaviour] | Callable[[CodingRequest], FakeBehaviour] | None = None,
                  *, ceiling_micros: Optional[int] = 50_000, review_verdict: str = "approve",
+                 judge_pick: "str | Callable[[JudgeRequest], str]" = "first", judge_cost_micros: int = 3_000,
                  name: str = "fake", vendor: str = "fake"):
         self.script = script or {}
         self.ceiling = ceiling_micros
         self.review_verdict = review_verdict
+        self.judge_pick = judge_pick
+        self.judge_cost_micros = judge_cost_micros
+        self.judgements: list[JudgeRequest] = []
         self.descriptor = ProviderDescriptor(
-            name=name, vendor=vendor, operations=["code", "review"], auth_method="none",
+            name=name, vendor=vendor, operations=["code", "review", "visual_judge"], auth_method="none",
             billing_party="nobody (deterministic test double)", data_destinations=["local process memory"],
             data_classes_sent=["prompt", "code"], cancellation="confirmed", structured_output=True,
             tested_versions=["fake-1"],
@@ -120,3 +126,25 @@ class FakeProvider(ProviderAdapter):
         ]
         return ReviewResult(self.review_verdict, findings, Usage(model="fake-model", input_tokens=500,
                                                                  output_tokens=50, requests=1), 2_000)
+
+    def judge_ceiling_micros(self, candidates: int, views: int = 4) -> Optional[int]:
+        return self.ceiling
+
+    def judge(self, req: JudgeRequest) -> JudgeResult:
+        """Deterministic judge: ``judge_pick`` is "first", "NONE", a uid, or a callable."""
+        self.judgements.append(req)
+        pick = self.judge_pick(req) if callable(self.judge_pick) else self.judge_pick
+        if pick == "first":
+            pick = req.candidates[0].uid if req.candidates else "NONE"
+        return JudgeResult(pick, f"fake judge picked {pick}",
+                           Usage(model="fake-model", input_tokens=800, output_tokens=40, requests=1),
+                           self.judge_cost_micros, raw=f'{{"pick": "{pick}"}}')
+
+
+class FakeJudge(FakeProvider):
+    """A FakeProvider used only as a visual judge in tests and offline dry runs."""
+
+    def __init__(self, pick: "str | Callable[[JudgeRequest], str]" = "first", *, cost_micros: int = 3_000,
+                 ceiling_micros: Optional[int] = 20_000, name: str = "fake-judge", vendor: str = "fake"):
+        super().__init__(ceiling_micros=ceiling_micros, judge_pick=pick, judge_cost_micros=cost_micros,
+                         name=name, vendor=vendor)

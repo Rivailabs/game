@@ -159,6 +159,8 @@ class Orchestrator:
             problems.append("no permitted paths")
         if not root.permitted_routes:
             problems.append("no permitted provider routes")
+        if root.task_type == TaskType.ASSET and not root.asset_brief:
+            problems.append("no asset brief")
         if problems:
             self._to(root, S.NEEDS_INPUT, "; ".join(problems))
             return self.store.get_root(root_id)
@@ -257,6 +259,9 @@ class Orchestrator:
                 ok, reason = False, why
         if ok:
             ok, reason = self._resource_status(root, root.verification_checks + root.integration_checks)
+        if ok and root.task_type == TaskType.ASSET:
+            reason = self._asset_preflight(root)
+            ok = not reason
         if ok:
             if root.state != S.READY:
                 return self._to(root, S.READY, "dependencies match, policy passes, resources available")
@@ -360,6 +365,8 @@ class Orchestrator:
             return self._revalidate(root, latest)
         if self.attempts_remaining(root) <= 0:
             return self._to(root, S.PAUSED, "attempt limit reached; owner decision required (cancel or revise)")
+        if root.task_type == TaskType.ASSET:
+            return self._dispatch_asset(root)
         name, provider, why = self._route(root)
         if provider is None:
             return self._to(root, S.BLOCKED, why)
@@ -548,6 +555,201 @@ class Orchestrator:
         self.store.update_provider_job(f"{root.id}:{attempt.id}:code", status="UNKNOWN")
         return self._to(root, S.PAUSED, "provider completion/charge pending: " + detail)
 
+    # ================================================================ asset tasks (catalogue lane first)
+    # State mapping (the plan's state machine has no RUNNING -> BLOCKED / NEEDS_INPUT edge):
+    # * preconditions (disk guard, Blender, index, packages, judge policy, brief) are checked during
+    #   readiness and in READY, so a missing tool gives BLOCKED before anything is spent;
+    # * lane exit 3 discovered while RUNNING -> PAUSED with "catalogue lane blocked: <reason>";
+    # * lane exit 2 (NONE) -> the generation lane if one is configured, otherwise
+    #   RUNNING -> PAUSED -> NEEDS_INPUT "no catalogue match; generation lane not available".
+    NO_GENERATION_LANE = "no catalogue match; generation lane not available"
+
+    def _brief_path(self, root: RootTask) -> Path:
+        p = Path(root.asset_brief or "")
+        return p if p.is_absolute() else self.rt.repo_path / p
+
+    def _asset_target_rel(self, brief_id: str) -> str:
+        wd = (self.project.workdir or ".").strip("/")
+        rel = f"assets/source/{brief_id}"
+        return rel if wd in ("", ".") else f"{wd}/{rel}"
+
+    def _asset_preflight(self, root: RootTask) -> str:
+        """Reason an asset task cannot be dispatched ("" = ready). Nothing is downloaded or sent."""
+        from .lanes.catalogue import CatalogueError, load_brief
+        from .lanes.run_catalogue import preflight
+        from .pathglob import match_path
+        from .providers.base import check_judge_policy
+
+        if not root.asset_brief:
+            return "asset task has no brief"
+        try:
+            brief = load_brief(self._brief_path(root))
+        except (CatalogueError, ValueError) as e:
+            return f"asset brief invalid: {e}"[:500]
+        probe = f"{self._asset_target_rel(brief.id)}/credits.json"
+        if not match_path(probe, root.permitted_paths):
+            return f"permitted_paths must include {self._asset_target_rel(brief.id)}/**"
+        if self.rt.catalogue is None:
+            return "catalogue lane not configured for this project"
+        name, provider, why = self._route(root)
+        if provider is None:
+            return why
+        try:
+            check_judge_policy(provider.descriptor, self.project.policy, unattended=self.rt.unattended)
+        except PolicyViolation as e:
+            return f"visual judge route {name}: {e} (the owner can allow 'render_image' in [policy])"
+        why = preflight(brief, self.rt.repo_path / (self.project.workdir or "."), self.rt.catalogue, judge=provider)
+        return f"catalogue lane: {why}" if why else ""
+
+    def _dispatch_asset(self, root: RootTask) -> RootTask:
+        from .lanes.catalogue import load_brief
+        from .lanes.run_catalogue import EXIT_BLOCKED, EXIT_NONE, EXIT_PICKED, run_brief
+
+        why = self._asset_preflight(root)
+        if why:
+            return self._to(root, S.BLOCKED, why)
+        brief = load_brief(self._brief_path(root))
+        name, provider, _ = self._route(root)
+        base = self.accepted_head()
+        number = len(self.quality_attempts(root.id)) + 1
+        attempt = CandidateAttempt(id=new_id("att"), root_id=root.id, number=number, base_commit=base,
+                                   provider=name, started_at=self.store.now())
+        ceiling = provider.judge_ceiling_micros(brief.candidates)
+        try:
+            res_id = self.budget.reserve(project_id=root.project_id, milestone_id=root.milestone_id,
+                                         root_id=root.id, amount_micros=ceiling, attempt_id=attempt.id,
+                                         provider=name, purpose=f"catalogue judge {brief.id} (attempt {number})",
+                                         unattended=self.rt.unattended)
+        except UnknownCeiling as e:
+            return self._to(root, S.BLOCKED, str(e))
+        except DispatchStopped:
+            raise
+        except (BudgetExceeded, NoCapConfigured) as e:
+            return self._to(root, S.PAUSED, f"budget: {e}")
+        if not self.leases.acquire_all([f"attempt:{attempt.id}"], self.rt.worker_id, root_id=root.id,
+                                       attempt_id=attempt.id):
+            self.budget.release(res_id)
+            return root
+        attempt.reservation_id = res_id
+        attempt.lease_holder = self.rt.worker_id
+        attempt.lease_expires_at = self.store.now() + self.rt.lease_ttl_s
+        attempt.heartbeat_at = self.store.now()
+        self.store.create_attempt(attempt)
+        root = self._to(root, S.RUNNING, f"catalogue lane for brief {brief.id} (attempt {number}, judge {name})",
+                        attempt_id=attempt.id, reservation_id=res_id)
+        try:
+            path, branch = self.ws.create(attempt.id, base)
+        except GitError as e:
+            return self._end_asset_attempt(root, attempt, S.PAUSED, f"workspace error: {e}", release=True)
+        attempt.workspace_path, attempt.branch = str(path), branch
+        self.store.save_attempt(attempt)
+        key = f"{root.id}:{attempt.id}:judge"
+        self.store.record_provider_job(idempotency_key=key, root_id=root.id, attempt_id=attempt.id,
+                                       provider=provider.descriptor.name, operation="visual_judge",
+                                       reservation_id=res_id)
+        target = Path(path) / (self.project.workdir or ".")
+
+        def on_cost(jr) -> None:
+            if jr.cost_micros:
+                self.budget.record_usage(res_id, jr.cost_micros, model=jr.usage.model, usage=jr.usage.to_dict())
+            self.store.update_provider_job(key, status="COMPLETED", usage_json=json.dumps(jr.usage.to_dict()),
+                                           result_json=json.dumps({"pick": jr.pick, "reason": jr.reason}))
+
+        try:
+            res = run_brief(brief, target, self.rt.catalogue, provider, on_cost=on_cost, idempotency_key=key)
+        except (TransportError, ProviderRejected) as e:
+            if e.cost_micros:
+                self.budget.record_usage(res_id, e.cost_micros, model=e.usage.model, usage=e.usage.to_dict())
+            self.store.update_provider_job(key, status="FAILED")
+            return self._end_asset_attempt(root, attempt, S.PAUSED, redact(f"visual judge failed: {e}"))
+        except (SupervisedOnly, PolicyViolation, CredentialError, ProviderUnavailable) as e:
+            self.store.update_provider_job(key, status="FAILED")
+            return self._end_asset_attempt(root, attempt, S.PAUSED, f"{type(e).__name__}: {e}", release=True)
+        except Exception as e:  # unknown outcome: the judge may have charged
+            self.store.update_provider_job(key, status="UNKNOWN")
+            self.budget.mark_charge_pending(res_id, redact(f"catalogue lane error {type(e).__name__}: {e}"))
+            return self._end_asset_attempt(root, attempt, S.PAUSED,
+                                           redact(f"provider completion/charge pending: catalogue lane error "
+                                                  f"{type(e).__name__}: {e}"), settle=False)
+        self._lane_evidence(root, attempt, res, "catalogue-lane")
+        if res.exit_code == EXIT_NONE and self.rt.generation_lane is not None:
+            self._event("asset_generation_fallthrough", root, attempt, brief=brief.id, reason=res.reason)
+            res = self.rt.generation_lane(root, target, brief)
+            self._lane_evidence(root, attempt, res, "generation-lane")
+        if res.exit_code == EXIT_PICKED:
+            return self._asset_candidate(root, attempt, brief, res)
+        if res.exit_code == EXIT_BLOCKED:
+            return self._end_asset_attempt(root, attempt, S.PAUSED, f"catalogue lane blocked: {res.reason}")
+        # NONE with no generation lane
+        reason = self.NO_GENERATION_LANE if self.rt.generation_lane is None else f"no asset produced: {res.reason}"
+        root = self._end_asset_attempt(root, attempt, S.PAUSED, reason)
+        return self._to(root, S.NEEDS_INPUT, reason)
+
+    def _end_asset_attempt(self, root: RootTask, attempt: CandidateAttempt, dst: TaskState, reason: str, *,
+                           release: bool = False, settle: bool = True) -> RootTask:
+        """Close an asset attempt that produced no candidate (not a quality attempt)."""
+        attempt.status = AttemptStatus.ABANDONED
+        attempt.finished_at = self.store.now()
+        self.store.save_attempt(attempt)
+        if attempt.reservation_id and settle:
+            (self.budget.release if release else self.budget.settle)(attempt.reservation_id)
+        self.leases.release(f"attempt:{attempt.id}", self.rt.worker_id)
+        if attempt.workspace_path and Path(attempt.workspace_path).exists():
+            self.ws.remove(attempt.workspace_path)
+        return self._to(self.store.get_root(root.id), dst, reason)
+
+    def _lane_evidence(self, root: RootTask, attempt: CandidateAttempt, res, name: str) -> Evidence:
+        details = res.to_dict() if hasattr(res, "to_dict") else dict(res.__dict__)
+        renders = {}
+        refs = []
+        if getattr(res, "out_dir", None) and getattr(res, "exit_code", None) == 0:
+            for view in ("front", "side", "back", "three_quarter"):
+                p = Path(res.out_dir) / f"{view}.png"
+                if p.exists():
+                    renders[view] = self.artifacts.put_file(p)
+                    refs.append(renders[view])
+        details["renders"] = renders
+        status = {0: EvidenceStatus.INFO, 2: EvidenceStatus.INFO, 3: EvidenceStatus.BLOCKED}.get(res.exit_code,
+                                                                                               EvidenceStatus.INFO)
+        summary = f"{name}: {res.status} - {res.reason}"
+        if res.exit_code == 0:
+            summary += " - owner approval required; licence labels can be wrong"
+        return self.store.add_evidence(Evidence(
+            id=new_id("ev"), root_id=root.id, attempt_id=attempt.id, evidence_class=EvidenceClass.ASSET,
+            status=status, name=name, summary=summary[:500], details=details, artifact_refs=refs))
+
+    def _asset_candidate(self, root: RootTask, attempt: CandidateAttempt, brief, res) -> RootTask:
+        self.store.add_evidence(Evidence(
+            id=new_id("ev"), root_id=root.id, attempt_id=attempt.id, evidence_class=EvidenceClass.STATIC,
+            status=EvidenceStatus.PASS, name="catalogue-budget-check",
+            summary=f"{res.pick}: within {brief.max_tris} triangles, {brief.max_texture}px textures, {brief.size_m} m",
+            details={"brief": brief.id, "max_tris": brief.max_tris, "max_texture": brief.max_texture,
+                     "size_m": brief.size_m}))
+        try:
+            cand = self.ws.commit_candidate(attempt.workspace_path,
+                                            f"Forge asset candidate {root.ticket or root.id}: catalogue pick "
+                                            f"{res.pick} for {brief.id}\n\nroot={root.id} attempt={attempt.id}")
+        except GitError as e:
+            cand = None
+            res.reason += f" (commit failed: {e})"
+        if cand is None:
+            attempt.repair_instructions = f"catalogue pick produced no change: {res.reason}"
+            return self._fail_attempt(root, attempt, FailureCategory.OTHER, "no candidate produced: " + res.reason)
+        attempt.candidate_hash = cand
+        attempt.status = AttemptStatus.CANDIDATE
+        self.store.save_attempt(attempt)
+        root = self._to(root, S.VERIFYING, f"catalogue candidate {cand[:12]} ({res.pick})", candidate_hash=cand)
+        return self.verify(root, attempt)
+
+    def _needs_owner_visual(self, root: RootTask) -> bool:
+        return root.visual_review_required or root.task_type == TaskType.ASSET
+
+    def _lane_budget_passed(self, root: RootTask, attempt: CandidateAttempt) -> bool:
+        if root.task_type != TaskType.ASSET:
+            return False
+        return any(e.name == "catalogue-budget-check" and e.status == EvidenceStatus.PASS
+                   for e in self.store.list_evidence(root.id, attempt.id))
+
     # ================================================================ verification
     def _run_checks(self, root: RootTask, attempt: CandidateAttempt, names: list[str], workdir: Path,
                     candidate_hash: str) -> list[tuple[CheckOutcome, Evidence]]:
@@ -627,7 +829,7 @@ class Orchestrator:
             incomplete_reason = "no protected verification checks configured for this task"
         else:
             incomplete_reason = "; ".join(f"{o.name}: {o.summary}" for o in incomplete)
-        technical_ok = not incomplete and bool(root.verification_checks)
+        technical_ok = not incomplete and (bool(root.verification_checks) or self._lane_budget_passed(root, attempt))
         # independent reviewer (opinion, not authority)
         review_verdict = self._independent_review(root, attempt, diff, outcomes)
         self.budget.settle(attempt.reservation_id)
@@ -638,7 +840,7 @@ class Orchestrator:
         if guard.flags:
             approval.gate_change_review = GateRecord(decision=Decision.PENDING, reason="; ".join(
                 f"{f.kind}: {f.path}" for f in guard.flags))
-        approval.visual_approval = GateRecord(decision=Decision.PENDING if root.visual_review_required
+        approval.visual_approval = GateRecord(decision=Decision.PENDING if self._needs_owner_visual(root)
                                               else Decision.NOT_REQUIRED)
         self.store.save_approval(approval)
         attempt.status = AttemptStatus.VERIFIED if technical_ok else AttemptStatus.CANDIDATE
@@ -649,7 +851,10 @@ class Orchestrator:
             reasons.append("technical evidence incomplete: " + incomplete_reason)
         if guard.flags:
             reasons.append("gate/test changes require separate review")
-        if root.visual_review_required:
+        if root.task_type == TaskType.ASSET:
+            reasons.append("owner approval of the catalogue pick required (check the renders, source page and "
+                           "licence; licence labels can be wrong)")
+        elif root.visual_review_required:
             reasons.append("owner visual approval required")
         if review_verdict in ("reject", "uncertain"):
             reasons.append(f"independent reviewer verdict: {review_verdict}")
@@ -706,7 +911,7 @@ class Orchestrator:
         approval = self.store.find_approval(root.id, attempt.candidate_hash)
         if any(oc.status != EvidenceStatus.PASS for oc in outcomes):
             return self._to(root, S.AWAITING_APPROVAL, "revalidation evidence incomplete")
-        if root.visual_review_required and (approval is None or approval.visual_approval.decision != Decision.APPROVED):
+        if self._needs_owner_visual(root) and (approval is None or approval.visual_approval.decision != Decision.APPROVED):
             return self._to(root, S.AWAITING_APPROVAL, "owner visual approval required")
         return self._to(root, S.INTEGRATION_READY, "revalidated; approvals for this exact candidate still apply")
 
@@ -771,6 +976,8 @@ class Orchestrator:
             summary_status = (EvidenceStatus.FAIL if any(o.status == EvidenceStatus.FAIL for o in outcomes) else
                               EvidenceStatus.PASS if all(o.status == EvidenceStatus.PASS for o in outcomes) and outcomes
                               else EvidenceStatus.INCOMPLETE)
+            if not outcomes and self._lane_budget_passed(root, attempt):
+                summary_status = EvidenceStatus.PASS  # asset task: the lane's budget check is the technical gate
             self.store.add_evidence(Evidence(
                 id=new_id("ev"), root_id=root.id, attempt_id=attempt.id, candidate_hash=staged.staged_sha,
                 evidence_class=EvidenceClass.INTEGRATION, status=summary_status, name="integration-summary",
@@ -786,7 +993,7 @@ class Orchestrator:
                 return self._to(root, S.AWAITING_APPROVAL, "integration evidence incomplete: " + "; ".join(
                     f"{o.name}: {o.summary}" for o in outcomes if o.status != EvidenceStatus.PASS)
                     + " - approve to re-run integration once available")
-            if staged.staged_sha != attempt.candidate_hash and root.visual_review_required:
+            if staged.staged_sha != attempt.candidate_hash and self._needs_owner_visual(root):
                 apr = self.store.get_or_create_approval(root.id, attempt.id, staged.staged_sha)
                 apr.technical_pass = GateRecord(decision=Decision.APPROVED, by="forge", at=self.store.now(),
                                                 reason="integration checks passed")
@@ -910,7 +1117,7 @@ class Orchestrator:
                                   "(recorded as an explicit owner override)")
             cand_apr.technical_pass = GateRecord(decision=Decision.APPROVED, by=reviewer, at=self.store.now(),
                                                  reason="owner accepted incomplete technical evidence")
-        if root.visual_review_required:
+        if self._needs_owner_visual(root):
             apr.visual_approval = GateRecord(decision=Decision.APPROVED, by=reviewer, at=self.store.now(),
                                              reason="owner approved this exact hash")
             if apr.id != cand_apr.id and cand_apr.visual_approval.decision == Decision.PENDING:
@@ -989,6 +1196,18 @@ class Orchestrator:
                 if attempt.candidate_hash:
                     self._to(root, S.VERIFYING, "recovered: candidate already committed")
                     self.verify(self.store.get_root(root.id), attempt)
+                    continue
+                if root.task_type == TaskType.ASSET:
+                    # The lane is not resumable mid-run: a judge call may or may not have been charged.
+                    job = self.store.get_provider_job(f"{root.id}:{attempt.id}:judge")
+                    charged = bool(job and job["status"] == "COMPLETED")
+                    if attempt.reservation_id and not charged:
+                        self.budget.mark_charge_pending(attempt.reservation_id, "catalogue lane interrupted")
+                    self._end_asset_attempt(
+                        root, attempt, S.PAUSED,
+                        "recovered: catalogue lane was interrupted" + ("" if charged else
+                                                                        "; provider completion/charge pending"),
+                        settle=charged)
                     continue
                 provider = self.rt.providers.get(attempt.provider or "")
                 if provider is None:

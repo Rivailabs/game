@@ -112,6 +112,8 @@ class ReviewApp:
                 return "200 OK", self.budget_page(), []
             if len(parts) == 2 and parts[0] == "artifact":
                 return "200 OK", self.artifact_page(parts[1]), []
+            if len(parts) == 2 and parts[0] == "artifact-image":
+                return "200 OK", self.artifact_image(parts[1]), [("Content-Type", "image/png")]
             if parts == ["api", "status"]:
                 data = json.dumps({pid: o.status() for pid, o in self.orch.items()})
                 return "200 OK", data, [("Content-Type", "application/json")]
@@ -203,6 +205,36 @@ class ReviewApp:
         return ("<table><tr><th>Status</th><th>Check</th><th>Result</th><th>Logs</th><th>When / hash</th></tr>"
                 + "".join(rows) + "</table>") if rows else "<p class=mute>No evidence yet.</p>"
 
+    def _asset_pick_html(self, evs) -> str:
+        """Catalogue pick: renders, source, artist and licence, with the owner-approval warning."""
+        out = []
+        for ev in evs:
+            d = ev.details
+            rec = d.get("pick_record") or {}
+            if not rec:
+                continue
+            imgs = "".join(f"<figure style='display:inline-block;margin:4px'><img src='/artifact-image/{e(h)}' "
+                           f"width=160 height=160 alt='{e(v)}'><figcaption class=mute>{e(v)}</figcaption></figure>"
+                           for v, h in (d.get("renders") or {}).items())
+            mandatory = (" <span class='pill FAIL'>MANDATORY HUMAN APPROVAL</span>"
+                         if rec.get("kind") == "character_base" else "")
+            out.append(
+                f"<div><h3>Catalogue pick <code>{e(rec.get('uid', ''))}</code> {_pill(rec.get('status', ''))}{mandatory}</h3>"
+                f"<p><b>{e(rec.get('name', ''))}</b> by {e(rec.get('artist', '') or 'unknown artist')} · "
+                f"licence {e(rec.get('licence', ''))} · source <code>{e(rec.get('source_url', ''))}</code></p>"
+                f"<p><span class='pill PENDING'>CHECK LICENCE</span> {e(rec.get('licence_warning', ''))}</p>"
+                f"<p class=mute>Judge: {e(rec.get('judge_reason', ''))}</p>{imgs}</div>")
+        return "".join(out)
+
+    def artifact_image(self, digest: str) -> bytes:
+        orch = next(iter(self.orch.values()), None)
+        if orch is None or not orch.artifacts.exists(digest):
+            raise KeyError(f"artifact {digest} not found")
+        data = orch.artifacts.get_bytes(digest)
+        if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+            raise KeyError(f"artifact {digest} is not a PNG image")
+        return data
+
     def task_page(self, root_id: str) -> str:
         r = self.store.get_root(root_id)
         orch = self.orch.get(r.project_id)
@@ -214,7 +246,8 @@ class ReviewApp:
                                                                  EvidenceClass.INTEGRATION, EvidenceClass.STATIC,
                                                                  EvidenceClass.MODEL_REVIEW)]
         visual = [x for x in evs if x.evidence_class in (EvidenceClass.DEVICE, EvidenceClass.PERFORMANCE,
-                                                         EvidenceClass.HUMAN)]
+                                                         EvidenceClass.HUMAN, EvidenceClass.ASSET)]
+        asset_html = self._asset_pick_html([x for x in cur_evs if x.evidence_class == EvidenceClass.ASSET])
         # Panel 1: purpose & acceptance
         cases = "".join(f"<tr><td>{e(c.id)}</td><td>{e(c.description)}</td><td>{e(c.evidence_class.value)}</td></tr>"
                         for c in r.acceptance_cases) or "<tr><td colspan=3 class=mute>No acceptance cases.</td></tr>"
@@ -266,7 +299,7 @@ class ReviewApp:
         apr_table = ("<table><tr><th>Hash</th><th>Technical pass</th><th>Visual approval</th><th>Integrated acceptance</th>"
                      f"<th>Release approval</th><th>Gate-change review</th></tr>{apr_rows}</table>") if approvals else ""
         p3 = f"<div class=card><h2>3 · Technical evidence</h2>{self._evidence_rows(technical)}<h3>Approvals by exact hash</h3>{apr_table or '<p class=mute>none</p>'}</div>"
-        p4 = (f"<div class=card><h2>4 · Visual / play evidence</h2>{self._evidence_rows(visual)}"
+        p4 = (f"<div class=card><h2>4 · Visual / play evidence</h2>{asset_html}{self._evidence_rows(visual)}"
               "<p class=mute>Device runs report INCOMPLETE (never pass) when the phone is disconnected, unauthorised, "
               "or the scenario does not report.</p></div>")
         # Panel 5 cost

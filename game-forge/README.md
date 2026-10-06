@@ -31,6 +31,7 @@ checks, the integration writer's atomic promotion and recorded owner approvals d
 | Preflight → `toolchain-manifest.json` (OS, CPU, RAM, disk, GPU/VRAM via nvidia-smi, git/dotnet/Unity/adb/Blender, devices) with an honest `not_verified` list | Done |
 | Local review UI on 127.0.0.1: dashboard, tasks by state, five-panel review page, approve / bounded repair / hold / cancel bound to an exact hash, budget page, kill switch. CSRF-protected, no external assets | Done (`forge/web/app.py`) |
 | CLI `forge` | Done |
+| Catalogue asset lane: Objaverse 1.0 + Objaverse++ index, CC-BY/CC0-only licence filter, reject list, Blender cleanup and renders, visual judge, credits, disk guard and download cap. Asset tasks run it before any generation | Implemented and tested with fakes only. See [Catalogue asset lane](#catalogue-asset-lane-find-a-free-model-before-generating-one) |
 | Astra seed: `projects/astra-kingdoms/project.toml` and `tasks/pilot.toml` (pilot 1-10 and V1 11-82, text copied verbatim from the plan) | Done. Pilot dependencies are **inferred** (the plan does not list them per ticket), so confirm them before approving |
 
 ## Architecture
@@ -127,6 +128,90 @@ request tests.
   worker account plus container/VM for unattended use, so treat R1 as supervised until that
   exists.
 
+## Catalogue asset lane (find a free model before generating one)
+
+An asset task (`task_type = "asset"`, `asset_brief = "game-forge/briefs/astra_v1/<id>.json"`) runs the
+catalogue lane first. The lane searches Objaverse 1.0 for an existing model that uses only annotations
+and Objaverse++ quality tags. It downloads only the chosen uids, cleans each one in Blender, checks its
+budget, renders four views and asks the visual judge to pick one or return NONE. The generation lane
+runs only when the result is NONE (exit 2). Code: `forge/lanes/`. Field names: `forge/lanes/catalogue_fields.py`.
+Confidence table: `docs/catalogue_fields.md`.
+
+Rules:
+- **Licence:** CC-BY and CC0 only. CC-BY-NC, CC-BY-NC-SA, CC-BY-SA, CC-BY-ND and a missing or unknown
+  licence are rejected (fails closed).
+- **Quality:** Objaverse++ High or Superior only. The object must not be multi-object or a scene. It must
+  be textured, which the lane defines as `is_single_color` false and the GLB having at least one texture.
+  Age-restricted entries are dropped.
+- **Reject list:** names or tags matching a known franchise, brand or character are skipped
+  (`forge/lanes/reject_list.json`, plus each brief's `reject_terms`; whole words, case-insensitive). The
+  judge is also told to return NONE for anything that resembles a recognisable game, film or brand asset.
+- **Disk guard:** the lane refuses to run (exit 3) when the target, work or cache disk has less than 10 GB
+  free. Downloads are capped at 500 MB per brief. The cap is planned from `archives.glb.size` and checked
+  again against real file sizes.
+- **Objaverse-XL sources are never used.**
+
+Exit codes: `0` picked (awaiting owner approval), `2` NONE (fall through to generation), `3` blocked (disk,
+Blender, packages, index, or judge policy).
+
+```bash
+pip install -e '.[catalogue]'                       # objaverse 0.1.7 + datasets (Objaverse++ tags)
+forge catalogue build-index                         # downloads the Objaverse metadata shards once (~GBs)
+forge catalogue build-index --quality-file opp.csv  # if `datasets` is unavailable: local Objaverse++ CSV/parquet/JSONL
+forge catalogue search briefs/astra_v1/wooden_longbow.json          # ranked candidates, no download
+forge catalogue run briefs/astra_v1/wooden_longbow.json --target ../astra-kingdoms --judge fake:first  # offline dry run
+forge catalogue run briefs/astra_v1/wooden_longbow.json --target ../astra-kingdoms --task A1  # paid judge, charged to task A1
+python -m forge.lanes.run_catalogue <brief.json> --target <repo>   # same as `forge catalogue run`
+```
+
+The index is a SQLite file at `.forge/catalogue/index.sqlite`. It stores uid, name, tags, licence, artist,
+viewer URL, quality score, face count and GLB size. A later run reuses it; pass `--rebuild` to rebuild it.
+Blender comes from `--blender`, `FORGE_BLENDER`, the toolchain manifest (`forge preflight`) or `PATH`. The
+committed script `forge/lanes/blender_cleanup.py` imports the model, applies transforms, scales it to
+`size_m`, decimates it to `max_tris`, downsizes textures to `max_texture`, exports a GLB and renders front,
+side, back and three-quarter views. It has **not yet run on a real Blender** here (no Blender on this
+machine), so the first real run checks it.
+
+**Where things go.** A pick is written to `<target>/assets/source/<id>/`:
+- the cleaned `<uid>.glb`;
+- `front.png`, `side.png`, `back.png` and `three_quarter.png`;
+- `report.json`, with the cleanup report, budgets, all candidates and the reason each excluded one was dropped;
+- `pick.json`, with status `AWAITING_OWNER_APPROVAL`;
+- **`credits.json`**, a JSON list with uid, name, artist, licence, source URL and download date. New picks
+  are appended, never duplicated.
+
+Downloads that were not picked are deleted, and this run's GLBs are removed from the objaverse package
+cache (`~/.objaverse/hf-objaverse-v1/glbs`). The metadata stays so the index can be rebuilt.
+
+**Licence labels can be wrong.** They come from uploader metadata. Every pick still needs owner approval on
+the review page: panel 4 shows the renders, artist, licence and source link. Open the source page and
+check the licence before approving. Character bases (`kind = "character_base"`) are always marked for
+mandatory human approval.
+
+Orchestrator mapping. The plan's state machine has no RUNNING → BLOCKED or RUNNING → NEEDS_INPUT edge, so:
+- Disk, Blender, index, package, brief and judge-policy problems are checked during readiness. They give
+  **BLOCKED** before anything is reserved or downloaded.
+- A NONE result moves the task RUNNING → PAUSED → **NEEDS_INPUT** with the reason "no catalogue match;
+  generation lane not available". No generation lane exists yet; `ProjectRuntime.generation_lane` is the hook.
+- An exit 3 found mid-run gives **PAUSED** with "catalogue lane blocked: …".
+- A pick becomes a normal candidate commit. It is verified (diff guard plus the lane's budget check), then
+  goes to **AWAITING_APPROVAL** and is integrated only after the owner approves the exact hash.
+- Judge cost is reserved and settled in the budget ledger like any provider call.
+
+The judge sends PNG renders, which is a new data class (`render_image`). Astra's `project.toml` policy does
+not allow it yet, so Astra asset tasks report BLOCKED with that reason until the owner adds it.
+
+Briefs: `briefs/astra_v1/` holds 29 briefs:
+- **Props** (3000 triangles, 512 px). Bows, arrow, quiver and shield use `kind = "weapon"`, meaning
+  equipment a character holds or wears. They keep the props budget.
+- **Arena pieces** (`arena`, 5000 triangles, 1024 px).
+- **Cover objects** (`prop` with `role = "cover"`, 3000 triangles). 512 px was chosen because the list
+  gave no texture budget.
+- **One archer `character_base`** (15000 triangles). 1024 px was chosen because the list gave no texture
+  budget.
+
+There are no briefs for weapon effects, cards, the land map, icons or sound.
+
 ## What is NOT implemented yet (honest list)
 
 R1 gaps:
@@ -143,14 +228,17 @@ R1 gaps:
 - Nothing enforces retention yet (14/30-day policies are stored only), and there is no backup
   or restore drill command.
 - Visual/play evidence capture (screenshots/video judging) is limited to what the device check
-  collects. The `visual_judge` role is configured but not wired to a lane.
+  collects. The `visual_judge` role is wired only to the catalogue lane. It has never made a live call.
+- The catalogue lane has run only against a fake index, a fake downloader and a fake Blender. The real
+  `objaverse` package, Hugging Face data and Blender script have not been exercised here, and several field
+  names are third-party or unconfirmed (see `docs/catalogue_fields.md`). No generation lane exists yet.
 - Performance budgets (frame time, PSS, download size) have no dedicated check type yet. Use a
   command check.
 
 Later releases (by design not in R1):
 - **R2** controlled assets: asset contracts, Blender normalization, rig/motion, provenance, GPU
-  capability scheduler and model-route benchmarks. `TaskType.ASSET` and `gpu_vram_gb` leases
-  exist only as schema.
+  capability scheduler and model-route benchmarks. `TaskType.ASSET` runs only the catalogue lane
+  (above); `gpu_vram_gb` leases exist only as schema.
 - **R3** document-to-spec intake, ambiguity handling, release packaging and the separate signer.
   `release_approval` exists as a field but has no signing flow.
 - **R4** installer, update channels, rollback, backup/restore, diagnostic export, licence inventory.

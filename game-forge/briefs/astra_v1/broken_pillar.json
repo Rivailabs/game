@@ -1,0 +1,41 @@
+{
+  "id": "broken_pillar",
+  "kind": "prop",
+  "title": "Broken pillar",
+  "search_terms": [
+    "broken pillar",
+    "ruined column",
+    "broken column",
+    "pillar ruin"
+  ],
+  "reject_terms": [
+    "concrete",
+    "steel",
+    "low poly scene",
+    "diorama",
+    "collection",
+    "pack",
+    "bundle",
+    "kit",
+    "set of",
+    "asset pack",
+    "gun",
+    "rifle",
+    "pistol",
+    "car",
+    "vehicle",
+    "robot",
+    "sci fi",
+    "scifi",
+    "futuristic",
+    "cyberpunk",
+    "spaceship",
+    "modern"
+  ],
+  "size_m": 2.0,
+  "max_tris": 3000,
+  "max_texture": 512,
+  "candidates": 8,
+  "requires_human_approval": true,
+  "notes": "Indian-epic fantasy setting: pre-modern, hand-crafted look. One object only."
+}

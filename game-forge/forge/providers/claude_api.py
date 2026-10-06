@@ -29,6 +29,8 @@ from ..credentials import CredentialBroker, CredentialError, redact
 from ..pathglob import is_safe_relative, match_path
 from .base import (
     CodingRequest,
+    JudgeRequest,
+    JudgeResult,
     ProviderAdapter,
     ProviderDescriptor,
     ProviderRejected,
@@ -104,6 +106,28 @@ REVIEW_SCHEMA = {
     "required": ["verdict", "findings"],
     "additionalProperties": False,
 }
+
+
+JUDGE_PROMPT = """You are the visual judge in Game Forge's asset catalogue lane. You see four renders (front, side,
+back, three-quarter) of each candidate 3D model downloaded from a public catalogue, plus a short brief for the asset
+the game needs. Pick the ONE candidate that best matches the brief as a single, game-usable object, or return NONE.
+Return NONE when:
+- no candidate clearly matches the brief (wrong object, wrong era or style, broken or unreadable geometry);
+- a candidate is a scene, diorama, collection or kit rather than one object;
+- a candidate resembles a recognisable game, film, TV or brand asset (a known character, franchise prop, logo or
+  branded product). Never pick such a candidate, even if it matches the brief well.
+Licence labels are checked elsewhere and still need the owner's approval; do not reason about them.
+Answer only with JSON: {"pick": "<candidate uid or NONE>", "reason": "<one or two sentences>"}."""
+
+JUDGE_SCHEMA = {
+    "type": "object",
+    "properties": {"pick": {"type": "string"}, "reason": {"type": "string"}},
+    "required": ["pick", "reason"],
+    "additionalProperties": False,
+}
+#: Upper bound of input tokens per image (Claude resizes large images; 512 px renders use far fewer).
+JUDGE_TOKENS_PER_IMAGE = 1_600
+JUDGE_TEXT_TOKENS = 20_000
 
 
 def _tool(name: str, description: str, props: dict, required: list[str]) -> dict:
@@ -437,6 +461,51 @@ class ClaudeAPIProvider(ProviderAdapter):
             return ReviewResult(data.get("verdict", "uncertain"), list(data.get("findings", [])), usage, cost, text)
         except json.JSONDecodeError:
             return ReviewResult("uncertain", [], usage, cost, text)
+
+
+    # ------------------------------------------------------------------ visual judge
+    def judge_ceiling_micros(self, candidates: int, views: int = 4) -> Optional[int]:
+        model = self._price_model(self.cfg.roles.visual_judge)
+        tokens_in = JUDGE_TEXT_TOKENS + candidates * views * JUDGE_TOKENS_PER_IMAGE
+        return self.prices.ceiling_micros(model, input_tokens=tokens_in,
+                                          output_tokens=self.cfg.max_tokens) * (1 + self.cfg.transport_retries)
+
+    def judge(self, req: JudgeRequest) -> JudgeResult:
+        import base64
+
+        model = self.cfg.roles.visual_judge
+        content: list[dict] = [{"type": "text", "text": f"Brief {req.brief_id}:\n{req.brief_text}\n\n{req.instructions}"}]
+        for i, c in enumerate(req.candidates, 1):
+            facts = ", ".join(f"{k}={v}" for k, v in sorted(c.facts.items()))
+            content.append({"type": "text", "text": f"Candidate {i}: uid={c.uid} name={c.name!r} {facts}"})
+            for view, path in sorted(c.images.items()):
+                data = base64.standard_b64encode(Path(path).read_bytes()).decode("ascii")
+                content.append({"type": "text", "text": f"{c.uid} {view} view:"})
+                content.append({"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": data}})
+        usage = Usage(model=model)
+        resp = self._create_with_retries(
+            usage, {}, model=model, max_tokens=self.cfg.max_tokens, system=JUDGE_PROMPT,
+            messages=[{"role": "user", "content": content}],
+            output_config={"format": {"type": "json_schema", "schema": JUDGE_SCHEMA}},
+        )
+        usage.add(_usage_from(resp, model))
+        cost = self.prices.cost_micros(usage)
+        if getattr(resp, "stop_reason", None) == "refusal":
+            return JudgeResult("NONE", "judge declined (refusal)", usage, cost)
+        text = next((b.text for b in resp.content if getattr(b, "type", None) == "text"), "{}")
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError:
+            return JudgeResult("NONE", "judge output was not JSON", usage, cost, text)
+        pick = str(data.get("pick", "NONE")).strip()
+        valid = {c.uid for c in req.candidates}
+        if pick not in valid:
+            reason = str(data.get("reason", ""))
+            if pick.upper() != "NONE":
+                reason = f"judge returned unknown pick {pick!r}; treated as NONE. {reason}"
+            pick = "NONE"
+            return JudgeResult(pick, redact(reason)[:1000], usage, cost, text)
+        return JudgeResult(pick, redact(str(data.get("reason", "")))[:1000], usage, cost, text)
 
 
 def broker_from_env(project_id: str, repo_roots: list[str], key_file: str | None = None) -> CredentialBroker:

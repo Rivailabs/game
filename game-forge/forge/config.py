@@ -41,6 +41,7 @@ class ProjectConfig:
     pricing: dict[str, Any]
     data_dir: Path
     runtime: dict[str, Any] = field(default_factory=dict)
+    catalogue: dict[str, Any] = field(default_factory=dict)
 
 
 def load_project_config(path: str | Path) -> ProjectConfig:
@@ -75,7 +76,30 @@ def load_project_config(path: str | Path) -> ProjectConfig:
         if b.get("default_root_ceiling_usd") is not None else None,
         check_specs=raw.get("checks") or {}, provider_specs=raw.get("providers") or {},
         reviewer_route=(raw.get("reviewer") or {}).get("route"), pricing=raw.get("pricing") or {},
-        data_dir=data_dir, runtime=forge,
+        data_dir=data_dir, runtime=forge, catalogue=dict(raw.get("catalogue") or {}),
+    )
+
+
+def lane_config(cfg: ProjectConfig, *, manifest: Optional[ToolchainManifest] = None, index: str | None = None,
+                blender: str | None = None, reject_list: str | None = None):
+    """Catalogue lane configuration from ``[catalogue]`` (no network, no optional imports)."""
+    from .lanes.asset_tools import BlenderAdapter, find_blender
+    from .lanes.catalogue import MAX_DOWNLOAD_BYTES, MB, objaverse_cache_dir
+    from .lanes.run_catalogue import LaneConfig
+
+    c = cfg.catalogue
+    base = cfg.path.parent
+    idx = index or c.get("index")
+    rl = reject_list or c.get("reject_list")
+    return LaneConfig(
+        index_path=(base / idx).resolve() if idx else cfg.data_dir / "catalogue" / "index.sqlite",
+        cache_dir=objaverse_cache_dir(),
+        work_root=cfg.data_dir / "catalogue" / "work",
+        reject_list_path=(base / rl).resolve() if rl else None,
+        # may be lowered, never raised above the owner's 500 MB rule
+        max_download_bytes=min(int(c["max_download_mb"]) * MB, MAX_DOWNLOAD_BYTES) if c.get("max_download_mb")
+        else MAX_DOWNLOAD_BYTES,
+        blender=BlenderAdapter(find_blender(blender or c.get("blender"), manifest)),
     )
 
 
@@ -132,13 +156,15 @@ def build_runtime(cfg: ProjectConfig, providers: dict[str, ProviderAdapter] | No
                                vram_gb=gpu.get("memory_total_gb"), ram_gb=manifest.ram_gb,
                                disk_free_gb=manifest.disk_free_gb)
     rt = cfg.runtime
-    return ProjectRuntime(
+    runtime = ProjectRuntime(
         project=cfg.project, data_dir=cfg.data_dir, checks=build_registry(cfg.check_specs),
         providers=providers if providers is not None else build_providers(cfg),
         reviewer_route=cfg.reviewer_route, manifest=manifest, capability=cap,
         transport_retries=int(rt.get("transport_retries", 2)), backoff_s=float(rt.get("backoff_s", 2.0)),
         lease_ttl_s=float(rt.get("lease_ttl_s", 900)), unattended=bool(cfg.project.policy.unattended_mode),
     )
+    runtime.catalogue = lane_config(cfg, manifest=manifest)
+    return runtime
 
 
 def init_project(cfg: ProjectConfig, store: Store, *, by: str = "owner") -> None:

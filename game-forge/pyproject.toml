@@ -14,12 +14,16 @@ dependencies = ["pydantic>=2.5"]
 [project.optional-dependencies]
 claude = ["anthropic>=1.0"]
 test = ["pytest>=8"]
+catalogue = ["objaverse==0.1.7", "datasets"]   # catalogue lane: Objaverse 1.0 + Objaverse++ tags
 
 [project.scripts]
 forge = "forge.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["forge*"]
+
+[tool.setuptools.package-data]
+"forge.lanes" = ["*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

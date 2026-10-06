@@ -94,6 +94,7 @@ def import_tasks(store: Store, project_id: str, data: dict[str, Any], *, default
             max_attempts=int(merged.get("max_attempts", 3)),
             active_work_timeout_s=int(merged.get("active_work_timeout_s", 3600)),
             reservation_ceiling_micros=usd_to_micros(ceiling) if ceiling is not None else default_root_ceiling_micros,
+            asset_brief=merged.get("asset_brief"),
         )
         created.append(store.create_root(root))
     return created, skipped

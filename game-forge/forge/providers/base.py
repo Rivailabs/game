@@ -183,3 +183,50 @@ class ProviderAdapter(ABC):
 
     def review(self, req: ReviewRequest) -> ReviewResult:  # pragma: no cover - optional
         raise NotImplementedError(f"{self.descriptor.name} does not support review")
+
+    def judge_ceiling_micros(self, candidates: int, views: int = 4) -> Optional[int]:
+        """Upper bound of one visual-judge call over ``candidates`` x ``views`` renders (None = unknown)."""
+        return None
+
+    def judge(self, req: "JudgeRequest") -> "JudgeResult":  # pragma: no cover - optional
+        raise NotImplementedError(f"{self.descriptor.name} does not support visual judging")
+
+
+# --------------------------------------------------------------------------- visual judge (asset lanes)
+
+#: Data classes a visual-judge call sends: the brief text and rendered PNG images of candidate assets.
+JUDGE_DATA_CLASSES = ["prompt", "render_image"]
+
+
+@dataclass
+class JudgeCandidate:
+    uid: str
+    name: str
+    images: dict[str, Path]  # view name (front/side/back/three_quarter) -> PNG path
+    facts: dict[str, Any] = field(default_factory=dict)  # triangles, textures (context only)
+
+
+@dataclass
+class JudgeRequest:
+    brief_id: str
+    brief_text: str
+    candidates: list[JudgeCandidate]
+    instructions: str
+    idempotency_key: str
+
+
+@dataclass
+class JudgeResult:
+    pick: str  # a candidate uid or "NONE"
+    reason: str = ""
+    usage: Usage = field(default_factory=Usage)
+    cost_micros: int = 0
+    raw: str = ""
+
+
+def check_judge_policy(desc: ProviderDescriptor, policy: ProjectPolicy, *, unattended: bool) -> None:
+    """The judge sends rendered images, so the project policy must allow the ``render_image`` data class."""
+    if "visual_judge" not in desc.operations:
+        raise PolicyViolation(f"{desc.name} does not offer the visual_judge operation")
+    probe = ProviderDescriptor(**{**desc.to_dict(), "data_classes_sent": list(JUDGE_DATA_CLASSES)})
+    check_policy(probe, policy, unattended=unattended)

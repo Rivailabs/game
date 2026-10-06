@@ -6,7 +6,7 @@ import os
 import socket
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Callable, Optional
 
 from .checks import Check
 from .models import Project, ToolchainManifest, WorkerCapability
@@ -32,6 +32,11 @@ class ProjectRuntime:
     lease_ttl_s: float = 900.0
     max_restage: int = 3
     unattended: bool = True
+    #: Catalogue lane configuration (``forge.lanes.run_catalogue.LaneConfig``); None = asset tasks BLOCKED.
+    catalogue: Optional[Any] = None
+    #: Generation lane for asset tasks, run only when the catalogue returns NONE (exit 2).
+    #: Signature ``(root, target_dir, brief) -> LaneResult``. None: no generation lane exists yet.
+    generation_lane: Optional[Callable[..., Any]] = None
 
     @property
     def db_path(self) -> Path:

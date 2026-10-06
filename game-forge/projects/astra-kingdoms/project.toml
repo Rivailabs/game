@@ -101,6 +101,17 @@ route = "claude-api"                  # independent reviewer (opinion; tests rem
 # output_per_mtok = 20.0
 # cache_read_per_mtok = 0.20
 
+[catalogue]
+# Catalogue asset lane (forge/lanes/). Asset tasks run it first; the generation lane runs only on NONE.
+# The visual judge sends four PNG renders per candidate to the judge route. The [policy] above does NOT
+# allow the "render_image" data class, so asset tasks stay BLOCKED with that reason until the owner adds
+# "render_image" to allowed_data_classes. That is an owner decision, so it is not changed here.
+judge_route = "claude-api"
+# index = "../../.forge/catalogue/index.sqlite"   # default: <data_dir>/catalogue/index.sqlite
+# blender = "/opt/blender/blender"                # default: FORGE_BLENDER, toolchain manifest, PATH
+# reject_list = "../../forge/lanes/reject_list.json"
+# max_download_mb = 500                           # can be lowered; never raised above 500
+
 [forge]
 data_dir = "../../.forge"             # game-forge/.forge (git-ignored): db, artifacts, worktrees
 transport_retries = 2

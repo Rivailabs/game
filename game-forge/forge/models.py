@@ -39,7 +39,7 @@ class TaskType(str, Enum):
     UNITY_SCENE = "unity_scene"
     BUILD = "build"
     DEVICE_TEST = "device_test"
-    ASSET = "asset"  # R2 lane; schema present, no asset workers in R1
+    ASSET = "asset"  # catalogue lane first, generation lane only when the catalogue returns NONE
     MEASUREMENT = "measurement"
     DOCS = "docs"
 
@@ -54,6 +54,7 @@ class EvidenceClass(str, Enum):
     # Supplementary classes (not acceptance authorities on their own):
     STATIC = "static"  # diff guard, permitted-path and policy checks
     MODEL_REVIEW = "model_review"  # independent reviewer model opinion
+    ASSET = "asset"  # asset-lane records: catalogue pick, renders, licence/credit (owner approval needed)
 
 
 class EvidenceStatus(str, Enum):
@@ -196,6 +197,8 @@ class RootTask(BaseModel):
     max_attempts: int = 3  # initial candidate + at most two repairs
     active_work_timeout_s: int = 3600
     reservation_ceiling_micros: Optional[int] = None
+    #: Asset tasks: catalogue brief JSON, relative to the repository root (or absolute).
+    asset_brief: Optional[str] = None
     evidence_refs: list[str] = Field(default_factory=list)
     previous_root_id: Optional[str] = None  # set for spec-change revisions
     previous_cost_micros: int = 0

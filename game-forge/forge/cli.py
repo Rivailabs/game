@@ -218,6 +218,37 @@ def cmd_ledger(args):
         print(dump_json({"cash": CashLedger(store).report(args.currency), "hours": CapacityLedger(store).summary()}))
 
 
+def cmd_catalogue(args):
+    from .config import lane_config
+    from .lanes import catalogue as cat
+    from .lanes.run_catalogue import EXIT_BLOCKED, cli_run
+
+    if args.catalogue_cmd == "run":
+        sys.exit(cli_run(args))
+    cfg = load_project_config(args.project_file)
+    lc = lane_config(cfg, index=args.index, reject_list=getattr(args, "reject_list", None))
+    try:
+        if args.catalogue_cmd == "build-index":
+            stats = cat.load_index(lc.index_path, quality_file=args.quality_file, rebuild=args.rebuild)
+            print(dump_json(stats.__dict__))
+            if stats.cached:
+                print("index already built; pass --rebuild to rebuild it", file=sys.stderr)
+            return
+        brief = cat.load_brief(args.brief)
+        cands = cat.search(brief, lc.index_path, reject_list=lc.rejects(), limit=args.limit)
+    except cat.CatalogueBlocked as e:
+        print(f"BLOCKED: {e}", file=sys.stderr)
+        sys.exit(EXIT_BLOCKED)
+    if args.json:
+        print(dump_json([c.to_dict() for c in cands]))
+        return
+    print(f"{len(cands)} candidate(s) for {brief.id}")
+    for c in cands:
+        size = f"{c.glb_size / 1024 ** 2:.1f}MB" if c.glb_size else "?"
+        print(f"  {c.score:4} {c.uid} {c.licence_name:6} {c.quality_name:9} faces={c.face_count} {size:>8}  "
+              f"{c.name[:50]}  ({c.artist})")
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="forge", description="Game Forge R1: reliable code/build/device loop")
     p.add_argument("--project-file", default=os.environ.get("FORGE_PROJECT", str(DEFAULT_PROJECT)))
@@ -302,6 +333,25 @@ def build_parser() -> argparse.ArgumentParser:
     lr = lsub.add_parser("report")
     lr.add_argument("--currency", default="INR")
     lr.set_defaults(fn=cmd_ledger)
+    sp = sub.add_parser("catalogue", help="catalogue asset lane (existing free 3D models; CC-BY / CC0 only)")
+    csub = sp.add_subparsers(dest="catalogue_cmd", required=True)
+    cb = csub.add_parser("build-index", help="build the local SQLite index from Objaverse 1.0 + Objaverse++")
+    cb.add_argument("--quality-file", help="local Objaverse++ CSV / parquet / JSON lines (else `datasets`)")
+    cb.add_argument("--index", help="index path (default: <data_dir>/catalogue/index.sqlite)")
+    cb.add_argument("--rebuild", action="store_true")
+    cb.set_defaults(fn=cmd_catalogue)
+    cs = csub.add_parser("search", help="show the ranked candidates for one brief (no download)")
+    cs.add_argument("brief")
+    cs.add_argument("--index")
+    cs.add_argument("--reject-list")
+    cs.add_argument("--limit", type=int)
+    cs.add_argument("--json", action="store_true")
+    cs.set_defaults(fn=cmd_catalogue)
+    from .lanes.run_catalogue import add_run_arguments
+
+    cr = csub.add_parser("run", help="run one brief: exit 0 picked, 2 NONE, 3 blocked")
+    add_run_arguments(cr)
+    cr.set_defaults(fn=cmd_catalogue)
     return p
 
 
