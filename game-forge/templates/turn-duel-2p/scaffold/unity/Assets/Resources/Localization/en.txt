@@ -1,0 +1,14 @@
+# __GAME_NAME__ player-facing strings - English (en), the reference language.
+# Format: key = value. Positional parameters {0}, {1}... Every other language carries the same keys.
+
+app.title = __GAME_NAME__
+menu.play = Play on one phone
+menu.practice = Practice against the bot
+menu.settings = Settings
+match.round = Round {0}
+match.health = Health {0}
+results.winner = {0} wins
+results.draw = Draw
+results.rematch = Rematch
+settings.sound = Sound effects
+common.back = Back
