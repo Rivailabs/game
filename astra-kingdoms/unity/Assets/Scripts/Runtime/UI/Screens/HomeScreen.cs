@@ -37,7 +37,10 @@ namespace AstraKingdoms.Client.UI.Screens
         public CatalogPreset PracticeCatalog => _practiceCatalog;
         public string ArenaVariantId => ArenaVariants.All[_arenaIndex].Id;
         /// <summary>Set by the online layer when its service is configured in this build.</summary>
-        public Func<bool> OnlineServiceConfigured { get; set; } = () => false;
+        public Func<bool> OnlineServiceConfigured { get; set; } = () => OnlineHook != null;
+
+        /// <summary>Set by the optional online module (Assets/Scripts/Online/UI); adds "Play online" when present.</summary>
+        public static Action<HomeScreen, Services.ClientContext> OnlineHook;
 
         public HomeScreen(Services.ClientContext ctx, UiFactory ui, Transform parent, bool developmentTools)
             : base(ctx, ui, parent, "HomeScreen", UiTheme.Background)
@@ -92,7 +95,12 @@ namespace AstraKingdoms.Client.UI.Screens
                 case PlayModeId.SharedPhone: PlaySharedPhone?.Invoke(); break;
                 case PlayModeId.Practice: PlayPractice?.Invoke(_level); break;
                 case PlayModeId.Tutorial: StartTutorial?.Invoke(); break;
-                default: break; // online entries are disabled unless the online layer is configured
+                case PlayModeId.PlayOnline:
+                case PlayModeId.FriendRoom:
+                    // The online module's lobby offers both the queue and friend rooms.
+                    OnlineHook?.Invoke(this, Ctx);
+                    break;
+                default: break;
             }
         }
 
