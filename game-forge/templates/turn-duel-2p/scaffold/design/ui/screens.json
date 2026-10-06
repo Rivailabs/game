@@ -1,0 +1,31 @@
+{
+  "template": "turn-duel-2p",
+  "note": "UI lane input: screens, elements and navigation. Sizes are in dp. Every text element names a localization key.",
+  "min_touch_dp": 48,
+  "start": "menu",
+  "screens": [
+    {"id": "menu", "purpose": "Start a match or open settings",
+     "elements": [
+       {"id": "play", "type": "button", "text_key": "menu.play", "size_dp": [240, 56], "goes_to": "match"},
+       {"id": "practice", "type": "button", "text_key": "menu.practice", "size_dp": [240, 56], "goes_to": "match"},
+       {"id": "settings", "type": "button", "text_key": "menu.settings", "size_dp": [240, 56], "goes_to": "settings"}
+     ]},
+    {"id": "match", "purpose": "Play turns",
+     "elements": [
+       {"id": "round", "type": "label", "text_key": "match.round"},
+       {"id": "health", "type": "label", "text_key": "match.health"},
+       {"id": "end", "type": "event", "goes_to": "results"}
+     ]},
+    {"id": "results", "purpose": "Show the outcome and offer a rematch",
+     "elements": [
+       {"id": "winner", "type": "label", "text_key": "results.winner"},
+       {"id": "rematch", "type": "button", "text_key": "results.rematch", "size_dp": [200, 56], "goes_to": "match"},
+       {"id": "back", "type": "button", "text_key": "common.back", "size_dp": [120, 48], "goes_to": "menu"}
+     ]},
+    {"id": "settings", "purpose": "Sound and language",
+     "elements": [
+       {"id": "sound", "type": "toggle", "text_key": "settings.sound", "size_dp": [200, 48]},
+       {"id": "back", "type": "button", "text_key": "common.back", "size_dp": [120, 48], "goes_to": "menu"}
+     ]}
+  ]
+}

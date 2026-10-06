@@ -212,6 +212,22 @@ Briefs: `briefs/astra_v1/` holds 29 briefs:
 
 There are no briefs for weapon effects, cards, the land map, icons or sound.
 
+## Releases 3-5: template production, external use, paid offering
+
+| Release item | Code | Status here |
+|---|---|---|
+| R3 document intake: Markdown / plain text / DOCX brief -> versioned spec; contradictions, missing rules, vague wording and out-of-template features become NEEDS_INPUT questions; owner answers recorded in the owner's words; change report per source change; approved requirements only *proposed* for change; acceptance cases frozen at approval; optional model pass through the provider `review` operation | `forge/intake/`, `forge spec ...` | Done, tested with FakeProvider. Heuristic checks can miss or over-report; dismissals are recorded |
+| R3 traceability matrix, dependency planner (milestones, estimate ranges, human checkpoints, task file for `forge import`), bounded parallelism planner | `forge/planning/`, `forge plan`, `forge trace` | Done |
+| R3 supported template `turn-duel-2p` (manifest, scaffold: C# rules / match state / replay / bot / rematch + NUnit checks, UI/audio/localization inputs, Forge project file) and the second sample brief (Rune Duel) | `templates/turn-duel-2p/`, `forge scaffold` | Done; the scaffold's sample build passes with the real .NET SDK. Unity-side screens are stubs (no Unity here) |
+| R3 lanes: UI checks, licensed-library audio with rights records, localization extraction/key checks/translation review, balance/replay report running the Astra simulator twice per seed | `forge/production/`, `python -m forge.production ...` | Done. Localization lane run on the real Astra tables; balance lane run on the real simulator (small n) |
+| R3 release packaging, signed owner approval, separate signer (apksigner/jarsigner, BLOCKED when absent), store submission behind an interface | `forge/release/`, `forge release ...`, `python -m forge.release.signer` | Done. Real `jarsigner` signing verified; `apksigner` and Google Play only against stand-ins. See `docs/release-and-signing.md` |
+| R4 setup assistant (prerequisites reported, manual steps and terms, sample minimal build first), checksum-verified downloads, signed update channels, compatibility report, rollback, no update mid-task, uninstall keeping projects | `forge/installer/`, `forge setup / update / uninstall` | Done. No automatic downloads ship until real checksums are recorded |
+| R4 diagnostic export (redacted, previewed, digest-confirmed), telemetry off by default (operational counts only), licence inventory, project export without a subscription, docs | `forge diag / telemetry / licences / export`, `docs/getting-started.md`, `docs/support-boundaries.md` | Done. Independent-user trials not run |
+| R5 hosted service (tenants, roles, entitlements, hosted review links, BYOK vault + gateway, Razorpay/Paddle billing, managed credits, monitoring, support), unit economics, offering metrics | `forge/hosted/`, `forge hosted / economics / metrics` | Implemented and **disabled by default**. See `docs/hosted-offering.md` |
+
+Backups/restore, asset generation lanes and the sandbox are separate work (`forge/backup/`, `forge/assets/`,
+`forge/sandbox/`).
+
 ## What is NOT implemented yet (honest list)
 
 R1 gaps:
@@ -239,7 +255,5 @@ Later releases (by design not in R1):
 - **R2** controlled assets: asset contracts, Blender normalization, rig/motion, provenance, GPU
   capability scheduler and model-route benchmarks. `TaskType.ASSET` runs only the catalogue lane
   (above); `gpu_vram_gb` leases exist only as schema.
-- **R3** document-to-spec intake, ambiguity handling, release packaging and the separate signer.
-  `release_approval` exists as a field but has no signing flow.
-- **R4** installer, update channels, rollback, backup/restore, diagnostic export, licence inventory.
-- **R5** team roles, hosted review, tenant isolation, billing/refunds, managed credits.
+- **R3, R4, R5**: implemented in code (see [Releases 3-5](#releases-3-5-template-production-external-use-paid-offering));
+  their exit gates still need a real phone, Unity, independent users and paying customers.

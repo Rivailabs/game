@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- __GAME_NAME__ shared rules library (turn-duel-2p template __TEMPLATE_VERSION__).
+       netstandard2.1 + C# 9 so Unity can compile the same sources. No floats or System.Random
+       in authoritative code. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>__NAMESPACE__.Rules</RootNamespace>
+    <AssemblyName>__NAMESPACE__.Rules</AssemblyName>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,75 @@
+# Game Forge project configuration for __GAME_NAME__ (turn-duel-2p template __TEMPLATE_VERSION__).
+# OWNER-controlled and protected: no worker candidate can change providers, checks, thresholds or
+# budgets by editing it. Budget values are PROPOSED; Forge never raises a limit by itself.
+
+[project]
+id = "__GAME_ID__"
+name = "__GAME_NAME__"
+repo_path = ".."
+workdir = "."
+accepted_branch = "forge/accepted"
+spec_version = "1"
+toolchain_profile = "linux-x86_64-ubuntu-lts"
+protected_paths = ["forge/**", "tests/Rules.Acceptance/**", "docs/**"]
+
+[policy]
+allowed_vendors = []                 # the owner adds approved providers explicitly
+allowed_regions = ["global"]
+allowed_data_classes = ["prompt", "code", "test_excerpt"]
+hosted_review_allowed = false
+retention_days_failed_candidates = 14
+retention_days_raw_diagnostics = 30
+intended_release_countries = []      # set from the approved specification
+unattended_mode = true
+
+[budget]
+project_cap_usd = 0                  # owner sets caps before any dispatch
+default_root_ceiling_usd = 0
+
+[milestones.M1]
+name = "Rules core"
+cap_usd = 0
+[milestones.M2]
+name = "Playable loop"
+cap_usd = 0
+[milestones.M3]
+name = "Release candidate"
+cap_usd = 0
+
+[checks.rules-tests]
+type = "dotnet_test"
+project_dir = "."
+target = "tests/Rules.Tests"
+timeout_s = 900
+
+[checks.unity-build]
+type = "unity_build"
+project_dir = "unity"
+build_method = "Forge.Build.BuildAndroid"
+output = "Builds/Android/__GAME_ID__.apk"
+timeout_s = 3600
+
+[checks.ui-lane]
+type = "command"
+argv = ["python", "-m", "forge.production", "ui", "design/ui/screens.json", "--strings", "unity/Assets/Resources/Localization/en.txt"]
+evidence_class = "static"
+
+[checks.audio-lane]
+type = "command"
+argv = ["python", "-m", "forge.production", "audio-verify", "design/audio/rights.json"]
+evidence_class = "static"
+
+[checks.localization-lane]
+type = "command"
+argv = ["python", "-m", "forge.production", "localization", "unity/Assets"]
+evidence_class = "static"
+
+[checks.balance-lane]
+type = "command"
+argv = ["python", "-m", "forge.production", "balance-verify", "reports/balance.json"]
+evidence_class = "replay"
+
+[checks.release-package]
+type = "command"
+argv = ["python", "-m", "forge.release.package", "verify", "release/package-manifest.json"]
+evidence_class = "integration"
