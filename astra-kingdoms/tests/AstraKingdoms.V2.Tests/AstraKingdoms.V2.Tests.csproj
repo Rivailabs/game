@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for src/AstraKingdoms.V2: homeland (milestones, plots, decorations, retirement, layout
+    migration/recovery, duplicate-grant protection, visits), ranked (expected score, bounds, reset,
+    exclusions, idempotency, matchmaking close and group isolation), the season lifecycle and two
+    full season rehearsals, the pass (late purchase, final 24 hours, unclaimed delivery), friends,
+    blocks, clans and succession, moderation, avatars and photo deletion, replay export, content
+    extension validation, localization placeholders, and source checks of the Unity V2 layer.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="..\..\src\AstraKingdoms.Meta\AstraKingdoms.Meta.csproj" />
+    <ProjectReference Include="..\..\src\AstraKingdoms.V2\AstraKingdoms.V2.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Astra Kingdoms V2 "a home worth returning to" (docs/PLAN.md, chapter "V2 a home worth returning
+    to" and the V2 rows of "V2 V4 bounded work packages"): persistent protected homeland, ranked
+    seasons with leagues and a server-owned skill rating, the 18-day season lifecycle and its
+    rehearsal harness, the cosmetic season pass, friends/clans/preset chat/moderation, stock and
+    gated photo avatars, replay clip export, and the V2 content extension mechanism.
+
+    netstandard2.1 + C# 9 with no UnityEngine references, like AstraKingdoms.Rules and
+    AstraKingdoms.Meta. It reuses Meta's earned reward ledger (cosmetic coins) and paid entitlement
+    ledger (pass SKUs) instead of adding a currency. Every number here is PROPOSED and versioned.
+    Also a local Unity package (com.astrakingdoms.v2).
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>AstraKingdoms.V2</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../AstraKingdoms.Rules/AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="../AstraKingdoms.Meta/AstraKingdoms.Meta.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Content/Records/*.json" />
+  </ItemGroup>
+
+</Project>
