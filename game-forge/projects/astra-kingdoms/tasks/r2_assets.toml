@@ -1,0 +1,112 @@
+# Release 2 ("controlled assets") exit-gate tasks for Astra Kingdoms.
+#
+# Plan exit gate: "A prop and an archer with required clips enter the existing pilot, pass
+# contract/deformation/contact checks and are approved in the running phone build; actual cost and
+# failed attempts are recorded."
+#
+# Each task runs ONE segment of the asset lane, up to the next owner gate; the owner approves the exact
+# candidate hash on the review page and the next task (which depends on it) continues. Everything imports
+# as DRAFT. Routes listed here are preferences; route selection still refuses anything the project
+# policy, territory, hardware, licence gate or certification does not allow (see `forge assets select`).
+#
+# Before approving: confirm [policy] intended_release_countries, record the first-use licence gate for
+# each route (`forge assets licence-gate ...`), record GPU workers (`forge assets worker-preflight`) and
+# configure the routes under [assets.routes] in project.toml.
+
+[defaults]
+milestone = "v1"
+task_type = "asset"
+max_attempts = 3
+reservation_ceiling_usd = 25
+visual_review_required = true
+verification_checks = []
+integration_checks = []
+active_work_timeout_s = 14400
+
+# ---------------------------------------------------------------- prop: wooden barricade
+[[tasks]]
+ticket = "R2-P1"
+group = "R2 assets"
+title = "Wooden barricade: catalogue first, generation on NONE, normalization and visual approval"
+asset_brief = "game-forge/briefs/astra_v1/wooden_barricade.json"
+permitted_paths = ["astra-kingdoms/assets/source/wooden_barricade/**"]
+permitted_routes = ["claude-api", "trellis2", "meshy"]
+acceptance_cases = [
+  {id = "AC1", description = "Normalized FBX within 3,000 triangles and 512 px textures; contract report has no problems", evidence_class = "static"},
+  {id = "AC2", description = "Owner approves the before/after renders at the gameplay camera scale", evidence_class = "human"},
+]
+
+[[tasks]]
+ticket = "R2-P2"
+group = "R2 assets"
+title = "Wooden barricade: Unity prefab and physical-device evidence"
+asset_brief = "game-forge/briefs/astra_v1/wooden_barricade.json"
+depends_on = ["R2-P1"]
+permitted_paths = ["astra-kingdoms/assets/source/wooden_barricade/**", "astra-kingdoms/unity/Assets/Forge/Art/wooden_barricade/**"]
+permitted_routes = ["trellis2", "meshy"]
+acceptance_cases = [
+  {id = "AC1", description = "Prefab assembled from the forge-prefab/1 manifest in batch mode", evidence_class = "integration"},
+  {id = "AC2", description = "Owner approves the prop in the running phone build", evidence_class = "device"},
+]
+
+# ---------------------------------------------------------------- archer with the required clip set
+[[tasks]]
+ticket = "R2-A1"
+group = "R2 assets"
+title = "Archer: brief and concept approval"
+asset_brief = "game-forge/briefs/astra_v1/production/astra_archer.asset.json"
+permitted_paths = ["astra-kingdoms/assets/source/astra_archer/**"]
+permitted_routes = ["flux-schnell-local", "api-image-service"]
+acceptance_cases = [{id = "AC1", description = "Owner approves an original archer concept (no god, revered figure or recognisable character)", evidence_class = "human"}]
+
+[[tasks]]
+ticket = "R2-A2"
+group = "R2 assets"
+title = "Archer: generation, Blender normalization, technical report, turntable and neutral-pose approval"
+asset_brief = "game-forge/briefs/astra_v1/production/astra_archer.asset.json"
+depends_on = ["R2-A1"]
+permitted_paths = ["astra-kingdoms/assets/source/astra_archer/**"]
+permitted_routes = ["trellis2", "meshy", "tripo"]
+acceptance_cases = [
+  {id = "AC1", description = "Within 8,000 triangles and two materials; textures at most 1,024 px", evidence_class = "static"},
+  {id = "AC2", description = "Owner approves neutral pose and proportions before rigging and motion spend", evidence_class = "human"},
+]
+
+[[tasks]]
+ticket = "R2-A3"
+group = "R2 assets"
+title = "Archer: rig onto astra_archer_v1 and deformation review"
+asset_brief = "game-forge/briefs/astra_v1/production/astra_archer.asset.json"
+depends_on = ["R2-A2"]
+permitted_paths = ["astra-kingdoms/assets/source/astra_archer/**"]
+permitted_routes = ["unirig", "meshy", "tripo", "mixamo"]
+acceptance_cases = [
+  {id = "AC1", description = "Stable joint names/hierarchy, at most 50 deforming bones and four weights per vertex", evidence_class = "static"},
+  {id = "AC2", description = "Owner approves hands, shoulders, elbows and feet in the deformation test poses and the retarget mapping", evidence_class = "human"},
+]
+
+[[tasks]]
+ticket = "R2-A4"
+group = "R2 assets"
+title = "Archer: required clip set (idle, draw, hold, release, recover, hit, dodges, jump, defeat, victory) and contact/transition review"
+asset_brief = "game-forge/briefs/astra_v1/production/astra_archer.asset.json"
+depends_on = ["R2-A3"]
+permitted_paths = ["astra-kingdoms/assets/source/astra_archer/**"]
+permitted_routes = ["stock-animation", "mixamo", "hy-motion-1.0"]
+acceptance_cases = [
+  {id = "AC1", description = "Every required clip passes frame-rate, duration, loop, root-motion and marker checks", evidence_class = "static"},
+  {id = "AC2", description = "Owner approves contacts, grip, root drift, recovery transitions and the release marker", evidence_class = "human"},
+]
+
+[[tasks]]
+ticket = "R2-A5"
+group = "R2 assets"
+title = "Archer: Unity prefab and approval in the running phone build"
+asset_brief = "game-forge/briefs/astra_v1/production/astra_archer.asset.json"
+depends_on = ["R2-A4"]
+permitted_paths = ["astra-kingdoms/assets/source/astra_archer/**", "astra-kingdoms/unity/Assets/Forge/Art/astra_archer/**"]
+permitted_routes = ["stock-animation"]
+acceptance_cases = [
+  {id = "AC1", description = "Prefab with Generic rig (root 'root'), clips, events and attachments assembled in batch mode", evidence_class = "integration"},
+  {id = "AC2", description = "Two equipped characters deform and animate correctly in the representative combat scene on the phone", evidence_class = "device"},
+]

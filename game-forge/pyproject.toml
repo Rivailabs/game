@@ -17,6 +17,7 @@ test = ["pytest>=8"]
 catalogue = ["objaverse==0.1.7", "datasets"]   # catalogue lane: Objaverse 1.0 + Objaverse++ tags
 intake = ["python-docx>=1.1"]                  # R3: read .docx briefs (Markdown/plain text need nothing)
 release = ["cryptography>=42"]                 # R3-R5: Ed25519 approvals/updates, BYOK encryption
+backup = ["cryptography>=41"]                   # encrypted backups (AES-256-GCM + scrypt)
 
 [project.scripts]
 forge = "forge.cli:main"
@@ -27,6 +28,7 @@ include = ["forge*"]
 [tool.setuptools.package-data]
 "forge.lanes" = ["*.json"]
 "forge.installer" = ["*.json"]
+"forge.assets" = ["data/*.json", "blender/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

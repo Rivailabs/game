@@ -58,6 +58,14 @@ from .providers.base import (
     check_policy,
 )
 from .runtime import ProjectRuntime
+from .sandbox.check import containment_of
+from .sandbox.watchdog import (
+    ActiveWorkTimeout,
+    call_with_deadline,
+    enforce_active_work_timeouts,
+    remaining_s,
+    run_check_with_deadline,
+)
 from .statemachine import can_transition, is_terminal
 from .store import Store
 from .util import new_id
@@ -109,6 +117,8 @@ class Orchestrator:
         self.ws = WorkspaceManager(rt.repo_path, rt.worktrees_dir)
         self.writer = IntegrationWriter(rt.repo_path, self.project.accepted_branch, rt.staging_dir)
         self.ctx = CheckContext(manifest=rt.manifest, scratch_dir=None)
+        if hasattr(rt.generation_lane, "bind"):  # R2 generation lane needs the durable store and ledger
+            rt.generation_lane.bind(self)
 
     # ================================================================ helpers
     def _event(self, type_: str, root: RootTask | None = None, attempt: CandidateAttempt | None = None, **kw) -> None:
@@ -118,11 +128,22 @@ class Orchestrator:
     def _to(self, root: RootTask, dst: TaskState, reason: str = "", **kw) -> RootTask:
         return self.store.transition(root.id, dst, reason, **kw)
 
+    def _asset_lane(self, root: RootTask):
+        """The R2 generation lane when it owns this asset root (continuing a lane, or no catalogue first)."""
+        gen = self.rt.generation_lane
+        if root.task_type == TaskType.ASSET and gen is not None and hasattr(gen, "handles") and gen.handles(root):
+            return gen
+        return None
+
     def quality_attempts(self, root_id: str) -> list[CandidateAttempt]:
         return [a for a in self.store.list_attempts(root_id) if a.status != AttemptStatus.ABANDONED]
 
     def attempts_remaining(self, root: RootTask) -> int:
         return root.max_attempts - len(self.quality_attempts(root.id))
+
+    def next_attempt_number(self, root_id: str) -> int:
+        """Attempt rows are numbered uniquely; abandoned (transport/blocked) attempts keep their numbers."""
+        return max((a.number for a in self.store.list_attempts(root_id)), default=0) + 1
 
     def _evidence(self, root: RootTask, attempt: CandidateAttempt | None, outcome: CheckOutcome,
                   candidate_hash: str | None = None) -> Evidence:
@@ -253,7 +274,7 @@ class Orchestrator:
                 deps[i] = deps[i].model_copy(update={"artifact_hash": h})
             root = self.store.update_root(root, dependencies=deps)
             self._event("dependencies_pinned", root, pins=[h for _, h in pins])
-        if ok:
+        if ok and self._asset_lane(root) is None:  # generation routes are checked by the asset lane itself
             name, _, why = self._route(root)
             if name is None:
                 ok, reason = False, why
@@ -302,6 +323,7 @@ class Orchestrator:
     def tick(self) -> TickReport:
         actions: list[str] = []
         actions += self.recover()
+        actions += enforce_active_work_timeouts(self)
         for root in self.store.list_roots(self.project.id):
             root = self.store.get_root(root.id)
             if root.held:
@@ -366,13 +388,15 @@ class Orchestrator:
         if self.attempts_remaining(root) <= 0:
             return self._to(root, S.PAUSED, "attempt limit reached; owner decision required (cancel or revise)")
         if root.task_type == TaskType.ASSET:
-            return self._dispatch_asset(root)
+            gen = self._asset_lane(root)
+            return gen.dispatch(root) if gen is not None else self._dispatch_asset(root)
         name, provider, why = self._route(root)
         if provider is None:
             return self._to(root, S.BLOCKED, why)
         base = self.accepted_head()
-        number = len(self.quality_attempts(root.id)) + 1
-        prev = self.quality_attempts(root.id)[-1] if number > 1 else None
+        number = self.next_attempt_number(root.id)
+        quality = self.quality_attempts(root.id)
+        prev = quality[-1] if quality else None
         attempt = CandidateAttempt(id=new_id("att"), root_id=root.id, number=number, base_commit=base,
                                    provider=name, started_at=self.store.now())
         req = self._coding_request(root, attempt, prev, self.rt.worktrees_dir / attempt.id)
@@ -461,8 +485,21 @@ class Orchestrator:
                 if rec.status == "unknown":
                     return self._charge_pending(root, attempt, rec.detail or "provider status unknown")
             try:
-                result = provider.submit(req)
+                result = call_with_deadline(lambda: provider.submit(req),
+                                            remaining_s(root, attempt, self.store.now()),
+                                            what=f"provider {provider.descriptor.name} submission")
                 self.store.update_provider_job(key, status="SUBMITTED", provider_job_id=result.provider_job_id)
+            except ActiveWorkTimeout as e:
+                self.leases.release(f"attempt:{attempt.id}", self.rt.worker_id)
+                self.store.update_provider_job(key, status="UNKNOWN")
+                self.budget.mark_charge_pending(attempt.reservation_id, str(e))
+                attempt.status = AttemptStatus.FAILED  # the attempt consumed its active duration
+                attempt.failure_category = FailureCategory.OTHER
+                attempt.finished_at = self.store.now()
+                attempt.repair_instructions = ("Previous attempt exceeded the active-work timeout; "
+                                               "deliver a smaller change.")
+                self.store.save_attempt(attempt)
+                return self._to(root, S.PAUSED, f"{e}; provider completion/charge pending")
             except TransportError as e:
                 if e.cost_micros:
                     self.budget.record_usage(attempt.reservation_id, e.cost_micros, model=e.usage.model,
@@ -582,6 +619,9 @@ class Orchestrator:
 
         if not root.asset_brief:
             return "asset task has no brief"
+        gen = self._asset_lane(root)
+        if gen is not None:
+            return gen.preflight(root)
         try:
             brief = load_brief(self._brief_path(root))
         except (CatalogueError, ValueError) as e:
@@ -611,7 +651,7 @@ class Orchestrator:
         brief = load_brief(self._brief_path(root))
         name, provider, _ = self._route(root)
         base = self.accepted_head()
-        number = len(self.quality_attempts(root.id)) + 1
+        number = self.next_attempt_number(root.id)
         attempt = CandidateAttempt(id=new_id("att"), root_id=root.id, number=number, base_commit=base,
                                    provider=name, started_at=self.store.now())
         ceiling = provider.judge_ceiling_micros(brief.candidates)
@@ -672,14 +712,16 @@ class Orchestrator:
                                            redact(f"provider completion/charge pending: catalogue lane error "
                                                   f"{type(e).__name__}: {e}"), settle=False)
         self._lane_evidence(root, attempt, res, "catalogue-lane")
+        lane_name = "catalogue lane"
         if res.exit_code == EXIT_NONE and self.rt.generation_lane is not None:
+            lane_name = "generation lane"
             self._event("asset_generation_fallthrough", root, attempt, brief=brief.id, reason=res.reason)
             res = self.rt.generation_lane(root, target, brief)
             self._lane_evidence(root, attempt, res, "generation-lane")
         if res.exit_code == EXIT_PICKED:
             return self._asset_candidate(root, attempt, brief, res)
         if res.exit_code == EXIT_BLOCKED:
-            return self._end_asset_attempt(root, attempt, S.PAUSED, f"catalogue lane blocked: {res.reason}")
+            return self._end_asset_attempt(root, attempt, S.PAUSED, f"{lane_name} blocked: {res.reason}")
         # NONE with no generation lane
         reason = self.NO_GENERATION_LANE if self.rt.generation_lane is None else f"no asset produced: {res.reason}"
         root = self._end_asset_attempt(root, attempt, S.PAUSED, reason)
@@ -719,12 +761,18 @@ class Orchestrator:
             status=status, name=name, summary=summary[:500], details=details, artifact_refs=refs))
 
     def _asset_candidate(self, root: RootTask, attempt: CandidateAttempt, brief, res) -> RootTask:
-        self.store.add_evidence(Evidence(
-            id=new_id("ev"), root_id=root.id, attempt_id=attempt.id, evidence_class=EvidenceClass.STATIC,
-            status=EvidenceStatus.PASS, name="catalogue-budget-check",
-            summary=f"{res.pick}: within {brief.max_tris} triangles, {brief.max_texture}px textures, {brief.size_m} m",
-            details={"brief": brief.id, "max_tris": brief.max_tris, "max_texture": brief.max_texture,
-                     "size_m": brief.size_m}))
+        if getattr(res, "asset_stage", None):  # generation lane: its own asset-contract evidence
+            from .assets.generation import contract_evidence
+
+            self.store.add_evidence(contract_evidence(root, attempt, res))
+        else:
+            self.store.add_evidence(Evidence(
+                id=new_id("ev"), root_id=root.id, attempt_id=attempt.id, evidence_class=EvidenceClass.STATIC,
+                status=EvidenceStatus.PASS, name="catalogue-budget-check",
+                summary=f"{res.pick}: within {brief.max_tris} triangles, {brief.max_texture}px textures, "
+                        f"{brief.size_m} m",
+                details={"brief": brief.id, "max_tris": brief.max_tris, "max_texture": brief.max_texture,
+                         "size_m": brief.size_m}))
         try:
             cand = self.ws.commit_candidate(attempt.workspace_path,
                                             f"Forge asset candidate {root.ticket or root.id}: catalogue pick "
@@ -747,7 +795,7 @@ class Orchestrator:
     def _lane_budget_passed(self, root: RootTask, attempt: CandidateAttempt) -> bool:
         if root.task_type != TaskType.ASSET:
             return False
-        return any(e.name == "catalogue-budget-check" and e.status == EvidenceStatus.PASS
+        return any(e.name in ("catalogue-budget-check", "asset-contract-check") and e.status == EvidenceStatus.PASS
                    for e in self.store.list_evidence(root.id, attempt.id))
 
     # ================================================================ verification
@@ -761,7 +809,8 @@ class Orchestrator:
                                   f"check {name} not defined in project configuration")
             else:
                 try:
-                    oc = chk.run(workdir, self.ctx)
+                    oc = run_check_with_deadline(chk, workdir, self.ctx,
+                                                 remaining_s(root, attempt, self.store.now()))
                 except Exception as e:  # a crashing checker is incomplete evidence, never a pass
                     oc = CheckOutcome(name, chk.evidence_class, EvidenceStatus.INCOMPLETE, f"check crashed: {e}")
             out.append((oc, self._evidence(root, attempt, oc, candidate_hash)))
@@ -832,7 +881,8 @@ class Orchestrator:
         technical_ok = not incomplete and (bool(root.verification_checks) or self._lane_budget_passed(root, attempt))
         # independent reviewer (opinion, not authority)
         review_verdict = self._independent_review(root, attempt, diff, outcomes)
-        self.budget.settle(attempt.reservation_id)
+        if attempt.reservation_id:  # asset-lane attempts reserve per provider job instead
+            self.budget.settle(attempt.reservation_id)
         self.leases.release(f"attempt:{attempt.id}", self.rt.worker_id)
         approval.technical_pass = GateRecord(
             decision=Decision.APPROVED if technical_ok else Decision.PENDING, by="forge", at=self.store.now(),
@@ -851,8 +901,14 @@ class Orchestrator:
             reasons.append("technical evidence incomplete: " + incomplete_reason)
         if guard.flags:
             reasons.append("gate/test changes require separate review")
+        supervised = [o.name for o in outcomes if containment_of(o.details) == "supervised"]
+        if supervised:  # generated code ran on the host account: the owner supervises, never auto-pass
+            reasons.append("supervised mode: generated code ran without enforced containment "
+                           f"({', '.join(supervised)})")
         if root.task_type == TaskType.ASSET:
-            reasons.append("owner approval of the catalogue pick required (check the renders, source page and "
+            gen = self._asset_lane(root)
+            reasons.append(gen.approval_reason(root) if gen is not None else
+                           "owner approval of the catalogue pick required (check the renders, source page and "
                            "licence; licence labels can be wrong)")
         elif root.visual_review_required:
             reasons.append("owner visual approval required")
@@ -1196,6 +1252,9 @@ class Orchestrator:
                 if attempt.candidate_hash:
                     self._to(root, S.VERIFYING, "recovered: candidate already committed")
                     self.verify(self.store.get_root(root.id), attempt)
+                    continue
+                if root.task_type == TaskType.ASSET and self._asset_lane(root) is not None:
+                    self._asset_lane(root).recover(root, attempt)  # jobs are durable; resume re-polls them
                     continue
                 if root.task_type == TaskType.ASSET:
                     # The lane is not resumable mid-run: a judge call may or may not have been charged.

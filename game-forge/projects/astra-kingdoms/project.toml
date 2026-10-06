@@ -112,6 +112,33 @@ judge_route = "claude-api"
 # reject_list = "../../forge/lanes/reject_list.json"
 # max_download_mb = 500                           # can be lowered; never raised above 500
 
+[assets]
+# R2 generation lane (forge/assets/): brief -> concept approval -> generation -> Blender normalization ->
+# technical report + turntable -> visual approval -> rig -> deformation review -> motion/retarget ->
+# contact/transition review -> Unity prefab -> device evidence. Route order is the owner's preference;
+# selection still refuses routes the policy, distribution countries, hardware, first-use licence gate or
+# certification do not allow. No route is configured yet: adding one (and its vendor to allowed_vendors)
+# is an owner decision. Until then asset tasks stop with NEEDS_INPUT "no permitted ... route".
+briefs_dir = "../../briefs/astra_v1/production"   # <id>.asset.json production briefs (catalogue briefs stay apart)
+unity_project_dir = "unity"
+device_checks = ["android-build", "device-smoke"]
+public_demo = false
+preferences.concept_image = ["flux-schnell-local", "api-image-service"]
+preferences.mesh = ["trellis2", "trellis", "meshy", "tripo"]
+preferences.rig = ["unirig", "meshy", "tripo", "mixamo"]
+preferences.motion = ["stock-animation", "mixamo", "hy-motion-1.0"]
+preferences.audio = ["licensed-sound-library"]
+# [assets.routes.trellis2]                          # local GPU route: pinned command, run in the sandbox
+# argv = ["python", "/opt/TRELLIS.2/forge_entry.py", "--image", "{image}", "--out", "{out_dir}"]
+# install_dir = "/opt/TRELLIS.2"
+# model_version = "TRELLIS.2@<commit>"
+# [assets.routes.meshy]                             # API route: certify first (`forge assets certify meshy`)
+# key_file = "~/.config/game-forge/meshy.key"
+# credit_usd = 0.02
+# credits = { text_to_3d = 20, image_to_3d = 30, rig = 5 }
+# [assets.routes.stock-animation]
+# path = "~/licensed/archer-anim-pack"               # library.json records the licence and receipt id
+
 [forge]
 data_dir = "../../.forge"             # game-forge/.forge (git-ignored): db, artifacts, worktrees
 transport_retries = 2

@@ -13,6 +13,7 @@ import secrets
 from typing import Callable, Iterable
 from urllib.parse import parse_qs
 
+from ..assets.review import asset_stage_html
 from ..budget import BudgetLedger, CapacityLedger, CashLedger, milestone_scope, project_scope, root_scope
 from ..models import Decision, EvidenceClass, EvidenceStatus, ReviewAction, TaskState
 from ..orchestrator import Orchestrator, ReviewError
@@ -248,6 +249,7 @@ class ReviewApp:
         visual = [x for x in evs if x.evidence_class in (EvidenceClass.DEVICE, EvidenceClass.PERFORMANCE,
                                                          EvidenceClass.HUMAN, EvidenceClass.ASSET)]
         asset_html = self._asset_pick_html([x for x in cur_evs if x.evidence_class == EvidenceClass.ASSET])
+        asset_html += asset_stage_html([x for x in cur_evs if x.evidence_class == EvidenceClass.ASSET])  # R2 gates
         # Panel 1: purpose & acceptance
         cases = "".join(f"<tr><td>{e(c.id)}</td><td>{e(c.description)}</td><td>{e(c.evidence_class.value)}</td></tr>"
                         for c in r.acceptance_cases) or "<tr><td colspan=3 class=mute>No acceptance cases.</td></tr>"

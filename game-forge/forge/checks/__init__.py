@@ -22,6 +22,15 @@ __all__ = [
 
 
 def build_check(name: str, spec: dict[str, Any]) -> Check:
+    chk = _build_check(name, spec)
+    if spec.get("sandbox"):  # e.g. sandbox = "generated_code_check": run inside the isolation backend
+        from ..sandbox.check import SandboxedCheck
+
+        chk = SandboxedCheck.from_spec(chk, spec)
+    return chk
+
+
+def _build_check(name: str, spec: dict[str, Any]) -> Check:
     kind = spec.get("type", "command")
     if kind == "command":
         return CommandCheck(name, list(spec["argv"]), cwd=spec.get("cwd", "."),
