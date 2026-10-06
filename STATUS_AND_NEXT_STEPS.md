@@ -145,6 +145,7 @@ The plan's own rule: do not add art, online scope or monetization before the pil
 | **Game total** | **841 passed, 0 failed** |
 | Art (`cd astra-kingdoms/art && python -m pytest`) | 115 passed |
 | Forge (`python -m pytest -k "not dotnet"`) | 735 passed |
-| Forge slow `dotnet` end-to-end tests | FORGE_DOTNET_RESULT |
+| Forge slow `dotnet` end-to-end tests (`-k dotnet`) | 9 passed |
+| **Forge total** | **744 passed, 0 failed** |
 
 Passing tests prove the logic matches the plan's written rules. They do not prove the game is fun, looks right, runs well on a phone, or works with real Google/Firebase/ad services.
