@@ -124,7 +124,8 @@ namespace AstraKingdoms.Client
         private void TutorialEvent(Flow.TutorialEvent e)
         {
             if (Mode != PlayMode.Tutorial || _tutorial == null) return;
-            if (_tutorial.Handle(e)) _tutorialDetails = new List<TextRef>();
+            // A new step clears old details, except the outcome step, which shows the volley's reasons.
+            if (_tutorial.Handle(e) && _tutorial.Step != TutorialStep.ReadOutcome) _tutorialDetails = new List<TextRef>();
             if (_tutorial.Finished)
             {
                 _ctx.Settings.TutorialCompleted = true;
@@ -165,6 +166,13 @@ namespace AstraKingdoms.Client
         private void OnMatchStartedV1(LocalMatchHost host)
         {
             _arena.ResetArchers();
+            if (Mode != PlayMode.Tutorial)
+            {
+                // A normal match never inherits the tutorial's gating or coach panel.
+                _tutorial = null;
+                _selection.ApplyGate(TutorialControl.All);
+                _tutorialOverlay.Hide();
+            }
             SessionMatchKind kind = Mode == PlayMode.Practice ? SessionMatchKind.Practice
                 : Mode == PlayMode.Tutorial ? SessionMatchKind.Tutorial : SessionMatchKind.SharedPhone;
             _life.MatchStarted(kind);
@@ -261,6 +269,13 @@ namespace AstraKingdoms.Client
         private void UpdateV1()
         {
             if (_life.Overlay != _overlayShown) RefreshOverlay();
+        }
+
+        /// <summary>Keeps the lifecycle's pause menu in step with the HUD's practice pause.</summary>
+        private void SyncPauseOverlay(bool paused)
+        {
+            if (paused != _life.PlayerPaused) _life.TogglePause();
+            RefreshOverlay();
         }
 
         private void RefreshOverlay()

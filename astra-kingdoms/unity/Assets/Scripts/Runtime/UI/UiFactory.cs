@@ -8,6 +8,13 @@ namespace AstraKingdoms.Client.UI
     /// <summary>
     /// Builds uGUI hierarchies in code (no hand-written prefab YAML). Font sizes are multiplied by the
     /// player's text-scale setting; screens are rebuilt when it changes.
+    /// <para>
+    /// Text path note (ticket 48): every label is created by <see cref="Label"/>, which uses legacy
+    /// <c>Text</c>. Legacy Text cannot shape Devanagari or Kannada (conjuncts, vowel signs), so before
+    /// Hindi or Kannada ship this one method switches to TextMesh Pro with the Noto faces planned in
+    /// the asset ledger and atlases built from <c>FontCoverage.AtlasCharacters</c>, verified on the
+    /// reference phone.
+    /// </para>
     /// </summary>
     public sealed class UiFactory
     {

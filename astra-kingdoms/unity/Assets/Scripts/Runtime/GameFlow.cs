@@ -261,6 +261,7 @@ namespace AstraKingdoms.Client
             {
                 _arena.Speed = h.Paused ? 0f : _controller.ClockSpeed;
                 RefreshSnapshot();
+                SyncPauseOverlay(h.Paused);
             }
         }
 
