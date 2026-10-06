@@ -85,6 +85,12 @@ namespace AstraKingdoms.Rules.Combat
         public bool ForestChargeAvailable { get; set; }
         public DuelResult Result { get; set; }
 
+        /// <summary>
+        /// Balance values pinned to the match (ticket 24); <see cref="RulesParameters.Default"/>
+        /// (AK-TR-1) unless the duel was started with a tuned snapshot. Shared by clones.
+        /// </summary>
+        public RulesParameters Parameters { get; set; } = RulesParameters.Default;
+
         public PlayerDuelState A { get; set; }
         public PlayerDuelState B { get; set; }
 
@@ -97,14 +103,23 @@ namespace AstraKingdoms.Rules.Combat
         /// intact and one Forest charge. Brahmastra charges are match-level and passed in.
         /// </summary>
         public static DuelState Start(int roundIndex, TerrainType terrain, PlayerSide defender, Loadout loadoutA, Loadout loadoutB,
-            bool brahmastraEnabled = false, bool brahmastraAvailableA = true, bool brahmastraAvailableB = true)
+            bool brahmastraEnabled = false, bool brahmastraAvailableA = true, bool brahmastraAvailableB = true) =>
+            Start(roundIndex, terrain, defender, loadoutA, loadoutB, RulesParameters.Default, brahmastraEnabled, brahmastraAvailableA, brahmastraAvailableB);
+
+        /// <summary>
+        /// Fresh state under a pinned balance snapshot (ticket 24): starting HP and the round range
+        /// come from <paramref name="parameters"/> (null means <see cref="RulesParameters.Default"/>).
+        /// </summary>
+        public static DuelState Start(int roundIndex, TerrainType terrain, PlayerSide defender, Loadout loadoutA, Loadout loadoutB,
+            RulesParameters parameters, bool brahmastraEnabled = false, bool brahmastraAvailableA = true, bool brahmastraAvailableB = true)
         {
+            RulesParameters p = parameters ?? RulesParameters.Default;
             if (loadoutA == null) throw new ArgumentNullException(nameof(loadoutA));
             if (loadoutB == null) throw new ArgumentNullException(nameof(loadoutB));
             if (loadoutA.Preset != loadoutB.Preset)
                 throw new RulesViolationException("CATALOG_MISMATCH", "Both loadouts must use the room's symmetric catalog.");
-            if (roundIndex < 1 || roundIndex > RulesConstants.MaxRounds)
-                throw new RulesViolationException("ROUND_RANGE", "Round index must be 1-" + RulesConstants.MaxRounds + ".");
+            if (roundIndex < 1 || roundIndex > p.MaxRounds)
+                throw new RulesViolationException("ROUND_RANGE", "Round index must be 1-" + p.MaxRounds + ".");
             if (brahmastraEnabled && loadoutA.Preset != CatalogPreset.Full)
                 throw new RulesViolationException("BRAHMASTRA_NOT_FULL", "Brahmastra may only be enabled in a Full private room.");
             return new DuelState
@@ -115,8 +130,9 @@ namespace AstraKingdoms.Rules.Combat
                 Catalog = loadoutA.Preset,
                 BrahmastraEnabled = brahmastraEnabled,
                 ForestChargeAvailable = terrain == TerrainType.Forest,
-                A = new PlayerDuelState(PlayerSide.A, loadoutA) { BrahmastraAvailable = brahmastraEnabled && brahmastraAvailableA },
-                B = new PlayerDuelState(PlayerSide.B, loadoutB) { BrahmastraAvailable = brahmastraEnabled && brahmastraAvailableB },
+                Parameters = p,
+                A = new PlayerDuelState(PlayerSide.A, loadoutA) { BrahmastraAvailable = brahmastraEnabled && brahmastraAvailableA, HpUnits = p.StartHpUnits },
+                B = new PlayerDuelState(PlayerSide.B, loadoutB) { BrahmastraAvailable = brahmastraEnabled && brahmastraAvailableB, HpUnits = p.StartHpUnits },
             };
         }
 

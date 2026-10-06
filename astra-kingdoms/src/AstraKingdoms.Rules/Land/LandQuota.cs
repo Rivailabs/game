@@ -14,20 +14,35 @@ namespace AstraKingdoms.Rules.Land
     public static class LandQuota
     {
         /// <summary>Allowance for a given card cap percent. D = 0 (a draw) yields 0: no card, no transfer.</summary>
-        public static int Compute(int loserCells, int hpDifferenceUnits, int capPercent)
+        public static int Compute(int loserCells, int hpDifferenceUnits, int capPercent) =>
+            Compute(loserCells, hpDifferenceUnits, capPercent, RulesConstants.QuotaFloorPpm);
+
+        /// <summary>
+        /// Allowance with an explicit quota floor in parts per million (ticket 24 balance bundles);
+        /// the AK-TR-1 floor is 30,000 (3% of the board).
+        /// </summary>
+        public static int Compute(int loserCells, int hpDifferenceUnits, int capPercent, long quotaFloorPpm)
         {
+            if (quotaFloorPpm < 0 || quotaFloorPpm > RulesConstants.QuotaDenominator) throw new ArgumentOutOfRangeException(nameof(quotaFloorPpm));
             if (loserCells < 0) throw new ArgumentOutOfRangeException(nameof(loserCells));
             if (hpDifferenceUnits < 0) throw new ArgumentOutOfRangeException(nameof(hpDifferenceUnits), "Pass the winner's HP minus the loser's.");
             if (capPercent <= 0 || capPercent > 100) throw new ArgumentOutOfRangeException(nameof(capPercent));
             if (hpDifferenceUnits == 0) return 0;
 
-            long share = Math.Max(RulesConstants.QuotaFloorPpm, (long)capPercent * hpDifferenceUnits);
+            long share = Math.Max(quotaFloorPpm, (long)capPercent * hpDifferenceUnits);
             long allowance = (long)RulesConstants.ActiveCells * share / RulesConstants.QuotaDenominator;
             return (int)Math.Min(loserCells, allowance);
         }
 
         public static int Compute(int loserCells, int hpDifferenceUnits, CardId card) =>
             Compute(loserCells, hpDifferenceUnits, Cards.CapPercent(card));
+
+        /// <summary>Allowance for a card under a pinned balance snapshot (card cap and quota floor in force).</summary>
+        public static int Compute(int loserCells, int hpDifferenceUnits, CardId card, RulesParameters parameters)
+        {
+            RulesParameters p = parameters ?? RulesParameters.Default;
+            return Compute(loserCells, hpDifferenceUnits, p.CardCapPercent(card), p.QuotaFloorPpm);
+        }
 
         /// <summary>A card is offered only after a duel with a positive HP difference.</summary>
         public static bool IsCardOffered(int hpDifferenceUnits) => hpDifferenceUnits > 0;
@@ -72,12 +87,20 @@ namespace AstraKingdoms.Rules.Land
         /// for <paramref name="round"/> (1-8). Cards are returned in draw order. A draw (D = 0)
         /// offers nothing and consumes no digests.
         /// </summary>
-        public static CardOffer V1(byte[] seed, int round, int hpDifferenceUnits)
+        public static CardOffer V1(byte[] seed, int round, int hpDifferenceUnits) =>
+            V1(seed, round, hpDifferenceUnits, RulesParameters.Default);
+
+        /// <summary>
+        /// The V1 offer under a pinned balance snapshot: the round range and the Vajra gate come from
+        /// <paramref name="parameters"/> (null means <see cref="RulesParameters.Default"/>).
+        /// </summary>
+        public static CardOffer V1(byte[] seed, int round, int hpDifferenceUnits, RulesParameters parameters)
         {
-            if (round < 1 || round > RulesConstants.MaxRounds) throw new ArgumentOutOfRangeException(nameof(round));
+            RulesParameters p = parameters ?? RulesParameters.Default;
+            if (round < 1 || round > p.MaxRounds) throw new ArgumentOutOfRangeException(nameof(round));
             if (!LandQuota.IsCardOffered(hpDifferenceUnits)) return new CardOffer(Array.Empty<CardId>(), 0);
 
-            IReadOnlyList<CardId> eligible = Core.Cards.Eligible(hpDifferenceUnits);
+            IReadOnlyList<CardId> eligible = Core.Cards.Eligible(hpDifferenceUnits, p.VajraMinExclusiveDiffUnits);
             SeededStream stream = SeededStream.Cards(seed, (uint)round);
             List<CardId> drawn = stream.DrawWithoutReplacement(eligible, V1OfferSize);
             return new CardOffer(drawn, stream.Counter);
