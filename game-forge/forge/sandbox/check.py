@@ -59,8 +59,8 @@ class SandboxedCheck(Check):
                 cfg, err = SandboxConfig(require_containment=True), str(e)
             runner = SandboxRunner(cfg)
         return cls(inner, runner, role=role, restore_argv=spec.get("restore_argv"),
-                   restore_cwd=spec.get("restore_cwd", "."), restore_timeout_s=float(spec.get("restore_timeout_s", 900)),
-                   config_error=err)
+                   restore_cwd=spec.get("restore_cwd", "."),
+                   restore_timeout_s=float(spec.get("restore_timeout_s", 900)), config_error=err)
 
     def availability(self, ctx: CheckContext) -> tuple[bool, str]:
         if self.config_error:

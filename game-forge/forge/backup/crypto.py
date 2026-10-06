@@ -44,7 +44,8 @@ def _aead():
     return AESGCM, Scrypt
 
 
-def derive_key(passphrase: bytes, salt: bytes, log2_n: int = SCRYPT_LOG2_N, r: int = SCRYPT_R, p: int = SCRYPT_P) -> bytes:
+def derive_key(passphrase: bytes, salt: bytes, log2_n: int = SCRYPT_LOG2_N, r: int = SCRYPT_R,
+               p: int = SCRYPT_P) -> bytes:
     if len(passphrase) < 12:
         raise BackupCryptoError("backup passphrase must be at least 12 characters")
     _, Scrypt = _aead()

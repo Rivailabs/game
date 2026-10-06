@@ -130,8 +130,9 @@ def enforce_active_work_timeouts(orch: "Orchestrator") -> list[str]:
         if root.state == S.RUNNING:
             _cancel_running(orch, root, attempt, reason)
         else:
-            attempt.repair_instructions = (attempt.repair_instructions + "\n" if attempt.repair_instructions else "") + \
-                "Previous attempt exceeded the active-work timeout during verification."
+            prefix = attempt.repair_instructions + "\n" if attempt.repair_instructions else ""
+            attempt.repair_instructions = prefix + ("Previous attempt exceeded the active-work timeout during "
+                                                    "verification.")
             orch.store.save_attempt(attempt)
             orch._fail_attempt(root, attempt, FailureCategory.OTHER, reason)
     return actions

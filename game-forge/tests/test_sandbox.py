@@ -240,7 +240,8 @@ def test_runner_enforced_with_backend_and_kills_container_on_timeout(tmp_path):
 
 def test_runner_falls_back_to_supervised_when_backend_cannot_enforce_allowlist(tmp_path):
     ex = RecordingExecutor()
-    r = SandboxRunner(SandboxConfig(), backends=[BWRAP], executor=ex, forbidden=no_home_forbidden(tmp_path), home=FAKE_HOME)
+    r = SandboxRunner(SandboxConfig(), backends=[BWRAP], executor=ex, forbidden=no_home_forbidden(tmp_path),
+                      home=FAKE_HOME)
     res = r.run(["dotnet", "restore"], workdir=tmp_path, role=WorkerRole.DEPENDENCY_RESTORE)
     assert res.containment == SUPERVISED and any("allow-list" in x for x in res.reasons)
     res = r.run(["dotnet", "test"], workdir=tmp_path, role=WorkerRole.GENERATED_CODE_CHECK)
