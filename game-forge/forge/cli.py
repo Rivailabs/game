@@ -352,6 +352,15 @@ def build_parser() -> argparse.ArgumentParser:
     cr = csub.add_parser("run", help="run one brief: exit 0 picked, 2 NONE, 3 blocked")
     add_run_arguments(cr)
     cr.set_defaults(fn=cmd_catalogue)
+
+    # Releases 3-5: each package registers its own command group (additive; see the package docs).
+    from .hosted.commands import register as register_r5_hosted
+    from .installer.commands import register as register_r4_installer
+    from .intake.commands import register as register_r3_intake
+    from .release.commands import register as register_r3_release
+
+    for register in (register_r3_intake, register_r3_release, register_r4_installer, register_r5_hosted):
+        register(sub)
     return p
 
 

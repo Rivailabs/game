@@ -131,6 +131,26 @@ class GooglePlayClient:
         self._call("DELETE", f"{API}/{package_id}/edits/{edit_id}")
 
 
+def urllib_transport(method: str, url: str, headers: dict, body: Optional[bytes]) -> tuple[int, dict]:
+    """Real HTTPS transport (standard library). Used only by an explicit ``forge release submit``."""
+    import urllib.error
+    import urllib.request
+
+    if not url.startswith("https://androidpublisher.googleapis.com/"):
+        raise SubmissionRefused("the publisher only talks to the Google Play Developer API")
+    req = urllib.request.Request(url, data=body, method=method, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=600) as resp:  # noqa: S310 - fixed https host checked above
+            raw = resp.read()
+            return resp.status, (json.loads(raw) if raw else {})
+    except urllib.error.HTTPError as e:
+        raw = e.read()
+        try:
+            return e.code, json.loads(raw)
+        except ValueError:
+            return e.code, {"error": raw.decode(errors="replace")[:500]}
+
+
 def submit(authorisation: dict, signing_record: dict, artifact: str | Path, client: PublishingClient, *,
            trusted_authorities: list[str], log_dir: str | Path, clock=time.time) -> dict:
     """Publish exactly the authorised signed artifact to the authorised track. Returns the record."""
