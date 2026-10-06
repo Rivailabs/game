@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compiles unity/Assets/Scripts/Online (online tickets 49-56) exactly as its asmdef declares:
+    noEngineReferences; rules, client core and the shared protocol assembly. Protocol/ and UI/
+    have their own asmdefs and check projects (../OnlineProtocol, ../OnlineUI). The server tests
+    run this assembly against the real match service in-process, and the load-test tool drives it.
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Online</AssemblyName>
+    <RootNamespace>AstraKingdoms.Client.Online</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Online/**/*.cs"
+             Exclude="$(AkUnityAssets)Scripts/Online/UI/**/*.cs;$(AkUnityAssets)Scripts/Online/Protocol/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+    <ProjectReference Include="../OnlineProtocol/AstraKingdoms.Client.Online.Protocol.Check.csproj" />
+  </ItemGroup>
+
+</Project>
