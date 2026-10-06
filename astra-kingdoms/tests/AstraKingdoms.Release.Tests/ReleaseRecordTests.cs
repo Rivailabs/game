@@ -178,9 +178,10 @@ public class CliAndDocumentTests
     [Test]
     public void UsageListsEveryCommandAndItsOptions()
     {
+        string usage = Program.Usage; // a const; read through a local so NUnit2007 sees an actual value
         foreach (string c in new[] { "ledger-validate", "store-text-lint", "perf-compare", "size-check", "repro-compare", "sustained-collate", "data-safety",
                      "closed-test-check", "version-policy-check", "release-record" })
-            Assert.That(Program.Usage, Does.Contain(c + " "), c);
+            Assert.That(usage, Does.Contain(c + " "), c);
     }
 
     private static readonly (int Ticket, string Path)[] TicketDocs =
