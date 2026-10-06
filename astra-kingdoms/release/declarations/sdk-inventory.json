@@ -1,0 +1,25 @@
+{
+  "format": "AK-SDK-INVENTORY/1",
+  "note": "Every SDK, plugin and service library in the Android build. 'data_types' uses Play Data safety 'Category/Type' names. A row changes whenever a dependency or its version changes; the Data safety form is regenerated from this file and the data map (AstraKingdoms.Release data-safety).",
+  "sdks": [
+    { "id": "unity-engine", "name": "Unity 6 runtime", "vendor": "Unity Technologies", "version": "6000.0.x (pin at preflight)", "status": "integrated",
+      "data_types": [], "data_map_rows": [], "families_self_certified": null,
+      "traffic_capture": null,
+      "note": "Unity Analytics/Cloud Diagnostics must stay disabled in Project Settings; verify on the release build with a traffic capture." },
+    { "id": "unity-iap", "name": "Unity In-App Purchasing (Google Play Billing)", "vendor": "Unity Technologies / Google", "version": "4.x (not yet installed)", "status": "planned",
+      "data_types": ["Financial info/Purchase history"], "data_map_rows": ["purchases"], "families_self_certified": null,
+      "traffic_capture": null },
+    { "id": "game-server", "name": "Astra Kingdoms online server (in-house)", "vendor": "in-house", "version": "V1 online layer", "status": "planned",
+      "data_types": ["Personal info/User IDs", "Personal info/Other info", "App activity/Other actions", "App info and performance/Diagnostics"],
+      "data_map_rows": ["account-id", "age-group", "progression", "ad-tickets", "diagnostics"], "families_self_certified": null,
+      "traffic_capture": null },
+    { "id": "ads", "name": "Rewarded-ad SDK and mediation adapters", "vendor": "NOT CHOSEN", "version": null, "status": "not-chosen",
+      "data_types": ["Device or other IDs/Device or other IDs"], "data_map_rows": ["ad-requests"], "families_self_certified": null,
+      "traffic_capture": null,
+      "note": "Must be Families self-certified (and every mediation adapter) before children or unknown-age players see offers (AdPolicy.FamiliesCertifiedSdkConfirmed)." },
+    { "id": "analytics", "name": "Product analytics", "vendor": "NOT CHOSEN", "version": null, "status": "not-chosen",
+      "data_types": ["App activity/App interactions"], "data_map_rows": ["analytics"], "families_self_certified": null, "traffic_capture": null },
+    { "id": "crash", "name": "Crash reporting", "vendor": "NOT CHOSEN", "version": null, "status": "not-chosen",
+      "data_types": ["App info and performance/Crash logs"], "data_map_rows": ["crash"], "families_self_certified": null, "traffic_capture": null }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "format": "AK-DEVICE-SCENARIOS/1",
+  "note": "Device scenarios for tickets 73-75, run by ci/device/*.sh against a development build on a registered reference phone. They use only launch extras the automation runner already understands (LaunchOptions: forge_scenario, autoplay, autoplaySpeed, quitAfterAutoplay), so no client change is needed. Each bot match takes about 80 s of match-clock time. Video capture is OFF for every measured scenario (plan: separate capture condition).",
+  "scenarios": [
+    {
+      "id": "pilot-smoke",
+      "ticket": 73,
+      "purpose": "Fast correctness and cold frame-pacing smoke: three approved seeds at 8x match clock (every frame still rendered).",
+      "extras": { "forge_scenario": "pilot-smoke" },
+      "expected_seconds": 30,
+      "timeout_seconds": 120,
+      "meminfo_interval_seconds": 5,
+      "thermal_interval_seconds": 0,
+      "gates": ["perf-compare"]
+    },
+    {
+      "id": "frame-pacing",
+      "ticket": 73,
+      "purpose": "Steady-state frame pacing at the real match clock over the approved seeds plus two more; compared against the stored baseline per phone.",
+      "extras": { "autoplay": "1,2,20261006,3,4", "autoplaySpeed": "1", "quitAfterAutoplay": "true" },
+      "expected_seconds": 400,
+      "timeout_seconds": 900,
+      "meminfo_interval_seconds": 15,
+      "thermal_interval_seconds": 30,
+      "gates": ["perf-compare"]
+    },
+    {
+      "id": "sustained-20m",
+      "ticket": 75,
+      "purpose": "20-minute sustained run: sixteen consecutive bot matches at the real clock with every screen transition, for peak PSS, PSS trend (leaks), thermal status and crashes.",
+      "extras": { "autoplay": "1,2,20261006,3,4,5,6,7,8,9,10,11,12,13,14,15", "autoplaySpeed": "1", "quitAfterAutoplay": "true" },
+      "expected_seconds": 1280,
+      "timeout_seconds": 2400,
+      "meminfo_interval_seconds": 30,
+      "thermal_interval_seconds": 30,
+      "gates": ["perf-compare", "sustained-collate"]
+    }
+  ]
+}

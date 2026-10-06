@@ -1,0 +1,5 @@
+{
+  "format": "AK-DEVICE-REGISTER/1",
+  "note": "Reference phones (plan: record an actual 2 GB reference phone and a second target phone before detailed art). 'model' must equal Android Build.MODEL as reported in the autoplay report's device_model (SystemInfo.deviceModel may prefix the manufacturer; copy it exactly from a real report). Empty until the phones are acquired: perf-compare therefore reports every run INCOMPLETE. Fill the fields from adb (see release/perf/README.md).",
+  "devices": []
+}

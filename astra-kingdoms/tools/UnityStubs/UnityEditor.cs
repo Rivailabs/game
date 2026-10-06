@@ -179,7 +179,7 @@ namespace UnityEditor.Build.Reporting
         public string outputPath => throw null;
     }
 
-    public sealed class BuildReport : UnityEngine.Object
+    public sealed partial class BuildReport : UnityEngine.Object
     {
         public BuildSummary summary => throw null;
     }

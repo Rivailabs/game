@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    V1 performance and release tooling (tickets 65-82): asset-ledger validation, store-text lint,
+    frame/memory comparison against budgets and baselines, download-size control, build
+    reproducibility comparison, sustained-play evidence collation, Data safety draft and the
+    release-candidate record. Every command writes an AK-GATE-RESULT/1 file that the
+    release-record command collects. INCOMPLETE evidence never becomes a pass.
+
+    The engine-independent gate logic is shared with the Unity editor by linking the sources in
+    unity/Assets/Editor/Release/Shared, and the asset-ledger rules by linking the client's
+    AssetLedger.cs, so the editor and this tool cannot disagree.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Disabled because the linked Unity-side sources (C# 9, netstandard2.1) are not annotated. -->
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RootNamespace>AstraKingdoms.Release</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../unity/Assets/Editor/Release/Shared/*.cs" Link="Shared/%(Filename)%(Extension)" />
+    <Compile Include="../../unity/Assets/Scripts/Core/Assets/AssetLedger.cs" Link="Shared/AssetLedger.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+  </ItemGroup>
+
+</Project>

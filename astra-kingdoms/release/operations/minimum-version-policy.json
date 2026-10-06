@@ -1,0 +1,22 @@
+{
+  "format": "AK-MIN-VERSION-POLICY/1",
+  "note": "Served by the game server's config endpoint (online agent's work) and checked by AstraKingdoms.Release version-policy-check before publication. A minimum-version change applies to NEW matches only: a match keeps the rules version and server compatibility it started with until it ends (plan: 'A reversible configuration can disable a failing weapon, ad placement or optional feature in new matches without altering an active match snapshot').",
+  "changed_utc": "2026-10-06T00:00:00Z",
+  "latest_version_code": 1,
+  "recommended_version_code": 1,
+  "minimum_version_code": 1,
+  "enforce_after_utc": "2026-10-06T00:00:00Z",
+  "grace_minutes": 60,
+  "blocked_version_codes": [],
+  "compatible_rules_versions": ["AK-TR-1"],
+  "server_compatibility_window_days": 30,
+  "kill_switches": {
+    "disabled_weapons": [],
+    "disabled_ad_placements": [],
+    "disabled_features": []
+  },
+  "message_keys": {
+    "update_recommended": "update.recommended",
+    "update_required": "update.required"
+  }
+}

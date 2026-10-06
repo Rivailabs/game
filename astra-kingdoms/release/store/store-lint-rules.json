@@ -1,0 +1,29 @@
+{
+  "format": "AK-STORE-LINT-RULES/1",
+  "note": "Rules for AstraKingdoms.Release store-text-lint (ticket 78). Patterns are .NET regular expressions, case-insensitive. A rule change is a reviewed change (plan: changing a gate needs separate review). Sources: plan 'Product promise', 'Release scope', 'Launch communication and growth', 'India online gaming and tournament design'.",
+  "supported_languages": ["English"],
+  "known_languages": ["Hindi", "Kannada", "Telugu", "Tamil", "Marathi", "Bengali", "Malayalam", "Gujarati", "Punjabi", "Odia", "Urdu"],
+  "max_counts": { "weapon": 20, "card": 6, "terrain": 5, "player": 2, "arena": 2, "outfit": 3, "language": 1 },
+  "field_limits": { "title": 30, "short description": 80, "full description": 4000 },
+  "forbidden": [
+    { "id": "v3.four-player", "pattern": "\\b(four|4)[\\s-]*(player|kingdom|way)s?\\b", "message": "four-player play is a separately gated V3 mode, not V1" },
+    { "id": "v3.team", "pattern": "\\b(2|two)\\s*v(s|ersus)?\\s*(2|two)\\b|\\bteam\\s+(battles?|matches|play)\\b|\\bmultiplayer\\s+battles?\\s+with\\s+(up\\s+to|many)", "message": "V1 is two-player only" },
+    { "id": "v2.kingdom", "pattern": "\\b(build|grow|rule|expand|manage|defend|upgrade)\\s+(your|a|an)\\s+(own\\s+|mighty\\s+|growing\\s+)?(kingdom|empire|homeland|realm)\\b|\\bpersistent\\s+(kingdom|world)\\b|\\bhomeland\\b", "message": "persistent kingdoms start in V2; V1 progression is not a live world" },
+    { "id": "v4.world", "pattern": "\\bconquer\\s+(the|a)\\s+(world|map|realm)\\b|\\bshared\\s+(conquest\\s+)?world\\b|\\balliances?\\b|\\barm(y|ies)\\b|\\bwar\\s+with\\s+other\\s+kingdoms\\b", "message": "world conquest, armies and alliances are V4 ideas, not V1 features" },
+    { "id": "v2.social", "pattern": "\\bclans?\\b|\\bguilds?\\b|\\bfriends?\\s+lists?\\b|\\bchat\\b", "message": "clans, friends lists and chat are not in V1 (friend rooms use a room code)" },
+    { "id": "v2.ranked", "pattern": "\\branked\\b|\\bseason\\s+pass\\b|\\bbattle\\s+pass\\b|\\bleaderboards?\\b|\\bcompetitive\\s+seasons?\\b", "message": "ranked seasons and the cosmetic pass are V2" },
+    { "id": "v2.replay-sharing", "pattern": "\\b(share|export|upload)\\s+(your\\s+)?(replays?|clips?|highlights?)\\b", "message": "replay export is V2" },
+    { "id": "v2.photo", "pattern": "\\bphoto\\s+avatars?\\b|\\b(upload|use)\\s+your\\s+(own\\s+)?(photo|selfie|face)\\b", "message": "photo avatars need their own privacy and moderation gate" },
+    { "id": "v3.realtime", "pattern": "\\breal[\\s-]?time\\s+(combat|battles?|duels?|pvp|action)\\b", "message": "real-time combat is a V3 discovery item; V1 is simultaneous locked turns" },
+    { "id": "v3.spectate", "pattern": "\\bspectat(e|or|ing)\\b|\\blive\\s+tournaments?\\b", "message": "spectating and tournaments are V3" },
+    { "id": "money.prizes", "pattern": "\\btournaments?\\b|\\bwin\\s+(real\\s+)?(cash|money|prizes?|rewards\\s+worth)\\b|\\breal[\\s-]?money\\b|\\bearn\\s+(real\\s+)?money\\b|\\bbet(ting|s)?\\b|\\bgambl\\w*|\\bjackpot\\b|\\bwithdraw", "message": "no stakes or prizes of real-world value (Online Gaming Act 2025; Play real-money policy)" },
+    { "id": "claims.registration", "pattern": "\\b(officially\\s+)?(registered|recogni[sz]ed|certified|approved|licensed)\\s+(e-?sports?|online\\s+game|by\\s+the\\s+(government|authority|ministry))\\b|\\bgovernment[\\s-]approved\\b", "message": "do not claim determination or registration unless it is true (Rules 8 and 12)" },
+    { "id": "claims.esports", "pattern": "\\be-?sports?\\b", "message": "e-sport status has recognition and registration conditions; review before use", "severity": "warn" },
+    { "id": "claims.stability", "pattern": "\\bbug[\\s-]?free\\b|\\bcrash[\\s-]?free\\b|\\bflawless\\b|\\b(fully|thoroughly|extensively)\\s+tested\\b|\\bautomat(ed|ion)\\s+(testing|tests|playtesting)\\b|\\bAI[\\s-](tested|verified|built)\\b|\\btested\\s+by\\s+(bots|AI)\\b", "message": "do not advertise automation as evidence that the game is stable" },
+    { "id": "claims.ads", "pattern": "\\bno\\s+ads\\b|\\bad[\\s-]?free\\b|\\bwithout\\s+(any\\s+)?ads\\b", "message": "the game offers optional rewarded ads outside matches" },
+    { "id": "claims.p2w", "pattern": "\\b(buy|purchase|unlock)\\s+(more\\s+)?(power|damage|stronger\\s+weapons|health|an?\\s+advantage)\\b|\\bpay\\s+to\\s+(win|get\\s+ahead)\\b", "message": "purchases are cosmetic only; never imply paid power" },
+    { "id": "platform.ios", "pattern": "\\b(iphone|ipad|ios|app\\s+store)\\b", "message": "iPhone follows platform qualification in V3" },
+    { "id": "culture.deities", "pattern": "\\b(gods?|goddess(es)?|deit(y|ies)|divine\\s+warriors?|avatars?\\s+of)\\b", "message": "gods and revered figures are not fighters; route to cultural review", "severity": "warn" },
+    { "id": "claims.superlative", "pattern": "#\\s*1\\b|\\bnumber\\s+one\\b|\\bbest\\s+(game|strategy\\s+game)\\b|\\baward[\\s-]winning\\b", "message": "unverifiable ranking claims are not allowed in Play metadata" }
+  ]
+}

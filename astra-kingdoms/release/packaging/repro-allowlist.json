@@ -1,0 +1,5 @@
+{
+  "format": "AK-REPRO-ALLOWLIST/1",
+  "note": "Build entries known to differ between two release builds of the same commit, each with a reviewed reason. Empty until two real Unity builds have been compared; add an entry only after confirming the difference cannot affect behaviour (e.g. an embedded build timestamp). Patterns: * within a path segment, ** across segments; archive members of nested files use 'outer!inner'.",
+  "entries": []
+}

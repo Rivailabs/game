@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for tools/AstraKingdoms.Release (V1 tickets 65-82): shared gate logic (frame/memory/size
+    budgets, import policy), every command, the committed release documents and data files, and the
+    contracts with neighbouring code: the client's AK-AUTOPLAY-REPORT/1 (built here with the real
+    AutomationReport) and Forge's release-record and provenance field names (read from the Python
+    sources).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="..\..\tools\AstraKingdoms.Release\AstraKingdoms.Release.csproj" />
+    <!-- The client core builds a real autoplay report. Aliased so its AssetLedger type cannot clash with the tool's linked copy. -->
+    <ProjectReference Include="..\..\tools\UnityCompileCheck\Core\AstraKingdoms.Client.Core.Check.csproj" Aliases="clientcore" />
+  </ItemGroup>
+
+</Project>

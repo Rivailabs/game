@@ -439,6 +439,7 @@ namespace UnityEngine
     {
         public static AudioClip Create(string name, int lengthSamples, int channels, int frequency, bool stream) => throw null;
         public bool SetData(float[] data, int offsetSamples) => throw null;
+        public float length => throw null;
     }
 
     public sealed class AudioSource : Behaviour
