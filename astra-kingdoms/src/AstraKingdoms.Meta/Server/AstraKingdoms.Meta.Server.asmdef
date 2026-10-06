@@ -1,0 +1,19 @@
+{
+    "name": "AstraKingdoms.Meta.Server",
+    "rootNamespace": "AstraKingdoms.Meta.Server",
+    "references": [
+        "AstraKingdoms.Rules",
+        "AstraKingdoms.Meta"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "ASTRA_KINGDOMS_SERVER"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
