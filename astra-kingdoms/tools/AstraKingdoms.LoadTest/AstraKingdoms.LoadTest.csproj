@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Load and fault check for the online match service (ticket 56). Drives N concurrent matches
+    through the real Unity online client library with rules-bot autopilots, injects link drops,
+    and checks the declared initial capacity scenario (see Program.cs and server/RUNBOOK.md).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="..\UnityCompileCheck\Online\AstraKingdoms.Client.Online.Check.csproj" />
+  </ItemGroup>
+
+</Project>

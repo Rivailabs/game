@@ -164,7 +164,9 @@ public class BalanceTests
     [Test]
     public void CompiledEngine_RefusesToServeATunedBundle()
     {
-        var ch = new BalanceChannel("live", BalanceBundle.Baseline(), "owner", 0);
+        // Since the engine became parameterized (ticket 24) the default channel serves tuned bundles;
+        // a deployment that opts into the strict compiled-hash check still refuses them.
+        var ch = new BalanceChannel("live", BalanceBundle.Baseline(), "owner", 0, BalanceChannel.CompiledEngineOnly);
         PublicationResult r = ch.Publish(Tuned("AK-TR-1.b2", ("Damage.BurnUnits", 600)), "owner", 1);
         Assert.That(r.Accepted, Is.False);
         Assert.That(r.Issues.Select(i => i.Code), Does.Contain("NOT_EXECUTABLE"));

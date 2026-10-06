@@ -361,6 +361,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     for register in (register_r3_intake, register_r3_release, register_r4_installer, register_r5_hosted):
         register(sub)
+    from .assets.cli import register as register_assets
+    from .backup.cli import register as register_backup
+    from .sandbox.cli import register as register_sandbox
+
+    register_assets(sub)  # forge assets ... (R2)
+    register_backup(sub)  # forge backup ... / forge retention ...
+    register_sandbox(sub)  # forge sandbox detect
     return p
 
 

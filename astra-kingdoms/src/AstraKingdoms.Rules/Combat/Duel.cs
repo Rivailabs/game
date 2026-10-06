@@ -25,6 +25,11 @@ namespace AstraKingdoms.Rules.Combat
             bool brahmastraEnabled = false, bool brahmastraAvailableA = true, bool brahmastraAvailableB = true) =>
             new Duel(DuelState.Start(roundIndex, terrain, defender, loadoutA, loadoutB, brahmastraEnabled, brahmastraAvailableA, brahmastraAvailableB));
 
+        /// <summary>Starts a fresh duel under a pinned balance snapshot (ticket 24).</summary>
+        public static Duel Start(int roundIndex, TerrainType terrain, PlayerSide defender, Loadout loadoutA, Loadout loadoutB,
+            RulesParameters parameters, bool brahmastraEnabled = false, bool brahmastraAvailableA = true, bool brahmastraAvailableB = true) =>
+            new Duel(DuelState.Start(roundIndex, terrain, defender, loadoutA, loadoutB, parameters, brahmastraEnabled, brahmastraAvailableA, brahmastraAvailableB));
+
         public IReadOnlyList<VolleyResult> Volleys => _volleys;
         public int CurrentVolley => State.VolleyIndex;
         public bool IsOver => State.IsOver;
