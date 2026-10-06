@@ -27,6 +27,10 @@ namespace UnityEditor
         public static T LoadAssetAtPath<T>(string assetPath) where T : UnityEngine.Object => throw null;
         public static void SaveAssets() { }
         public static void Refresh() { }
+        public static void AddObjectToAsset(UnityEngine.Object objectToAdd, UnityEngine.Object assetObject) { }
+        public static bool DeleteAsset(string path) => throw null;
+        public static string[] FindAssets(string filter, string[] searchInFolders) => throw null;
+        public static string GUIDToAssetPath(string guid) => throw null;
     }
 
     public class EditorBuildSettingsScene

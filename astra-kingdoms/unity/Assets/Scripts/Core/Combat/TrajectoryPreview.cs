@@ -66,5 +66,8 @@ namespace AstraKingdoms.Client.Combat
         }
 
         public static PreviewPoint ToPoint(FixedVector3 v) => new PreviewPoint(v.X.ToDouble(), v.Y.ToDouble(), v.Z.ToDouble());
+
+        /// <summary>Rules fixed-point position as a presentation vector (rules frame, metres).</summary>
+        public static Presentation.V3 ToV3(FixedVector3 v) => new Presentation.V3(v.X.ToDouble(), v.Y.ToDouble(), v.Z.ToDouble());
     }
 }
