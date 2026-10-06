@@ -88,9 +88,12 @@ namespace AstraKingdoms.Rules.Balance
         /// </summary>
         public RulesParameters ToParameters()
         {
-            if (_parameters != null) return _parameters;
+            RulesParameters cached = _parameters;
+            if (cached != null) return cached;
             bool compiledBaseline = IsBaseline && BundleId == RulesConstants.RulesVersion;
-            return _parameters = compiledBaseline ? RulesParameters.Default : RulesParameters.FromBundle(this);
+            RulesParameters built = compiledBaseline ? RulesParameters.Default : RulesParameters.FromBundle(this);
+            // First writer wins, so every caller (and every pinned match) shares one instance.
+            return System.Threading.Interlocked.CompareExchange(ref _parameters, built, null) ?? built;
         }
 
         /// <summary>The base rules contents with the overrides applied.</summary>
