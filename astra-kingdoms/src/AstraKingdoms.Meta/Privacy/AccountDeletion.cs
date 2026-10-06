@@ -13,7 +13,7 @@ namespace AstraKingdoms.Meta.Privacy
 {
     public enum DeletionChannel : byte
     {
-        /// <summary>The discoverable in-app path (Profile → Privacy → Delete account).</summary>
+        /// <summary>The discoverable in-app path (see <see cref="PrivacyLinks.InAppPath"/>).</summary>
         InApp = 0,
         /// <summary>The external web resource (works when the app is uninstalled).</summary>
         Web = 1,
@@ -234,7 +234,7 @@ namespace AstraKingdoms.Meta.Privacy
         /// <summary>Grievance contact route (India Online Gaming Rules 2026, rule 20).</summary>
         public string GrievanceUrl { get; set; } = "https://example.invalid/astra-kingdoms/grievance";
         /// <summary>The in-app path, as written in the store listing and the help page.</summary>
-        public string InAppPath { get; set; } = "Home → Profile → Privacy & account → Delete account";
+        public string InAppPath { get; set; } = "Home → Profile and shop → Privacy and account → Delete my data";
 
         public IReadOnlyList<string> ValidateForRelease()
         {

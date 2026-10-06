@@ -133,7 +133,7 @@ public class DeletionAndRetentionTests
         links.PrivacyPolicyUrl = "https://astra.example.org/privacy";
         links.GrievanceUrl = "http://astra.example.org/grievance";
         Assert.That(links.ValidateForRelease(), Is.EqualTo(new[] { "grievance URL must be https" }));
-        Assert.That(links.InAppPath, Does.Contain("Delete account"));
+        Assert.That(links.InAppPath, Does.Contain("Delete my data"));
     }
 
     [Test]
