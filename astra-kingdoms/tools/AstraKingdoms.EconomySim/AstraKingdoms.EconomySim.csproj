@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    V4 economy discovery simulator (plan: "V4 economy discovery: Simulator for earned coins, armies,
+    land and seasonal sinks before world implementation"). Drives the real AstraKingdoms.World rules
+    (shards, challenges, protection table, season close) with simulated players. Not part of the Unity
+    import. Uses doubles for player modelling and statistics only; every rule decision is made by the
+    world assembly.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="..\..\src\AstraKingdoms.World\AstraKingdoms.World.csproj" />
+  </ItemGroup>
+
+</Project>
