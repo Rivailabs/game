@@ -16,6 +16,9 @@ namespace AstraKingdoms.Client.UI.Screens
         public event Action OpenSettings;
         public event Action OpenReplay;
 
+        /// <summary>Set by the optional online module (Assets/Scripts/Online/UI); adds "Play online" when present.</summary>
+        public static Action<HomeScreen, Services.ClientContext> OnlineHook;
+
         public HomeScreen(Services.ClientContext ctx, UiFactory ui, Transform parent, bool developmentTools)
             : base(ctx, ui, parent, "HomeScreen", UiTheme.Background)
         {
@@ -27,6 +30,7 @@ namespace AstraKingdoms.Client.UI.Screens
             ui.Button(col, T("home.practice"), () => PlayPractice?.Invoke(_level), UiTheme.Button, UiFactory.SizeLarge);
             _difficulty = ui.Button(col, string.Empty, CycleDifficulty, UiTheme.Panel);
             ui.Label(col, T("home.practiceHint"), UiFactory.SizeSmall, TextAnchor.MiddleCenter, UiTheme.TextMuted);
+            if (OnlineHook != null) ui.Button(col, T("home.online"), () => OnlineHook(this, Ctx), UiTheme.Button, UiFactory.SizeLarge);
             ui.Button(col, T("home.settings"), () => OpenSettings?.Invoke(), UiTheme.Button);
             if (developmentTools) ui.Button(col, T("home.replay"), () => OpenReplay?.Invoke(), UiTheme.Panel, UiFactory.SizeSmall);
             UiFactory.Flexible(col);

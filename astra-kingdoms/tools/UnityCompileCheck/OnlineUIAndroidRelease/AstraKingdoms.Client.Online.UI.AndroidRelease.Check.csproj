@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Scripts/Online/UI against tools/UnityStubs and the Android
+    release runtime assembly. Defines: UNITY_ANDROID;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER
+    (no development sign-in fallback: release builds need the Firebase identity adapter).
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Online.UI.AndroidRelease</AssemblyName>
+    <RootNamespace>AstraKingdoms.Client.Online.UI</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_ANDROID;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Online/UI/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+    <ProjectReference Include="../RuntimeAndroidRelease/AstraKingdoms.Client.RuntimeAndroidRelease.Check.csproj" />
+    <ProjectReference Include="../Online/AstraKingdoms.Client.Online.Check.csproj" />
+    <ProjectReference Include="../OnlineProtocol/AstraKingdoms.Client.Online.Protocol.Check.csproj" />
+  </ItemGroup>
+
+</Project>
