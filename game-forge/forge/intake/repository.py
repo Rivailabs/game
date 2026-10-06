@@ -35,7 +35,7 @@ from typing import Callable, Optional
 from ..planning.template import Template
 from .analysis import analyse
 from .changes import ChangeReport, compute_changes
-from .document import SourceDocument, read_document
+from .document import read_document
 from .extract import _next_id, assign_ids, extract_requirements
 from .spec import (
     KIND_EVIDENCE,
@@ -430,8 +430,3 @@ class SpecRepository:
         return sorted(r.id for r in cur.plannable() if r.id in old and old[r.id] != r.text_hash) + \
             sorted(rid for rid in old if rid not in {r.id for r in cur.plannable()})
 
-
-def load_source(spec: Specification, repo: SpecRepository) -> SourceDocument:
-    vdir = repo._vdir(spec.version)
-    src = next(vdir.glob("source.*"))
-    return read_document(src)
