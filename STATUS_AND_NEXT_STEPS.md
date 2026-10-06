@@ -40,6 +40,8 @@ Where Astra Kingdoms and Game Forge stand against `docs/PLAN.md`, what is left, 
 | V1 tickets 57-64: XP/levels, daily tasks, cosmetics, shop, Google Play purchase verification, rewarded ads, analytics, retention maths | Done as a library | `src/AstraKingdoms.Meta`, `unity/Assets/Scripts/Meta` |
 | V3: four-player mode, tournaments, spectator feed, real-time prototype | Game logic done | `src/AstraKingdoms.Modes` |
 | V4: conquest world, loss limits, offline defence, alliances, season close, economy simulator | Game logic done | `src/AstraKingdoms.World`, `tools/AstraKingdoms.EconomySim` |
+| V2 library: homeland plots, ranked seasons and rating, cosmetic pass, friends, clans, photo-avatar gates, replay export, content extension points | Library done and tested; no Unity screens or server endpoints yet | `src/AstraKingdoms.V2` |
+| Art tickets 65-72: art briefs, cultural review checklist, placeholder icons/sounds/music generated offline, asset ledger | Briefs and placeholders done; real art, music and sound still needed | `art/`, `unity/Assets/Art/Placeholder` |
 | Privacy data map | Draft, needs legal review | `docs/privacy-data-map.md` |
 
 ### Game Forge
@@ -56,19 +58,17 @@ Where Astra Kingdoms and Game Forge stand against `docs/PLAN.md`, what is left, 
 
 ## 3. Started but not merged (saved on separate branches)
 
-Work was stopped on request partway through. Each piece is pushed to its own branch so nothing is lost. See section 7 for whether each one builds and passes tests.
+Work was stopped on request partway through. The finished parts were merged (V2 library, art 65-72). The rest is pushed to its own branch so nothing is lost; it is **not** in the main branch or the zip.
 
-| Branch | What it contains | What is missing |
+| Branch | What it contains | State |
 |---|---|---|
-| `wip/v2-kingdom-seasons-social` | V2 library: homeland plots, ranked seasons and rating, cosmetic pass, friends, clans, photo-avatar gates, replay export, V2 content extension points, plus tests | Unity V2 screens, server hosting, te/ta/mr/bn locale files |
-| `wip/art-and-release-65-82` | Art briefs, cultural review checklist, placeholder icon/sound/music generators (tickets 65-72); release tool and docs for tickets 73-82; CI scripts | Not finished or reviewed; GitHub CI workflow not added |
-| `wip/server-integration` | Progression, shop, purchases, ads, analytics and account deletion hosted inside the server | Online drawn cut and arrow playback, reserve-weapon picker, Firebase sign-in adapter, Unity prefab assembler for Forge, latency fix |
-
----
+| `wip/art-and-release-65-82` | Release tool for tickets 73-82 (`tools/AstraKingdoms.Release`: ledger, store-text lint, perf, size, reproducibility, data-safety, release record), release docs, CI scripts | Builds; **5 of 101 release tests fail** (missing `.github/workflows/ci.yml` and `release/README.md`, plus three small logic bugs) |
+| `wip/server-integration` | Progression, shop, purchases, ads, analytics and account deletion hosted inside the server (`server/.../MetaHost/`) | Builds; **server tests hang**, so the wiring is incomplete |
+| `wip/v2-kingdom-seasons-social` | Same V2 library that was merged | Merged; branch kept for history |
 
 ## 4. Still to build (code)
 
-1. **Finish and merge the three branches above.**
+1. **Finish and merge the two unmerged branches above** (release tooling 73-82, server integration).
 2. **V2 Unity screens and server endpoints:** kingdom view and editing, ranked entry and leagues, pass track, friends, clans, reports, avatar picker, replay export preview.
 3. **Online client gaps:** finger-drawn cut online (needs a server preview message), arrow playback online (needs a volley-result message), reserve-weapon picker in Full rooms.
 4. **Firebase sign-in on the phone:** an adapter for the Firebase Unity SDK. Without it, release builds cannot sign in.
@@ -130,6 +130,21 @@ The plan's own rule: do not add art, online scope or monetization before the pil
 
 ---
 
-## 7. Test results at the time of writing
+## 7. Test results at the time of writing (main branch)
 
-See the end of this file (filled in after the final test run).
+| Suite | Result |
+|---|---|
+| `astra-kingdoms` build | 0 warnings, 0 errors (includes the Unity stand-in compile checks) |
+| Rules | 296 passed |
+| Client core (Unity logic) | 119 passed |
+| Meta (progression, shop, analytics) | 178 passed |
+| V2 | 67 passed |
+| Modes (V3) | 78 passed |
+| World (V4) | 43 passed |
+| Server | 60 passed |
+| **Game total** | **841 passed, 0 failed** |
+| Art (`cd astra-kingdoms/art && python -m pytest`) | 115 passed |
+| Forge (`python -m pytest -k "not dotnet"`) | 735 passed |
+| Forge slow `dotnet` end-to-end tests | FORGE_DOTNET_RESULT |
+
+Passing tests prove the logic matches the plan's written rules. They do not prove the game is fun, looks right, runs well on a phone, or works with real Google/Firebase/ad services.

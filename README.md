@@ -9,6 +9,10 @@ This repository holds the two products described in
 | [`game-forge/`](game-forge/) | The tool. Python orchestrator that turns approved, bounded tasks into reviewable code, test evidence and builds — task state machine, budget ledger, isolated git worktrees, protected checks, device evidence and a local review UI. Astra Kingdoms is its first proving project. |
 | [`docs/`](docs/) | The source plan (`.docx` original and Markdown conversion). The plan's rules chapter is the source of truth for gameplay. |
 
+## Status
+
+See **[STATUS_AND_NEXT_STEPS.md](STATUS_AND_NEXT_STEPS.md)** for what is done, what is pending, what only you can do, and the recommended next steps.
+
 ## Current stage
 
 The plan's first commitment is **Minimal Forge (R1) → Astra pilot**. This repository
