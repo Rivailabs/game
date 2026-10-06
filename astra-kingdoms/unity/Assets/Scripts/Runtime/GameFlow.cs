@@ -24,6 +24,7 @@ namespace AstraKingdoms.Client
         SharedPhone = 0,
         Practice = 1,
         Automation = 2,
+        Tutorial = 3,
     }
 
     /// <summary>
@@ -31,7 +32,7 @@ namespace AstraKingdoms.Client
     /// resolution playback, the cut screen and results. Screens only ever receive the entitled
     /// player's view or the public snapshot.
     /// </summary>
-    public sealed class GameFlow : MonoBehaviour
+    public sealed partial class GameFlow : MonoBehaviour
     {
         private ClientContext _ctx;
         private ArenaView _arena;
@@ -112,7 +113,8 @@ namespace AstraKingdoms.Client
             _home = Add(new HomeScreen(_ctx, _ui, root, _devTools));
             _settings = Add(new SettingsScreen(_ctx, _ui, root));
             _replay = Add(new ReplayScreen(_ctx, _ui, root, _arena));
-            _privacy = Add(new PrivacyScreen(_ctx, _ui, root)); // last: always drawn on top
+            _privacy = Add(new PrivacyScreen(_ctx, _ui, root)); // drawn above the match screens
+            BuildV1Ui(root); // tutorial, weapons, session overlay (above everything)
 
             _home.PlaySharedPhone += StartSharedPhone;
             _home.PlayPractice += StartPractice;
@@ -124,7 +126,7 @@ namespace AstraKingdoms.Client
                 if (rebuild) BuildUi();
                 ShowHome();
             };
-            _loadout.Confirmed += (side, weapons) => Host?.SubmitLoadout(side, weapons);
+            _loadout.ConfirmedWithReserve += (side, weapons, reserve) => Host?.SubmitLoadout(side, weapons, reserve);
             _privacy.ReadyTapped += () => Host?.ConfirmReady();
             _selection.PreviewChanged += OnPreviewChanged;
             _selection.LockRequested += (side, input) =>
@@ -167,6 +169,7 @@ namespace AstraKingdoms.Client
             Haptics.Enabled = _ctx.Settings.Haptics;
             _arena.SetReducedShake(_ctx.Settings.ReducedCameraShake);
             _ctx.Loc.Language = _ctx.Settings.Language;
+            ApplySettingsV1();
         }
 
         private void HideAll()
@@ -176,11 +179,7 @@ namespace AstraKingdoms.Client
 
         // ------------------------------------------------------------------ navigation
 
-        public void ShowStart()
-        {
-            if (!_ctx.Settings.FirstRunComplete) ShowSettings();
-            else ShowHome();
-        }
+        public void ShowStart() => ShowLaunchScreen();
 
         public void ShowHome()
         {
@@ -227,7 +226,7 @@ namespace AstraKingdoms.Client
             _ctx.PlayerName = side => side == PlayerSide.A ? _ctx.T("player.you") : _ctx.TF("player.bot", _ctx.DifficultyName(Difficulty));
             _controller.ClockSpeed = 1f;
             _arena.Speed = 1f;
-            _controller.StartMatch(MatchConfig.Pilot(MatchMode.Practice), SeatKind.Human, SeatKind.Bot, difficulty);
+            _controller.StartMatch(PracticeConfig(), SeatKind.Human, SeatKind.Bot, difficulty);
         }
 
         /// <summary>Both seats are bots; used by the development automation interface.</summary>
@@ -250,6 +249,7 @@ namespace AstraKingdoms.Client
             _arena.Stop();
             _arena.ClearPreview();
             if (Mode == PlayMode.Practice) StartPractice(Difficulty);
+            else if (Mode == PlayMode.Tutorial) StartTutorial();
             else StartSharedPhone();
         }
 
@@ -279,6 +279,7 @@ namespace AstraKingdoms.Client
             host.CutApplied += OnCutApplied;
             host.MatchEnded += result => OnMatchEnded(host, result);
             host.CommandRejected += OnRejected;
+            OnMatchStartedV1(host);
         }
 
         private void OnStageChanged(HostStage stage)
@@ -305,11 +306,11 @@ namespace AstraKingdoms.Client
                     _privacy.Open(stage, side);
                     break;
                 case HostStage.LoadoutEntry:
-                    _loadout.Open(side);
+                    _loadout.Open(side, h.Config.Catalog, _ctx.AccountLevel());
                     break;
                 case HostStage.TerrainAnnounce:
                     _hud.Show();
-                    _announce.Open(_snapshot, _landMessage);
+                    _announce.Open(_snapshot, _landMessage, TakeTransferPlan());
                     _landMessage = null;
                     _cutAppliedThisRound = false;
                     break;
@@ -330,9 +331,11 @@ namespace AstraKingdoms.Client
                     _land.Open(h, side, interactive, _snapshot, _snapshot.FrontierCellId);
                     break;
                 case HostStage.MatchOver:
-                    _result.Open(h.Engine.Result, h.CloneTerritory());
+                    _arena.ShowMatchEnd(h.Engine.Result.Winner);
+                    _result.Open(h.Engine.Result, h.CloneTerritory(), h.Engine.MatchId);
                     break;
             }
+            OnStageChangedV1(stage, side);
         }
 
         private void OnVolleyResolved(ResolvedVolley v)
@@ -341,17 +344,20 @@ namespace AstraKingdoms.Client
             _lastLines = _explain.Build(e, v.ConcealA, v.ConcealB);
             _hud.HoldHp(e.A.HpBeforeUnits, e.B.HpBeforeUnits);
             _arena.Play(v, (float)(Host?.Timings.ResolutionSeconds ?? 2.5));
+            OnVolleyResolvedV1(v);
         }
 
         private void OnFlightCompleted()
         {
             _hud.ReleaseHp();
             if (_resolution.Visible) _resolution.ShowExplanation(_lastLines);
+            OnFlightCompletedV1();
         }
 
         private void OnCutApplied(PlayerSide side, int cells)
         {
             _cutAppliedThisRound = true;
+            CaptureTransfer(side);
             _landMessage = _ctx.TF("land.applied", _ctx.PlayerName(side), cells);
             _ctx.Audio?.Play(Sfx.Land);
         }
@@ -377,7 +383,7 @@ namespace AstraKingdoms.Client
             if (h == null || !h.CanView(side)) return;
             PlayerView view = h.ViewFor(side);
             var arcs = TrajectoryPreview.Compute(side, weapon, pitch, yaw, power, view.Self.BaselineOffsetRightRaw, view.Foe.BaselineOffsetRightRaw);
-            _arena.ShowPreview(arcs, side == PlayerSide.A ? UiTheme.PlayerA : UiTheme.PlayerB);
+            _arena.ShowPreview(arcs, side == PlayerSide.A ? UiTheme.PlayerA : UiTheme.PlayerB, _selection.AimAtLimit);
         }
 
         private void RefreshSnapshot()
@@ -432,6 +438,7 @@ namespace AstraKingdoms.Client
                     break;
             }
             _hud.SetRemaining(remaining, h.Stage != HostStage.LoadoutEntry && h.Stage != HostStage.LoadoutReady && h.Stage != HostStage.MatchOver);
+            UpdateV1();
         }
     }
 }
