@@ -1,0 +1,11 @@
+{
+  "name": "com.astrakingdoms.rules",
+  "version": "0.1.0",
+  "displayName": "Astra Kingdoms Rules (AK-TR-1)",
+  "description": "Engine-independent authoritative rules for Astra Kingdoms ruleset AK-TR-1: weapons, volleys, flight simulation, land cuts, match engine, bots and replay records. No UnityEngine references; the same sources build with dotnet (AstraKingdoms.Rules.csproj) and inside Unity as a local package.",
+  "unity": "6000.0",
+  "keywords": ["astra-kingdoms", "rules", "deterministic"],
+  "author": {
+    "name": "Astra Kingdoms"
+  }
+}
