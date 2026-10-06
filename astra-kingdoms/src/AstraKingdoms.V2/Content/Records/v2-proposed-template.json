@@ -1,0 +1,40 @@
+{
+  "format": "AK-CONTENT-RECORDS/1",
+  "note": "TEMPLATE. Each record is a PROPOSED placeholder showing the required fields. Roles, counterplay and asset ids are examples for reviewers to replace; statistics stay empty until a reviewed content record sets them (plan: specify final effects and statistics in reviewed content records). Copy a record, give it the next free id, and move it through proposed -> inReview -> approved.",
+  "records": [
+    {
+      "kind": "weapon",
+      "id": "weapon.21",
+      "status": "proposed",
+      "element": "Varuna",
+      "role": "ricochet",
+      "counterplay": ["dodge.jump", "terrain.Fort", "ability.IronWall"],
+      "distinction": "Example only: a shot that rebounds once off the arena floor; read by its bounce point, answered by jumping or by cover.",
+      "assetId": "asset.weapon.example_ricochet",
+      "testHook": "ContentV2Tests.Weapon21_RoleAndCounterplayResolve",
+      "stats": {}
+    },
+    {
+      "kind": "card",
+      "id": "card.7",
+      "status": "proposed",
+      "role": "crescent",
+      "counterplay": ["card.Suchi", "tactic.spacing"],
+      "distinction": "Example only: a curved envelope that favours border arcs instead of deep wedges.",
+      "assetId": "asset.card.example_crescent",
+      "testHook": "ContentV2Tests.Card7_EnvelopeIsDistinct",
+      "stats": {}
+    },
+    {
+      "kind": "terrain",
+      "id": "terrain.Marsh",
+      "status": "proposed",
+      "role": "slow-ground",
+      "counterplay": ["dodge.left", "dodge.right", "terrain.Plain"],
+      "distinction": "Example only: the single sixth category; a readable ground effect that changes footing, not damage.",
+      "assetId": "asset.terrain.example_marsh",
+      "testHook": "ContentV2Tests.TerrainMarsh_TemplateValidates",
+      "stats": {}
+    }
+  ]
+}

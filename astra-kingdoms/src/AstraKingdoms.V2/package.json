@@ -1,0 +1,15 @@
+{
+  "name": "com.astrakingdoms.v2",
+  "version": "0.1.0",
+  "displayName": "Astra Kingdoms V2 (kingdom, seasons, social, avatars, replay export)",
+  "description": "Engine-independent V2 services: protected homeland and decorations, ranked seasons and leagues, the 18-day season lifecycle, the cosmetic season pass, friends, clans, preset chat, moderation, stock and gated photo avatars, replay clip export planning and the V2 content extension mechanism. No UnityEngine references. All numbers are PROPOSED.",
+  "unity": "6000.0",
+  "keywords": ["astra-kingdoms", "seasons", "social", "kingdom"],
+  "author": {
+    "name": "Astra Kingdoms"
+  },
+  "dependencies": {
+    "com.astrakingdoms.rules": "0.1.0",
+    "com.astrakingdoms.meta": "0.1.0"
+  }
+}
