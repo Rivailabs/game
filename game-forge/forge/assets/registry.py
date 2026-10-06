@@ -103,7 +103,8 @@ class AssetRegistry:
         bid = new_id("bench")
         with self.store.tx() as c:
             c.execute("INSERT INTO asset_benchmarks(id,route,stage,worker_id,gpu_model,json,at) VALUES(?,?,?,?,?,?,?)",
-                      (bid, b.route, b.stage, b.worker_id, b.gpu_model, json.dumps(asdict(b)), b.at or self.store.now()))
+                      (bid, b.route, b.stage, b.worker_id, b.gpu_model, json.dumps(asdict(b)),
+                       b.at or self.store.now()))
             self.store.append_event("route_benchmark_recorded", route=b.route, stage=b.stage, worker_id=b.worker_id,
                                     gpu_model=b.gpu_model, success=b.success, peak_vram_gb=b.peak_vram_gb)
         return bid
@@ -127,12 +128,14 @@ class AssetRegistry:
         return json.loads(r["json"]) if r else None
 
     def lanes(self) -> list[dict]:
-        return [json.loads(r["json"]) for r in self.store.conn.execute("SELECT json FROM asset_lanes ORDER BY asset_id")]
+        rows = self.store.conn.execute("SELECT json FROM asset_lanes ORDER BY asset_id")
+        return [json.loads(r["json"]) for r in rows]
 
     def put_provenance(self, rec: ProvenanceRecord) -> None:
         with self.store.tx() as c:
-            c.execute("INSERT INTO asset_provenance(asset_id,version,stage,json) VALUES(?,?,?,?) ON CONFLICT(asset_id,version,stage) DO UPDATE "
-                      "SET json=excluded.json", (rec.asset_id, rec.version, rec.stage, rec.model_dump_json()))
+            c.execute("INSERT INTO asset_provenance(asset_id,version,stage,json) VALUES(?,?,?,?) "
+                      "ON CONFLICT(asset_id,version,stage) DO UPDATE SET json=excluded.json",
+                      (rec.asset_id, rec.version, rec.stage, rec.model_dump_json()))
             self.store.append_event("asset_provenance_recorded", asset_id=rec.asset_id, version=rec.version,
                                     stage=rec.stage, route=rec.route, hashes=rec.final_hashes)
 

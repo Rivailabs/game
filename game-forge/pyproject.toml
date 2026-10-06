@@ -25,6 +25,7 @@ include = ["forge*"]
 
 [tool.setuptools.package-data]
 "forge.lanes" = ["*.json"]
+"forge.assets" = ["data/*.json", "blender/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

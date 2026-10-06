@@ -11,7 +11,8 @@ asset under its triangle ceiling can still fail on transparency, materials, anim
 | Visible arena                | 40,000 triangles; at most 16 opaque material batches                              |
 | Total visible geometry       | 70,000 triangles in the initial worst-case scene                                  |
 | Draw calls                   | 60 in the declared representative combat scene                                    |
-| Character and arena textures | Normally at most 1,024 px per dimension; larger shared UI atlases need measured approval |
+| Character and arena textures | Normally at most 1,024 px per dimension; larger shared UI atlases need  |
+|                              | measured approval                                                                 |
 | Effects                      | At most 12 active emitters and 64 live particles per emitter                      |
 | Audio                        | Short mono effects where appropriate and streamed music when qualified            |
 """

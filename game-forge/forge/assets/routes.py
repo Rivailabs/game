@@ -310,7 +310,8 @@ def _has_permission(ctx: RouteContext, route: str, scope: str, *, need_dependenc
                (p.dependency_rights_cleared or not need_dependencies) for p in ctx.permissions)
 
 
-def qualify_hardware(route: RouteDescriptor, stage: str | None, ctx: RouteContext) -> tuple[Optional[GpuSlot], str, str]:
+def qualify_hardware(route: RouteDescriptor, stage: str | None, ctx: RouteContext
+                     ) -> tuple[Optional[GpuSlot], str, str]:
     """Pick one GPU that qualifies (never pools VRAM). Returns (gpu, qualification, reason-if-none)."""
     if route.kind != "local_model":
         return None, "no GPU needed", ""

@@ -97,9 +97,10 @@ def _default_run(argv, cwd, timeout, env=None):
     return run_proc_direct(argv, cwd, timeout, env)
 
 
-def query_gpus(*, run: Runner | None = None, which: Callable[[str], Optional[str]] = shutil.which
+def query_gpus(*, run: Runner | None = None, which: Callable[[str], Optional[str]] | None = None
                ) -> tuple[list[GpuInfo], str]:
     run = run or _default_run
+    which = which or shutil.which
     if not which("nvidia-smi"):
         return [], "nvidia-smi not found (no NVIDIA GPU/driver detected)"
     r = run(NVIDIA_SMI_ARGV, Path.cwd(), 30, None)
@@ -109,7 +110,7 @@ def query_gpus(*, run: Runner | None = None, which: Callable[[str], Optional[str
     return gpus, "" if gpus else "nvidia-smi returned no GPUs"
 
 
-def capability_preflight(worker_id: str, *, run: Runner | None = None, which=shutil.which, now: float = 0.0,
+def capability_preflight(worker_id: str, *, run: Runner | None = None, which=None, now: float = 0.0,
                          disk_path: str | Path = ".", remote_provider: str = "") -> WorkerRecord:
     gpus, note = query_gpus(run=run, which=which)
     ram = None

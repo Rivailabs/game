@@ -81,8 +81,8 @@ def meshy_transport(final_status="SUCCEEDED"):
     task = {"id": "t-1", "status": final_status, "progress": 100,
             "model_urls": {"glb": "https://assets.meshy.ai/t-1/model.glb", "fbx": "https://assets.meshy.ai/t-1/m.fbx"},
             "texture_urls": [{"base_color": "https://assets.meshy.ai/t-1/base.png"}],
-            "thumbnail_url": "https://assets.meshy.ai/t-1/thumb.png", "task_error": {"message": "nsfw" if
-                                                                                        final_status == "FAILED" else ""}}
+            "thumbnail_url": "https://assets.meshy.ai/t-1/thumb.png",
+            "task_error": {"message": "nsfw" if final_status == "FAILED" else ""}}
     return FakeTransport({
         ("POST", "https://api.meshy.ai/openapi/v2/text-to-3d"): {"result": "t-1"},
         ("GET", "https://api.meshy.ai/openapi/v2/text-to-3d/t-1"): sequence(
