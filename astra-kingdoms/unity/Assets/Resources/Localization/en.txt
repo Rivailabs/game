@@ -232,3 +232,151 @@ replay.failed = Record verification failed: {0}
 auto.running = Automation run: seed {0} ({1} of {2})
 auto.done = Automation finished: {0}
 error.generic = Something went wrong: {0}
+
+# ---- V1 duel presentation, land, screens and usability (tickets 26-48) ----
+# Plural and number placeholders: {0,number} groups digits; {0,plural,one{...} other{...}} (see MessageFormat).
+
+announce.text = Round {0} of 8\nTerrain: {1}\n{2} attacks this round
+announce.withLand = {0}\n\n{1}
+
+cue.release = {0} Released
+cue.dodge = {0} {1}
+cue.shieldRaised = {0} Ash Shield up
+cue.wallRaised = {0} Iron Wall cover
+cue.clashSurvived = {0} Survived the clash
+cue.clashCancelled = {0} Cancelled in a clash
+cue.hit = {0} {1} HP
+cue.hitCovered = {0} {1} HP, reduced by cover
+cue.graze = {0} Graze {1} HP
+cue.grazeCovered = {0} Graze {1} HP, reduced by cover
+cue.blocked = {0} Blocked
+cue.miss = {0} Miss
+cue.coverRemoved = {0} Cover washed away
+cue.health = {0} HP {1}
+
+hud.hpLand = {0} - {1}
+hud.nameReady = {0} [{1}]
+hud.timeUrgent = ! {0}
+
+home.weapons = Weapons and mastery
+home.catalog = Practice set: {0}
+home.arena = Arena: {0}
+catalog.starter = Starter (5 weapons)
+catalog.full = Full (20 weapons, loaned)
+arena.courtyard = Palace courtyard
+arena.riverside = River steps
+
+mode.online = Play online
+mode.online.hint = A match against another player. A bot is offered only after waiting, and is always labelled.
+mode.friend = Play with a friend
+mode.friend.hint = Share a room code. Both players see the same settings before starting.
+mode.tutorial = Tutorial
+mode.tutorial.hint = A guided starter duel, one choice at a time.
+mode.unavailable.offline = Needs an internet connection.
+mode.unavailable.notInThisBuild = Not available in this build yet.
+
+loadout.countOf = {0} of {1} equipped
+loadout.loanNote = Loaned weapons are lent to both players for this room only.
+loadout.owned = Owned
+loadout.loaned = Loaned
+loadout.row = {0} - {1}
+loadout.rowReserve = {0} - {1} - reserve (Armoury defence only)
+loadout.pickReserve = Choose a reserve weapon
+loadout.pickReserveActive = Tap the weapon to keep in reserve
+loadout.hintStarter = Starter set: equip 1 to {0} weapons. Your loadout stays private.
+loadout.hintFull = Full set: equip 1 to {0} weapons; with six you may add one reserve. Your loadout stays private.
+loadout.full = All slots are full. Remove a weapon first.
+loadout.reserveDistinct = The reserve must be a weapon you have not equipped.
+loadout.reserveFullOnly = Reserves exist only in Full rooms.
+loadout.reserveNeedsSix = Equip six weapons before choosing a reserve.
+loadout.notInRoom = That weapon is not in this room's set.
+
+select.dodgeOption = {0} {1}
+select.locked = Locked
+select.lockedWaiting = Locked. Waiting for the other choice.
+select.pitchLimit = Up/down angle {0} deg (limit)
+select.yawLimit = Left/right angle {0} deg (limit)
+
+land.totals = {0}: {1,number} cells ({2}%) - {3}: {4,number} cells ({5}%)
+land.legend = {0}: stripes - {1}: dots - white line: border - diamond: special terrain
+land.margin = HP margin: {0}
+land.withGlyph = {0} {1}
+land.vajraLocked = Vajra is offered only after a margin above 60.00 HP.
+land.reason.floor = {0}: {2,number} cells - the 3% minimum, because the HP margin was small.
+land.reason.margin = {0}: {2,number} cells - its {1}% cap times your HP margin.
+land.reason.loserLand = {0}: {2,number} cells - all the land the other player has left.
+land.gesture.TooShort = Keep drawing: a loop needs at least three points.
+land.gesture.ClosedAutomatically = Your finger lifted far from the start, so the loop was closed with a straight edge.
+land.gesture.LeftTheBoard = Points outside the board were ignored.
+land.gesture.Simplified = The loop was simplified to 128 points.
+
+result.areasPercent = {0}: {1,number} cells ({2}%) - {3}: {4,number} cells ({5}%)
+result.detail = {0}\n{1}\n{2}
+
+settings.motion = Reduced motion: {0}
+settings.patterns = Patterns and shapes (not only colour): {0}
+settings.tutorialUntimed = Untimed tutorial: {0}
+settings.dataTitle = Data on this phone
+settings.dataHint = This phone keeps your settings, tutorial progress and match records.
+settings.deleteData = Delete data on this phone
+settings.deleteConfirm = Tap again to delete
+settings.deleteWarning = This resets your settings and removes saved records on this phone.
+settings.deleted = Data on this phone was deleted.
+settings.deleteFailed = Some data could not be deleted: {0}
+
+data.settings = Settings and tutorial progress
+data.records = Match records
+data.practice = Practice statistics
+
+session.overlay.None = Ready
+session.overlay.ResumeCover = Welcome back
+session.overlay.PauseMenu = Paused
+session.overlay.Reconnecting = Reconnecting
+session.overlay.ConnectionLost = Connection lost
+session.overlay.Recovered = Back in the match
+session.resumeTitle = Welcome back
+session.resumeHint = The match clock stopped while the app was away. Make sure only the right player can see the screen, then continue.
+session.reconnecting = Reconnecting to the match. The server keeps the match clock.
+session.lost = The connection was lost. You can keep waiting or leave the match.
+session.recovered = The match is now at: {0}
+session.keepWaiting = Keep waiting
+session.leave = Leave match
+session.continue = Continue
+
+phase.setup = Choosing loadouts
+phase.terrainAnnounce = Terrain announcement
+phase.selection = Choosing a shot
+phase.resolution = Watching the volley
+phase.cardAndCut = Taking land
+phase.matchOver = Match over
+phase.unknown = Waiting for the match
+
+tutorial.title = Tutorial
+tutorial.offerTitle = Learn with a guided duel?
+tutorial.offerHint = A short practice match against a labelled bot. One choice at a time, and no timer unless you turn it on.
+tutorial.start = Start the tutorial
+tutorial.skip = Not now
+tutorial.step.Welcome = Two archers shoot at the same time. Win the duel, then take land. Tap Continue.
+tutorial.step.ChooseWeapon = Choose a weapon. Each element beats two others; the shape on the button shows its element.
+tutorial.step.AimAndPower = Drag on the aim pad to change the angle, then set the power. The line shows the start of your arrow's flight.
+tutorial.step.ChooseDodge = Choose a dodge: stand, left, right or jump. A dodge can make the other arrow miss.
+tutorial.step.Lock = Lock your choice. It cannot change after locking, and the bot never sees it.
+tutorial.step.WatchReveal = Both shots fly at the same time. Watch where each arrow goes.
+tutorial.step.ReadOutcome = Read what happened, then tap Continue.
+tutorial.step.FreePlay = Keep playing with everything you learned. The hints stay on.
+tutorial.step.DrawCut = You won the duel. Choose a card, then draw a loop around the marked border cell, or tap Auto Cut.
+tutorial.step.AdvancedStatuses = Some weapons add effects such as burn, shock or net. The HUD lists them under each player. Tap Continue.
+tutorial.step.Complete = Tutorial complete.
+tutorial.why.pass = You did not choose in time, so you passed this volley.
+tutorial.why.clashed = Your arrow was cancelled in a mid-air clash.
+tutorial.why.theyDodged = Your arrow missed because {0} dodged: {1}.
+tutorial.why.blocked = Your arrow hit {0}'s Ash Shield.
+tutorial.why.missed = Your arrow missed. Try a different angle or power.
+tutorial.why.elementBeatYou = Their {0} beats your {1}, so their hit counted 1.5 times.
+tutorial.why.noDodge = You stood still, so their arrow could reach you.
+tutorial.why.hpSummary = You lost {0} HP and took {1} HP from them.
+
+weapons.title = Weapons and mastery
+weapons.summary = Account level {0}. In Full rooms every weapon is loaned to both players.
+weapons.row = {0} - {1} - {2} ({3,plural,one{# shot} other{# shots}})
+weapons.unlocksAt = Unlocks at level {0} (loaned in Full rooms)

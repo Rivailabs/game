@@ -270,11 +270,14 @@ namespace AstraKingdoms.Client.Match
             }
         }
 
-        public CommandReceipt SubmitLoadout(PlayerSide side, IReadOnlyList<int> weapons)
+        public CommandReceipt SubmitLoadout(PlayerSide side, IReadOnlyList<int> weapons) => SubmitLoadout(side, weapons, 0);
+
+        /// <summary>Loadout with an optional Full-room reserve (0 = none).</summary>
+        public CommandReceipt SubmitLoadout(PlayerSide side, IReadOnlyList<int> weapons, int reserve)
         {
             RequireStage(HostStage.LoadoutEntry, side);
             PlayerView view = Engine.GetView(side);
-            CommandReceipt r = Engine.Submit(side, new SubmitLoadoutCommand(view.NewHeader(_requestIds()), weapons));
+            CommandReceipt r = Engine.Submit(side, new SubmitLoadoutCommand(view.NewHeader(_requestIds()), weapons, reserve));
             Report(r);
             if (r.Accepted) Sync(force: true);
             return r;

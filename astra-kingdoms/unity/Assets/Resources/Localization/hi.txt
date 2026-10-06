@@ -234,3 +234,150 @@ replay.failed = रिकॉर्ड सत्यापन विफल: {0}
 auto.running = स्वचालित रन: सीड {0} ({2} में से {1})
 auto.done = स्वचालित रन समाप्त: {0}
 error.generic = कुछ गलत हो गया: {0}
+
+# ---- V1 द्वंद्व प्रस्तुति, भूमि, स्क्रीन और उपयोगिता (टिकट 26-48) - needs fluent-speaker review ----
+
+announce.text = राउंड {0} / 8\nभूभाग: {1}\nइस राउंड में {2} आक्रमण करता है
+announce.withLand = {0}\n\n{1}
+
+cue.release = {0} छोड़ा
+cue.dodge = {0} {1}
+cue.shieldRaised = {0} भस्म ढाल उठी
+cue.wallRaised = {0} लौह दीवार की आड़
+cue.clashSurvived = {0} टक्कर में बचा
+cue.clashCancelled = {0} टक्कर में नष्ट
+cue.hit = {0} {1} HP
+cue.hitCovered = {0} {1} HP, आड़ से कम
+cue.graze = {0} छू गया {1} HP
+cue.grazeCovered = {0} छू गया {1} HP, आड़ से कम
+cue.blocked = {0} रोका गया
+cue.miss = {0} चूका
+cue.coverRemoved = {0} आड़ बह गई
+cue.health = {0} HP {1}
+
+hud.hpLand = {0} - {1}
+hud.nameReady = {0} [{1}]
+hud.timeUrgent = ! {0}
+
+home.weapons = हथियार और महारत
+home.catalog = अभ्यास सेट: {0}
+home.arena = अखाड़ा: {0}
+catalog.starter = आरंभिक (5 हथियार)
+catalog.full = पूर्ण (20 हथियार, उधार)
+arena.courtyard = महल का आँगन
+arena.riverside = नदी के घाट
+
+mode.online = ऑनलाइन खेलें
+mode.online.hint = किसी दूसरे खिलाड़ी के साथ मैच। प्रतीक्षा के बाद ही बॉट दिया जाता है, और उसे हमेशा बॉट बताया जाता है।
+mode.friend = मित्र के साथ खेलें
+mode.friend.hint = रूम कोड साझा करें। शुरू करने से पहले दोनों खिलाड़ी एक जैसी सेटिंग्स देखते हैं।
+mode.tutorial = ट्यूटोरियल
+mode.tutorial.hint = मार्गदर्शित आरंभिक द्वंद्व, एक समय में एक विकल्प।
+mode.unavailable.offline = इंटरनेट कनेक्शन चाहिए।
+mode.unavailable.notInThisBuild = इस बिल्ड में अभी उपलब्ध नहीं है।
+
+loadout.countOf = {1} में से {0} चुने गए
+loadout.loanNote = उधार के हथियार केवल इस रूम के लिए दोनों खिलाड़ियों को दिए जाते हैं।
+loadout.owned = अपना
+loadout.loaned = उधार
+loadout.row = {0} - {1}
+loadout.rowReserve = {0} - {1} - आरक्षित (केवल शस्त्रागार की रक्षा में)
+loadout.pickReserve = आरक्षित हथियार चुनें
+loadout.pickReserveActive = आरक्षित रखने वाले हथियार पर टैप करें
+loadout.hintStarter = आरंभिक सेट: 1 से {0} हथियार चुनें। आपका चयन गोपनीय रहता है।
+loadout.hintFull = पूर्ण सेट: 1 से {0} हथियार चुनें; छह होने पर एक आरक्षित जोड़ सकते हैं। आपका चयन गोपनीय रहता है।
+loadout.full = सभी स्थान भरे हैं। पहले कोई हथियार हटाएँ।
+loadout.reserveDistinct = आरक्षित हथियार वह होना चाहिए जो आपने नहीं चुना है।
+loadout.reserveFullOnly = आरक्षित हथियार केवल पूर्ण रूम में होते हैं।
+loadout.reserveNeedsSix = आरक्षित चुनने से पहले छह हथियार चुनें।
+loadout.notInRoom = यह हथियार इस रूम के सेट में नहीं है।
+
+select.dodgeOption = {0} {1}
+select.locked = लॉक हो गया
+select.lockedWaiting = लॉक हो गया। दूसरे विकल्प की प्रतीक्षा है।
+select.pitchLimit = ऊपर/नीचे कोण {0} डिग्री (सीमा)
+select.yawLimit = बाएँ/दाएँ कोण {0} डिग्री (सीमा)
+
+land.totals = {0}: {1,number} सेल ({2}%) - {3}: {4,number} सेल ({5}%)
+land.legend = {0}: धारियाँ - {1}: बिंदु - सफ़ेद रेखा: सीमा - हीरा: विशेष भूभाग
+land.margin = HP अंतर: {0}
+land.withGlyph = {0} {1}
+land.vajraLocked = वज्र केवल 60.00 HP से अधिक अंतर पर मिलता है।
+land.reason.floor = {0}: {2,number} सेल - 3% न्यूनतम, क्योंकि HP अंतर छोटा था।
+land.reason.margin = {0}: {2,number} सेल - इसकी {1}% सीमा गुणा आपका HP अंतर।
+land.reason.loserLand = {0}: {2,number} सेल - दूसरे खिलाड़ी की बची हुई पूरी भूमि।
+land.gesture.TooShort = बनाते रहें: घेरे के लिए कम से कम तीन बिंदु चाहिए।
+land.gesture.ClosedAutomatically = उँगली शुरुआत से दूर उठी, इसलिए घेरा एक सीधी रेखा से बंद किया गया।
+land.gesture.LeftTheBoard = बोर्ड के बाहर के बिंदु छोड़ दिए गए।
+land.gesture.Simplified = घेरे को 128 बिंदुओं तक सरल किया गया।
+
+result.areasPercent = {0}: {1,number} सेल ({2}%) - {3}: {4,number} सेल ({5}%)
+result.detail = {0}\n{1}\n{2}
+
+settings.motion = कम गति (मोशन): {0}
+settings.patterns = पैटर्न और आकार (केवल रंग नहीं): {0}
+settings.tutorialUntimed = बिना समय-सीमा का ट्यूटोरियल: {0}
+settings.dataTitle = इस फ़ोन पर डेटा
+settings.dataHint = यह फ़ोन आपकी सेटिंग्स, ट्यूटोरियल की प्रगति और मैच रिकॉर्ड रखता है।
+settings.deleteData = इस फ़ोन का डेटा हटाएँ
+settings.deleteConfirm = हटाने के लिए फिर से टैप करें
+settings.deleteWarning = इससे सेटिंग्स रीसेट होंगी और इस फ़ोन के सहेजे रिकॉर्ड हट जाएँगे।
+settings.deleted = इस फ़ोन का डेटा हटा दिया गया।
+settings.deleteFailed = कुछ डेटा हटाया नहीं जा सका: {0}
+
+data.settings = सेटिंग्स और ट्यूटोरियल प्रगति
+data.records = मैच रिकॉर्ड
+data.practice = अभ्यास के आँकड़े
+
+session.overlay.None = तैयार
+session.overlay.ResumeCover = फिर से स्वागत है
+session.overlay.PauseMenu = रुका हुआ
+session.overlay.Reconnecting = फिर से जुड़ रहे हैं
+session.overlay.ConnectionLost = कनेक्शन टूट गया
+session.overlay.Recovered = मैच में वापस
+session.resumeTitle = फिर से स्वागत है
+session.resumeHint = ऐप के बाहर रहने तक मैच की घड़ी रुकी रही। ध्यान रखें कि स्क्रीन सही खिलाड़ी ही देखे, फिर आगे बढ़ें।
+session.reconnecting = मैच से फिर जुड़ रहे हैं। मैच की घड़ी सर्वर चलाता है।
+session.lost = कनेक्शन टूट गया। आप प्रतीक्षा कर सकते हैं या मैच छोड़ सकते हैं।
+session.recovered = मैच अब यहाँ है: {0}
+session.keepWaiting = प्रतीक्षा करें
+session.leave = मैच छोड़ें
+session.continue = आगे बढ़ें
+
+phase.setup = हथियार चुने जा रहे हैं
+phase.terrainAnnounce = भूभाग की घोषणा
+phase.selection = निशाना चुना जा रहा है
+phase.resolution = वॉली देखी जा रही है
+phase.cardAndCut = भूमि ली जा रही है
+phase.matchOver = मैच समाप्त
+phase.unknown = मैच की प्रतीक्षा
+
+tutorial.title = ट्यूटोरियल
+tutorial.offerTitle = मार्गदर्शित द्वंद्व से सीखें?
+tutorial.offerHint = बॉट के साथ एक छोटा अभ्यास मैच, जिसे हमेशा बॉट बताया जाता है। एक समय में एक विकल्प, और जब तक आप चालू न करें तब तक कोई टाइमर नहीं।
+tutorial.start = ट्यूटोरियल शुरू करें
+tutorial.skip = अभी नहीं
+tutorial.step.Welcome = दो धनुर्धर एक साथ तीर चलाते हैं। द्वंद्व जीतें, फिर भूमि लें। आगे बढ़ें पर टैप करें।
+tutorial.step.ChooseWeapon = एक हथियार चुनें। हर तत्व दो दूसरों पर भारी है; बटन पर बना आकार उसका तत्व दिखाता है।
+tutorial.step.AimAndPower = कोण बदलने के लिए निशाना पैड पर खींचें, फिर शक्ति तय करें। रेखा आपके तीर की उड़ान की शुरुआत दिखाती है।
+tutorial.step.ChooseDodge = बचाव चुनें: खड़े रहें, बाएँ, दाएँ या कूदें। बचाव से दूसरा तीर चूक सकता है।
+tutorial.step.Lock = अपना विकल्प लॉक करें। लॉक के बाद यह नहीं बदलता, और बॉट इसे कभी नहीं देखता।
+tutorial.step.WatchReveal = दोनों तीर एक साथ उड़ते हैं। देखें हर तीर कहाँ जाता है।
+tutorial.step.ReadOutcome = पढ़ें क्या हुआ, फिर आगे बढ़ें पर टैप करें।
+tutorial.step.FreePlay = जो सीखा उसके साथ खेलते रहें। संकेत चालू रहते हैं।
+tutorial.step.DrawCut = आपने द्वंद्व जीता। एक कार्ड चुनें, फिर चिह्नित सीमा सेल के चारों ओर घेरा बनाएँ, या स्वतः कट पर टैप करें।
+tutorial.step.AdvancedStatuses = कुछ हथियार जलन, झटका या जाल जैसे प्रभाव जोड़ते हैं। HUD इन्हें हर खिलाड़ी के नीचे दिखाता है। आगे बढ़ें पर टैप करें।
+tutorial.step.Complete = ट्यूटोरियल पूरा हुआ।
+tutorial.why.pass = आपने समय पर नहीं चुना, इसलिए यह वॉली पास हो गई।
+tutorial.why.clashed = आपका तीर हवा में टक्कर से नष्ट हो गया।
+tutorial.why.theyDodged = आपका तीर चूका क्योंकि {0} ने बचाव किया: {1}।
+tutorial.why.blocked = आपका तीर {0} की भस्म ढाल से टकराया।
+tutorial.why.missed = आपका तीर चूक गया। दूसरा कोण या शक्ति आज़माएँ।
+tutorial.why.elementBeatYou = उनका {0} आपके {1} पर भारी है, इसलिए उनका वार 1.5 गुना गिना गया।
+tutorial.why.noDodge = आप खड़े रहे, इसलिए उनका तीर आप तक पहुँच सका।
+tutorial.why.hpSummary = आपके {0} HP गए और आपने उनके {1} HP लिए।
+
+weapons.title = हथियार और महारत
+weapons.summary = खाता स्तर {0}। पूर्ण रूम में हर हथियार दोनों खिलाड़ियों को उधार मिलता है।
+weapons.row = {0} - {1} - {2} ({3,plural,one{# तीर} other{# तीर}})
+weapons.unlocksAt = स्तर {0} पर खुलता है (पूर्ण रूम में उधार)

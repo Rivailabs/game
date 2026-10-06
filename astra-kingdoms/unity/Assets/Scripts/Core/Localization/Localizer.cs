@@ -70,27 +70,35 @@ namespace AstraKingdoms.Client.Localization
             return MissingPlaceholder;
         }
 
-        /// <summary>Looks up a template and fills positional parameters (invariant number formatting).</summary>
+        /// <summary>
+        /// Looks up a template and fills its parameters with <see cref="MessageFormat"/> (positional
+        /// text, language digit grouping and plural forms). Fallback rules, in order: the current
+        /// language's template; if it is missing, or malformed for these arguments, the English
+        /// template; if that also fails, the English template text unfilled. A raw key is never shown.
+        /// </summary>
         public string Format(string key, params object[] args)
         {
             string template = Get(key);
             if (args == null || args.Length == 0) return template;
             try
             {
-                return string.Format(CultureInfo.InvariantCulture, template, args);
+                return MessageFormat.Format(template, _language, args);
             }
             catch (FormatException)
             {
                 // A malformed translation must not crash the match screen; English is the safe form.
-                string en;
-                if (_tables[English].TryGet(key, out en))
+                if (_tables[English].TryGet(key, out string en))
                 {
-                    try { return string.Format(CultureInfo.InvariantCulture, en, args); }
-                    catch (FormatException) { }
+                    if (_language != English) MissingKey?.Invoke(_language, key);
+                    try { return MessageFormat.Format(en, English, args); }
+                    catch (FormatException) { return en; }
                 }
                 return template;
             }
         }
+
+        /// <summary>An integer with the current language's digit grouping (51,040; Indian 1,23,456).</summary>
+        public string Number(long value) => MessageFormat.GroupedInteger(value, _language);
 
         /// <summary>Keys present in English but missing from <paramref name="code"/> (empty for English).</summary>
         public IReadOnlyList<string> MissingKeys(string code)

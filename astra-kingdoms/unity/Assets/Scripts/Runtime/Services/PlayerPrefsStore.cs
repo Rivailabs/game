@@ -4,7 +4,7 @@ using UnityEngine;
 namespace AstraKingdoms.Client.Services
 {
     /// <summary>Settings persistence through Unity PlayerPrefs.</summary>
-    public sealed class PlayerPrefsStore : IKeyValueStore
+    public sealed class PlayerPrefsStore : IKeyValueStore, IKeyValueEraser
     {
         public bool HasKey(string key) => PlayerPrefs.HasKey(key);
         public float GetFloat(string key, float fallback) => PlayerPrefs.GetFloat(key, fallback);
@@ -14,5 +14,6 @@ namespace AstraKingdoms.Client.Services
         public void SetInt(string key, int value) => PlayerPrefs.SetInt(key, value);
         public void SetString(string key, string value) => PlayerPrefs.SetString(key, value);
         public void Save() => PlayerPrefs.Save();
+        public void DeleteKey(string key) => PlayerPrefs.DeleteKey(key);
     }
 }

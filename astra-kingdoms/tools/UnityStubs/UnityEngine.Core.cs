@@ -43,6 +43,7 @@ namespace UnityEngine
         public Component AddComponent(Type componentType) => throw null;
         public T GetComponent<T>() => throw null;
         public T GetComponentInChildren<T>() => throw null;
+        public T[] GetComponentsInChildren<T>(bool includeInactive) => throw null;
         public static GameObject Find(string name) => throw null;
         public static GameObject CreatePrimitive(PrimitiveType type) => throw null;
     }
@@ -54,6 +55,7 @@ namespace UnityEngine
         public string tag { get; set; }
         public T GetComponent<T>() => throw null;
         public T GetComponentInChildren<T>() => throw null;
+        public T[] GetComponentsInChildren<T>(bool includeInactive) => throw null;
     }
 
     public class Behaviour : Component
@@ -79,6 +81,10 @@ namespace UnityEngine
         public Quaternion localRotation { get; set; }
         public Vector3 localScale { get; set; }
         public Vector3 eulerAngles { get; set; }
+        public Vector3 localEulerAngles { get; set; }
+        public Vector3 forward { get; set; }
+        public Vector3 up { get; set; }
+        public Vector3 right { get; set; }
         public Transform parent { get; set; }
         public int childCount => throw null;
         public Transform GetChild(int index) => throw null;
@@ -161,6 +167,10 @@ namespace UnityEngine
         public static Vector3 operator *(float d, Vector3 a) => new Vector3(a.x * d, a.y * d, a.z * d);
         public static float Distance(Vector3 a, Vector3 b) => throw null;
         public static Vector3 Lerp(Vector3 a, Vector3 b, float t) => throw null;
+        public static Vector3 right => new Vector3(1, 0, 0);
+        public static Vector3 forward => new Vector3(0, 0, 1);
+        public Vector3 normalized => throw null;
+        public float magnitude => throw null;
     }
 
     public struct Quaternion
@@ -172,6 +182,10 @@ namespace UnityEngine
         public static Quaternion identity => throw null;
         public static Quaternion Euler(float x, float y, float z) => throw null;
         public static Quaternion LookRotation(Vector3 forward) => throw null;
+        public static Quaternion LookRotation(Vector3 forward, Vector3 upwards) => throw null;
+        public static Quaternion AngleAxis(float angle, Vector3 axis) => throw null;
+        public static Quaternion operator *(Quaternion lhs, Quaternion rhs) => throw null;
+        public static Vector3 operator *(Quaternion rotation, Vector3 point) => throw null;
     }
 
     public struct Color
@@ -237,6 +251,7 @@ namespace UnityEngine
         public float nearClipPlane { get; set; }
         public float farClipPlane { get; set; }
         public bool orthographic { get; set; }
+        public Vector3 WorldToScreenPoint(Vector3 position) => throw null;
     }
 
     public enum LightType
@@ -251,6 +266,7 @@ namespace UnityEngine
         public LightType type { get; set; }
         public float intensity { get; set; }
         public Color color { get; set; }
+        public LightShadows shadows { get; set; }
     }
 
     public sealed class AudioListener : Behaviour
@@ -266,6 +282,7 @@ namespace UnityEngine
     {
         public Material material { get; set; }
         public Material sharedMaterial { get; set; }
+        public Material[] sharedMaterials { get; set; }
         public bool enabled { get; set; }
     }
 
@@ -296,6 +313,8 @@ namespace UnityEngine
         public Material(Material source) { }
         public Color color { get; set; }
         public Shader shader { get; set; }
+        public Texture mainTexture { get; set; }
+        public int renderQueue { get; set; }
     }
 
     public enum FilterMode
@@ -368,6 +387,7 @@ namespace UnityEngine
         public static bool isPlaying => throw null;
         public static bool isBatchMode => throw null;
         public static int targetFrameRate { get; set; }
+        public static NetworkReachability internetReachability => throw null;
         public static void Quit() { }
         public static void Quit(int exitCode) { }
         public static void OpenURL(string url) { }

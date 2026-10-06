@@ -1,0 +1,147 @@
+metric,group,key,n,wins,losses,draws,win_share,wilson_lo,wilson_hi
+terminal_reason,all,Territory90,2004,335,,,0.1672,,
+terminal_reason,all,RoundsComplete,2004,1669,,,0.8328,,
+round8_frequency,all,reached_round_8,2004,1722,,,0.8593,0.8434,0.8738
+policy_pairing,all,Easy v Hard,334,0,334,0,0.0000,0.0000,0.0114
+policy_pairing,all,Easy v Normal,334,10,324,0,0.0299,0.0163,0.0542
+policy_pairing,all,Hard v Normal,334,271,63,0,0.8114,0.7660,0.8497
+first_attacker,all,All matches,2004,982,1018,4,0.4910,0.4691,0.5129
+first_attacker,mirror,Mirror labels,1002,470,528,4,0.4709,0.4401,0.5020
+first_attacker,Easy v Easy,"First attacker, Easy v Easy",334,163,171,0,0.4880,0.4349,0.5415
+first_attacker,Hard v Hard,"First attacker, Hard v Hard",334,158,172,4,0.4788,0.4254,0.5326
+first_attacker,Normal v Normal,"First attacker, Normal v Normal",334,149,185,0,0.4461,0.3937,0.4997
+first_attacker,catalog,Catalog Full,2004,982,1018,4,0.4910,0.4691,0.5129
+cohort_matchup,mirror,L1 (starters) v L1 (starters),44,18,18,8,0.5000,0.3447,0.6553
+cohort_matchup,mirror,L1 (starters) v L2-8,124,54,70,0,0.4355,0.3515,0.5234
+cohort_matchup,mirror,L1 (starters) v L9-16,132,56,76,0,0.4242,0.3432,0.5095
+cohort_matchup,mirror,L1 (starters) v L17-20,58,26,32,0,0.4483,0.3275,0.5755
+cohort_matchup,mirror,L2-8 v L1 (starters),124,70,54,0,0.5645,0.4766,0.6485
+cohort_matchup,mirror,L2-8 v L2-8,180,90,90,0,0.5000,0.4277,0.5723
+cohort_matchup,mirror,L2-8 v L9-16,202,111,91,0,0.5495,0.4806,0.6166
+cohort_matchup,mirror,L2-8 v L17-20,138,69,69,0,0.5000,0.4177,0.5823
+cohort_matchup,mirror,L9-16 v L1 (starters),132,76,56,0,0.5758,0.4905,0.6568
+cohort_matchup,mirror,L9-16 v L2-8,202,91,111,0,0.4505,0.3834,0.5194
+cohort_matchup,mirror,L9-16 v L9-16,228,114,114,0,0.5000,0.4356,0.5644
+cohort_matchup,mirror,L9-16 v L17-20,84,39,45,0,0.4643,0.3615,0.5702
+cohort_matchup,mirror,L17-20 v L1 (starters),58,32,26,0,0.5517,0.4245,0.6725
+cohort_matchup,mirror,L17-20 v L2-8,138,69,69,0,0.5000,0.4177,0.5823
+cohort_matchup,mirror,L17-20 v L9-16,84,45,39,0,0.5357,0.4298,0.6385
+cohort_matchup,mirror,L17-20 v L17-20,76,38,38,0,0.5000,0.3903,0.6097
+cohort_vs_other_bands,mirror,L1 (starters),314,136,178,0,0.4331,0.3794,0.4884
+cohort_vs_other_bands,mirror,L2-8,464,250,214,0,0.5388,0.4933,0.5836
+cohort_vs_other_bands,mirror,L9-16,418,206,212,0,0.4928,0.4452,0.5406
+cohort_vs_other_bands,mirror,L17-20,280,146,134,0,0.5214,0.4630,0.5793
+element_matchup,mirror,Agni v Agni,2394,879,879,636,0.5000,0.4767,0.5233
+element_matchup,mirror,Agni v Vayu,1911,1489,187,235,0.8884,0.8725,0.9026
+element_matchup,mirror,Agni v Prithvi,3050,2559,205,286,0.9258,0.9155,0.9350
+element_matchup,mirror,Agni v Vidyut,2250,434,1532,284,0.2208,0.2030,0.2396
+element_matchup,mirror,Agni v Varuna,2109,651,1047,411,0.3834,0.3606,0.4068
+element_matchup,mirror,Vayu v Agni,1911,187,1489,235,0.1116,0.0974,0.1275
+element_matchup,mirror,Vayu v Vayu,1476,527,527,422,0.5000,0.4699,0.5301
+element_matchup,mirror,Vayu v Prithvi,1794,1139,289,366,0.7976,0.7760,0.8176
+element_matchup,mirror,Vayu v Vidyut,1721,1001,398,322,0.7155,0.6913,0.7385
+element_matchup,mirror,Vayu v Varuna,1584,403,840,341,0.3242,0.2988,0.3507
+element_matchup,mirror,Prithvi v Agni,3050,205,2559,286,0.0742,0.0650,0.0845
+element_matchup,mirror,Prithvi v Vayu,1794,289,1139,366,0.2024,0.1824,0.2240
+element_matchup,mirror,Prithvi v Prithvi,1848,545,545,758,0.5000,0.4704,0.5296
+element_matchup,mirror,Prithvi v Vidyut,1985,1245,526,214,0.7030,0.6813,0.7238
+element_matchup,mirror,Prithvi v Varuna,1827,905,354,568,0.7188,0.6934,0.7430
+element_matchup,mirror,Vidyut v Agni,2250,1532,434,284,0.7792,0.7604,0.7970
+element_matchup,mirror,Vidyut v Vayu,1721,398,1001,322,0.2845,0.2615,0.3087
+element_matchup,mirror,Vidyut v Prithvi,1985,526,1245,214,0.2970,0.2762,0.3187
+element_matchup,mirror,Vidyut v Vidyut,1230,335,335,560,0.5000,0.4622,0.5378
+element_matchup,mirror,Vidyut v Varuna,1583,1084,149,350,0.8792,0.8598,0.8962
+element_matchup,mirror,Varuna v Agni,2109,1047,651,411,0.6166,0.5932,0.6394
+element_matchup,mirror,Varuna v Vayu,1584,840,403,341,0.6758,0.6493,0.7012
+element_matchup,mirror,Varuna v Prithvi,1827,354,905,568,0.2812,0.2570,0.3066
+element_matchup,mirror,Varuna v Vidyut,1583,149,1084,350,0.1208,0.1038,0.1402
+element_matchup,mirror,Varuna v Varuna,1292,388,388,516,0.5000,0.4649,0.5351
+element_total,mirror,Agni,9320,5133,2971,1216,0.6334,0.6228,0.6438
+element_total,mirror,Vayu,7010,2730,3016,1264,0.4751,0.4622,0.4880
+element_total,mirror,Prithvi,8656,2644,4578,1434,0.3661,0.3551,0.3773
+element_total,mirror,Vidyut,7539,3540,2829,1170,0.5558,0.5436,0.5680
+element_total,mirror,Varuna,7103,2390,3043,1670,0.4399,0.4268,0.4531
+weapon_volley,mirror,1 Ember Arrow,4546,2003,1445,1098,0.5809,0.5644,0.5973
+weapon_duel_used,mirror,1 Ember Arrow,3206,1680,1351,175,0.5543,0.5365,0.5719
+weapon_match_in_loadout,mirror,1 Ember Arrow,1137,596,533,8,0.5279,0.4987,0.5569
+weapon_volley,mirror,2 Gale Arrow,3193,1314,1185,694,0.5258,0.5062,0.5453
+weapon_duel_used,mirror,2 Gale Arrow,2568,1262,1228,78,0.5068,0.4872,0.5264
+weapon_match_in_loadout,mirror,2 Gale Arrow,1148,576,564,8,0.5053,0.4763,0.5342
+weapon_volley,mirror,3 Stone Arrow,4866,1064,2533,1269,0.2958,0.2811,0.3109
+weapon_duel_used,mirror,3 Stone Arrow,3494,1380,1947,167,0.4148,0.3982,0.4316
+weapon_match_in_loadout,mirror,3 Stone Arrow,1152,531,613,8,0.4642,0.4354,0.4931
+weapon_volley,mirror,4 Spark Arrow,4778,2300,1623,855,0.5863,0.5708,0.6016
+weapon_duel_used,mirror,4 Spark Arrow,3383,1733,1562,88,0.5259,0.5089,0.5430
+weapon_match_in_loadout,mirror,4 Spark Arrow,1169,591,570,8,0.5090,0.4803,0.5377
+weapon_volley,mirror,5 Tide Arrow,4615,1826,1670,1119,0.5223,0.5057,0.5388
+weapon_duel_used,mirror,5 Tide Arrow,3383,1635,1614,134,0.5032,0.4860,0.5204
+weapon_match_in_loadout,mirror,5 Tide Arrow,1184,585,591,8,0.4974,0.4689,0.5260
+weapon_volley,mirror,6 Fire Fan,4279,2469,1653,157,0.5990,0.5839,0.6138
+weapon_duel_used,mirror,6 Fire Fan,2655,1482,1146,27,0.5639,0.5449,0.5828
+weapon_match_in_loadout,mirror,6 Fire Fan,835,459,376,0,0.5497,0.5158,0.5831
+weapon_volley,mirror,7 Twin Gust,2767,1357,1100,310,0.5523,0.5326,0.5719
+weapon_duel_used,mirror,7 Twin Gust,2014,1008,970,36,0.5096,0.4876,0.5316
+weapon_match_in_loadout,mirror,7 Twin Gust,846,434,412,0,0.5130,0.4793,0.5465
+weapon_volley,mirror,8 Boulder Shot,4039,1468,1907,664,0.4350,0.4183,0.4518
+weapon_duel_used,mirror,8 Boulder Shot,2624,1307,1251,66,0.5109,0.4916,0.5303
+weapon_match_in_loadout,mirror,8 Boulder Shot,823,474,349,0,0.5759,0.5419,0.6093
+weapon_volley,mirror,9 Chain Bolt,1746,828,606,312,0.5774,0.5517,0.6027
+weapon_duel_used,mirror,9 Chain Bolt,1283,634,614,35,0.5080,0.4803,0.5357
+weapon_match_in_loadout,mirror,9 Chain Bolt,512,255,257,0,0.4980,0.4549,0.5412
+weapon_volley,mirror,10 Mist Veil,1572,277,852,443,0.2453,0.2211,0.2713
+weapon_duel_used,mirror,10 Mist Veil,1267,437,787,43,0.3570,0.3307,0.3843
+weapon_match_in_loadout,mirror,10 Mist Veil,537,219,318,0,0.4078,0.3671,0.4499
+weapon_volley,mirror,11 Ash Shield,1313,733,103,477,0.8768,0.8528,0.8974
+weapon_duel_used,mirror,11 Ash Shield,1084,611,425,48,0.5898,0.5595,0.6193
+weapon_match_in_loadout,mirror,11 Ash Shield,502,251,251,0,0.5000,0.4564,0.5436
+weapon_volley,mirror,12 Cyclone,1452,315,707,430,0.3082,0.2807,0.3372
+weapon_duel_used,mirror,12 Cyclone,1176,434,689,53,0.3865,0.3584,0.4153
+weapon_match_in_loadout,mirror,12 Cyclone,544,240,304,0,0.4412,0.4000,0.4832
+weapon_volley,mirror,13 Iron Wall,954,375,420,159,0.4717,0.4372,0.5065
+weapon_duel_used,mirror,13 Iron Wall,821,374,426,21,0.4675,0.4332,0.5021
+weapon_match_in_loadout,mirror,13 Iron Wall,390,172,218,0,0.4410,0.3926,0.4906
+weapon_volley,mirror,14 Storm Net,1120,369,418,333,0.4689,0.4342,0.5038
+weapon_duel_used,mirror,14 Storm Net,848,426,388,34,0.5233,0.4890,0.5575
+weapon_match_in_loadout,mirror,14 Storm Net,361,188,173,0,0.5208,0.4693,0.5718
+weapon_volley,mirror,15 Flood Arrow,1369,394,612,363,0.3917,0.3620,0.4222
+weapon_duel_used,mirror,15 Flood Arrow,1014,444,531,39,0.4554,0.4244,0.4868
+weapon_match_in_loadout,mirror,15 Flood Arrow,372,170,202,0,0.4570,0.4071,0.5078
+weapon_volley,mirror,16 Sun Lance,1576,807,649,120,0.5543,0.5286,0.5796
+weapon_duel_used,mirror,16 Sun Lance,1036,563,452,21,0.5547,0.5240,0.5850
+weapon_match_in_loadout,mirror,16 Sun Lance,328,179,149,0,0.5457,0.4916,0.5988
+weapon_volley,mirror,17 Sky Dive,1074,271,551,252,0.3297,0.2984,0.3625
+weapon_duel_used,mirror,17 Sky Dive,705,276,402,27,0.4071,0.3707,0.4445
+weapon_match_in_loadout,mirror,17 Sky Dive,250,130,120,0,0.5200,0.4582,0.5812
+weapon_volley,mirror,18 Quake Arrow,645,282,263,100,0.5174,0.4755,0.5591
+weapon_duel_used,mirror,18 Quake Arrow,504,259,232,13,0.5275,0.4833,0.5713
+weapon_match_in_loadout,mirror,18 Quake Arrow,224,129,95,0,0.5759,0.5104,0.6388
+weapon_volley,mirror,19 Thunder Crown,1125,378,517,230,0.4223,0.3904,0.4550
+weapon_duel_used,mirror,19 Thunder Crown,736,352,356,28,0.4972,0.4605,0.5339
+weapon_match_in_loadout,mirror,19 Thunder Crown,230,114,116,0,0.4957,0.4316,0.5598
+weapon_volley,mirror,20 Ocean Call,839,281,297,261,0.4862,0.4456,0.5269
+weapon_duel_used,mirror,20 Ocean Call,596,290,278,28,0.5106,0.4695,0.5515
+weapon_match_in_loadout,mirror,20 Ocean Call,216,110,106,0,0.5093,0.4430,0.5752
+terrain_defender,mirror,Plain,4356,2080,2121,155,0.4951,0.4800,0.5102
+terrain_defender,mirror,Fort,862,473,367,22,0.5631,0.5293,0.5963
+terrain_defender,mirror,River,715,513,166,36,0.7555,0.7218,0.7864
+terrain_defender,mirror,Forest,868,387,436,45,0.4702,0.4363,0.5044
+terrain_defender,mirror,Armoury,1204,555,608,41,0.4772,0.4486,0.5059
+comeback_trailing,after_round_2,< 35% of board,38,2,36,0,0.0526,0.0146,0.1729
+comeback_trailing,after_round_2,35-45%,407,83,324,0,0.2039,0.1676,0.2458
+comeback_trailing,after_round_2,45-50%,481,203,278,0,0.4220,0.3787,0.4666
+comeback_trailing,after_round_4,< 35% of board,136,5,131,0,0.0368,0.0158,0.0832
+comeback_trailing,after_round_4,35-45%,445,82,363,0,0.1843,0.1510,0.2229
+comeback_trailing,after_round_4,45-50%,407,155,252,0,0.3808,0.3350,0.4289
+comeback_trailing,after_round_6,< 35% of board,223,4,219,0,0.0179,0.0070,0.0452
+comeback_trailing,after_round_6,35-45%,415,44,371,0,0.1060,0.0799,0.1393
+comeback_trailing,after_round_6,45-50%,355,124,231,0,0.3493,0.3016,0.4003
+screening_flag,element,Agni,9320,5133,2971,1216,0.6334,0.6164,0.6501
+screening_flag,element,Prithvi,8656,2644,4578,1434,0.3661,0.3484,0.3842
+screening_flag,element,Vidyut,7539,3540,2829,1170,0.5558,0.5361,0.5753
+screening_flag,element,Varuna,7103,2390,3043,1670,0.4399,0.4188,0.4612
+screening_flag,"weapon (duel, used)",3 Stone Arrow,3494,1380,1947,167,0.4148,0.3881,0.4419
+screening_flag,"weapon (duel, used)",10 Mist Veil,1267,437,787,43,0.3570,0.3151,0.4012
+screening_watch,"weapon (duel, used)",11 Ash Shield,1084,611,425,48,0.5898,0.5409,0.6369
+screening_flag,"weapon (duel, used)",12 Cyclone,1176,434,689,53,0.3865,0.3418,0.4331
+screening_watch,"weapon (duel, used)",17 Sky Dive,705,276,402,27,0.4071,0.3493,0.4675
+screening_flag,terrain defender,River,715,513,166,36,0.7555,0.7001,0.8036

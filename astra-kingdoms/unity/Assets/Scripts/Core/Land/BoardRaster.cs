@@ -49,6 +49,19 @@ namespace AstraKingdoms.Client.Land
             }
         }
 
+        /// <summary>Paints an ownership snapshot (<see cref="OwnershipContours.Snapshot"/>: 0 = A, 1 = B, 255 = outside).</summary>
+        public void PaintOwners(byte[] owners)
+        {
+            if (owners == null || owners.Length != Board.GridCellCount) throw new ArgumentException("Expected a 256x256 ownership snapshot.", nameof(owners));
+            Array.Clear(Paint, 0, PixelCount);
+            foreach (int id in Board.ActiveCellIds)
+            {
+                byte o = owners[id];
+                if (o == OwnershipContours.Outside) continue;
+                Paint[BoardMapping.TextureIndex(Board.X(id), Board.Y(id))] = (byte)(o == (byte)PlayerSide.A ? CellPaint.OwnerA : CellPaint.OwnerB);
+            }
+        }
+
         public void OverlayEnvelope(IReadOnlyList<int> envelopeCells)
         {
             if (envelopeCells == null) return;

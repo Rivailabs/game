@@ -4,16 +4,19 @@ using UnityEngine;
 namespace AstraKingdoms.Client.Arena
 {
     /// <summary>
-    /// Creates the grey-box arena from primitives. Used by the editor scene builder (ticket 4) and as
-    /// a runtime fallback, so the duel always has its two capsule fighters at x = 0 and x = 8 m.
-    /// Colliders are removed: rendering never decides contacts.
+    /// Creates the grey-box arena from primitives. Used by the editor scene builders (tickets 4 and
+    /// 36) and as a runtime fallback, so the duel always has its two capsule fighters at x = 0 and
+    /// x = 8 m. Colliders are removed: rendering never decides contacts. The arena treatment
+    /// (courtyard or riverside, <see cref="Presentation.ArenaVariants"/>) supplies the ground and props.
     /// </summary>
     public static class ArenaBuilder
     {
-        public static GameObject CreateArena()
+        public static GameObject CreateArena() => CreateArena(Presentation.ArenaVariants.Courtyard);
+
+        public static GameObject CreateArena(string variantId)
         {
             var root = new GameObject(ArenaLayout.ArenaRootName);
-            CreateGround(root.transform);
+            ArenaVariantBuilder.Build(variantId, root.transform);
             CreateFighter(PlayerSide.A, root.transform);
             CreateFighter(PlayerSide.B, root.transform);
             CreateLight(root.transform);
@@ -62,6 +65,7 @@ namespace AstraKingdoms.Client.Arena
             var light = go.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = 1.1f;
+            light.shadows = LightShadows.None; // plan: no automatic realtime shadow-casting lights
             go.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
             return go;
         }

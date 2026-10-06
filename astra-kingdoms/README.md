@@ -222,9 +222,9 @@ a voluntary rematch). Nothing in code replaces that.
   shaping (conjuncts, vowel signs). Shipping these languages needs a licensed font with coverage
   and a shaping-capable text path, plus native review of the draft strings. English is complete.
 - **Minimum SDK 23** is Unity 6.0's floor, not a decision. Confirm it against the reference phone.
-- **Audio** is generated placeholder tones (nothing to license). The licensed library and asset
-  ledger come in V1.
-- **No tutorial** (V1 ticket). First launch shows language and settings, then Home.
+- **Audio** is generated placeholder tones or silence (nothing to license), routed through the
+  `AudioCue` registry; the licensed library is still to come (see "V1 tickets 24-48" below).
+- **Tutorial** exists in code (ticket 45) but has not been tried by new testers.
 - **Aim preview** shows only the first 0.375 s of the arc, so it reads the angle without solving
   the shot. That is a tuning choice for playtests.
 
@@ -246,3 +246,45 @@ choose what human tests to run.
 - **Match length.** 83.3% of matches reach round 8; 20.3% end by the 90% shortcut.
 - **Comebacks.** Almost none: a player below 35% of the board after duel 4 wins 2.6% of mirror
   matches.
+
+## V1 tickets 24-48: balance, duel and land presentation, screens
+
+Status legend as above. "Done in code" means dotnet-tested logic (rules tests 279, client-core tests
+119 after this work) plus compile-checked Unity code; nothing here has run in a Unity editor or on
+a phone, and no person has played it.
+
+| # | Deliverable | Status | What remains |
+| --- | --- | --- | --- |
+| 24 | Versioned balance publication and rollback | Done in code: `src/AstraKingdoms.Rules/Balance/` — `TunableSchema` (closed list; board, physics, trig, abilities stay frozen), `BalanceBundle` (`AK-BALANCE-BUNDLE/1` JSON, new ID per change, effective rules hash), `BalanceValidator`, `BalanceChannel` (append-only log, idempotent per-match pins, rollback for new matches only, IDs never reused) | **Blocked on a parameterized engine:** AK-TR-1 compiles its constants, so a tuned bundle is refused as `NOT_EXECUTABLE`; it can be validated, hashed and reviewed but not served. Server-side storage is the online agent's work. |
+| 25 | Human/bot balance review report | Done in code: the simulator builds a source-independent `MatchObservation` and one stratified report (pairings, first attacker, unlock cohorts, comebacks by checkpoint and deficit, elements, terrain, weapons usage-conditioned vs loadout-contained, Wilson + Bonferroni flags, "insufficient" strata). Human records use `AK-PLAYTEST-RECORD/1` (match record + pseudonymous seats + consent, replay-verified on ingest). Reports: `reports/balance-review-AK-TR-1-n2000-cohorts.md`; format example in `tools/AstraKingdoms.Sim/examples/` (synthetic, skipped unless `--include-synthetic`). | No human playtest data exists yet. Bot cohorts use a stated familiarity assumption. |
+| 26 | Archer prefab and rig import | Done in code: `ArcherAttachments` contract, placeholder `ArcherRig` from primitives, editor `AssetBudgetValidatorMenu` with the plan's ceilings (`AssetBudgets`) | Needs the approved archer (ticket 65), the editor and deformation review |
+| 27 | Archer animation controller | Done in code: required clip set and transitions in `ArcherPoseLibrary`/`ArcherAnimator` (tested continuity and a single release marker); `ArcherAnimatorBuilder` writes the Animator controller with the `OnReleaseArrow` event | Controller never generated in an editor; production clips |
+| 28 | Bow, arrow and procedural string | Done in code: `BowstringSolver` (grip, nock and arrow collinear at every aim), LineRenderer string, nocked arrow | Visual check at the gameplay camera |
+| 29 | Aim and power preview | Done in code: `AimController` feeds both the preview and the lock; degree ticks, limit markers, timing dots | Touch feel on the phone; light haptics need an Android plugin (`Haptics.Tick` is a no-op seam) |
+| 30 | Selection, lock and reveal | Done in code: `RevealPolicy` (tested over every stage), locked state, ready flags only | Human check |
+| 31-34 | Playback, pooled effects, clash/impact/damage, dodge/cover | Done in code: `VolleyCueBuilder` derives every cue from the record (tested against 4 bot matches); `EffectBudgetPool` (12 x 64) + `EffectPoolView`; captions with glyphs; release marker starts the recorded flight | Visual and frame-time checks on the phone |
+| 35 | HUD | Done in code: `HudModel` (bar + number, glyph statuses, urgency badge, compact layout at 130% text) | Reference-phone readability |
+| 36 | Camera and two arenas | Done in code: `CameraShake` (off with reduced motion), `ArenaVariants` courtyard/riverside (no prop in the flight volume or in front of the camera), `ArenaVariantSceneBuilder` | Frame-time checks of both scenes on the phone |
+| 37-41 | Contours, card choices, cut capture, transfer, totals/labels | Done in code: `OwnershipContours`, `OwnershipOverlay` patterns, `CardChoices`, `CutGesture`, `LandTransferPlan`, `LandTotals`, `BoardLabels` | Usability of the cut window with people |
+| 42 | Result and rematch | Done in code: `ResultSummary`, `RematchGuard` | — |
+| 43 | Bootstrap, menu and modes | Done in code: `ModeCatalog` (offline modes always available; online disabled with a reason), `LaunchFlow` (settings, then the tutorial offer) | Online entries depend on the online layer |
+| 44 | Loadout, mastery, practice | Done in code: `LoadoutModel` (Owned/Loaned from the symmetric catalogue, reserve rules), `Mastery`, weapons screen | Account level comes from progression (default 1 here) |
+| 45 | Tutorial and loss explanation | Done in code: `TutorialMachine` on a real practice match, `LossExplanation` from the record, untimed option | New testers must finish it without coaching |
+| 46 | Settings, accessibility, data | Done in code: reduced motion, patterns, untimed tutorial, local data deletion (`LocalDataControls`) | Account deletion is an online flow |
+| 47 | Pause, background, connection | Done in code: `SessionLifecycle` + `OnApplicationPause` (local clock stops, resume frame dropped, opaque cover), online reconnect/recovered states | Online states need the online layer's events |
+| 48 | English, Hindi, Kannada | Done in code: `MessageFormat` (grouping, CLDR plurals), fallback chain, `glossary.txt`, `FontCoverage`; hi/kn drafts complete but **need fluent-speaker review** | Fonts and a shaping text path (below), native review on the reference phone |
+
+**Text rendering path (ticket 48).** Legacy uGUI `Text` cannot shape Devanagari or Kannada. The
+planned path is TextMesh Pro (bundled with uGUI 2.0 in Unity 6) with the Noto faces listed in the
+asset ledger, font atlases generated from `FontCoverage.AtlasCharacters(...)`, and the editor's
+complex-script shaping verified on the reference phone before Hindi or Kannada ship. `UiFactory`
+is the single place that creates text, so the switch is local to it.
+
+**Asset ledger.** `unity/Assets/Resources/Ledger/asset-ledger.json` (`AK-ASSET-LEDGER/1`) records
+every sound, music track, font, model, texture and animation in use or planned; tests reject an
+approved entry without licence, rights holder, provenance and hash.
+
+```bash
+dotnet run -c Release --project tools/AstraKingdoms.Sim -- --matches 10000 --cohorts      # bot review
+dotnet run -c Release --project tools/AstraKingdoms.Sim -- --ingest path/to/playtests      # human review
+```

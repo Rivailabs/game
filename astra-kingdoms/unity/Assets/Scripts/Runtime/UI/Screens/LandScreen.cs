@@ -10,25 +10,30 @@ using UnityEngine.UI;
 namespace AstraKingdoms.Client.UI.Screens
 {
     /// <summary>
-    /// Card-constrained cut (tickets 7 and 8). Shows total ownership, the maximum allowance Q per
-    /// offered card, the posed card envelope as the visible legal boundary, and the exact cells the
-    /// engine's preview says would move. The envelope is placed by dragging and turned/resized with
-    /// two fingers (or buttons); the cut is a finger-drawn loop captured as screen points, snapped to
-    /// cell centres with the rules' helper, simplified to at most 128 vertices while shown, and
-    /// previewed with <see cref="LocalMatchHost.PreviewCut"/> (exact cells, specific rejection reason).
-    /// Auto Cut is the accessible alternative. Nothing here decides legality or area.
+    /// Card choice and cut (tickets 7-8 and 37-41). Shows exact totals (cells and reconciled
+    /// percentages), owner patterns and the rendered border contour (so ownership reads without
+    /// colour), terrain markers, every offered card with its allowance and the term of the quota
+    /// formula that set it, the posed card envelope as the visible legal boundary, and the exact cells
+    /// the engine's preview says would move. The envelope is placed by dragging and turned/resized
+    /// with two fingers (or buttons); the cut is a finger-drawn loop captured by <see cref="CutGesture"/>
+    /// (snapped with the rules' helper, at most 128 vertices) and previewed with
+    /// <see cref="LocalMatchHost.PreviewCut"/>, which gives the specific rejection reason. Auto Cut is
+    /// the accessible alternative. Nothing here decides legality or area.
     /// </summary>
     public sealed class LandScreen : UiScreen
     {
         private const float PreviewInterval = 0.12f;
 
         private readonly BoardTexture _board = new BoardTexture();
+        private readonly BoardOverlayTexture _overlay = new BoardOverlayTexture();
         private readonly RawImage _image;
         private readonly Text _title;
         private readonly Text _timer;
         private readonly Text _ownership;
+        private readonly Text _explain;
         private readonly Text _status;
         private readonly Text _hint;
+        private readonly Text _legend;
         private readonly RectTransform _cardColumn;
         private readonly RectTransform _controls;
         private readonly Button _modeMove;
@@ -36,7 +41,7 @@ namespace AstraKingdoms.Client.UI.Screens
         private readonly Button _confirm;
         private readonly List<Button> _cardButtons = new List<Button>();
 
-        private readonly List<CellPoint> _stroke = new List<CellPoint>();
+        private readonly CutGesture _gesture = new CutGesture();
         private readonly Dictionary<int, Vector2> _pointers = new Dictionary<int, Vector2>();
 
         private LocalMatchHost _host;
@@ -45,14 +50,15 @@ namespace AstraKingdoms.Client.UI.Screens
         private Territory _territory;
         private IReadOnlyList<CardId> _cards = Array.Empty<CardId>();
         private IReadOnlyList<int> _quotas = Array.Empty<int>();
+        private CardChoiceExplanation _choices;
         private int _frontierCell = -1;
         private int _cardIndex = -1;
         private CardPose _pose;
         private bool _hasPose;
         private bool _drawMode;
         private bool _autoMode;
-        private bool _drawing;
         private List<CellPoint> _polygon = new List<CellPoint>();
+        private GestureHint _gestureHint;
         private int _anchor = -1;
         private CutResult _preview;
         private bool _dirty;
@@ -81,14 +87,17 @@ namespace AstraKingdoms.Client.UI.Screens
             input.Down += OnDown;
             input.Moved += OnMoved;
             input.Up += OnUp;
+            RawImage overlay = ui.Raw(_image.rectTransform, "Overlay", _overlay.Texture);
+            UiFactory.Stretch(overlay.rectTransform);
 
-            RectTransform col = ui.Column(Root, "Column", 8, 16);
+            RectTransform col = ui.Column(Root, "Column", 6, 16);
             UiFactory.Region(col, 0.56f, 0.01f, 0.99f, 0.99f);
             _title = ui.Label(col, string.Empty, UiFactory.SizeBody, TextAnchor.MiddleCenter, UiTheme.Text);
             _timer = ui.Label(col, string.Empty, UiFactory.SizeLarge, TextAnchor.MiddleCenter, UiTheme.Warning);
             _ownership = ui.Label(col, string.Empty, UiFactory.SizeSmall, TextAnchor.MiddleCenter, UiTheme.TextMuted);
             ui.Label(col, T("land.chooseCard"), UiFactory.SizeSmall, TextAnchor.MiddleLeft, UiTheme.TextMuted);
             _cardColumn = ui.Column(col, "Cards", 6, 0);
+            _explain = ui.Label(col, string.Empty, UiFactory.SizeSmall, TextAnchor.MiddleLeft, UiTheme.TextMuted);
             _controls = ui.Column(col, "Controls", 6, 0);
             RectTransform modeRow = ui.Row(_controls, "Mode", 8);
             UiFactory.Prefer(modeRow.gameObject, -1, ui.Scaled(UiFactory.SizeBody) + 40);
@@ -96,10 +105,10 @@ namespace AstraKingdoms.Client.UI.Screens
             _modeDraw = ui.Button(modeRow, T("land.modeDraw"), () => SetDrawMode(true), UiTheme.Button);
             RectTransform poseRow = ui.Row(_controls, "Pose", 8);
             UiFactory.Prefer(poseRow.gameObject, -1, ui.Scaled(UiFactory.SizeSmall) + 40);
-            ui.Button(poseRow, "↺ " + T("land.rotateLeft"), () => Rotate(-1), UiTheme.Button, UiFactory.SizeSmall);
-            ui.Button(poseRow, "↻ " + T("land.rotateRight"), () => Rotate(1), UiTheme.Button, UiFactory.SizeSmall);
-            ui.Button(poseRow, "− " + T("land.smaller"), () => Resize(0.8f), UiTheme.Button, UiFactory.SizeSmall);
-            ui.Button(poseRow, "+ " + T("land.bigger"), () => Resize(1.25f), UiTheme.Button, UiFactory.SizeSmall);
+            ui.Button(poseRow, TF("land.withGlyph", "↺", T("land.rotateLeft")), () => Rotate(-1), UiTheme.Button, UiFactory.SizeSmall);
+            ui.Button(poseRow, TF("land.withGlyph", "↻", T("land.rotateRight")), () => Rotate(1), UiTheme.Button, UiFactory.SizeSmall);
+            ui.Button(poseRow, TF("land.withGlyph", "−", T("land.smaller")), () => Resize(0.8f), UiTheme.Button, UiFactory.SizeSmall);
+            ui.Button(poseRow, TF("land.withGlyph", "+", T("land.bigger")), () => Resize(1.25f), UiTheme.Button, UiFactory.SizeSmall);
             RectTransform cutRow = ui.Row(_controls, "Cut", 8);
             UiFactory.Prefer(cutRow.gameObject, -1, ui.Scaled(UiFactory.SizeBody) + 40);
             ui.Button(cutRow, T("land.auto"), UseAutoCut, UiTheme.Button);
@@ -107,14 +116,18 @@ namespace AstraKingdoms.Client.UI.Screens
             _hint = ui.Label(col, string.Empty, UiFactory.SizeSmall, TextAnchor.MiddleLeft, UiTheme.TextMuted);
             _status = ui.Label(col, string.Empty, UiFactory.SizeBody, TextAnchor.MiddleLeft, UiTheme.Text);
             UiFactory.Flexible(col);
+            _legend = ui.Label(col, string.Empty, UiFactory.SizeSmall, TextAnchor.MiddleLeft, UiTheme.TextMuted);
             _confirm = ui.Button(col, T("land.confirm"), Confirm, UiTheme.ButtonPrimary, UiFactory.SizeLarge);
         }
 
         public Texture2D BoardTextureForTests => _board.Texture;
 
+        /// <summary>Fires when the player confirms a cut (tutorial hook).</summary>
+        public event Action Confirmed;
+
         /// <summary>
         /// Opens the cut window. <paramref name="interactive"/> is false for spectators (a bot's cut or
-        /// a player watching); they see the board and the countdown only.
+        /// a player watching); they see the board, the cards' allowances and the countdown only.
         /// </summary>
         public void Open(LocalMatchHost host, PlayerSide winner, bool interactive, PublicSnapshot snapshot, int frontierCellId)
         {
@@ -125,34 +138,40 @@ namespace AstraKingdoms.Client.UI.Screens
             _cards = snapshot.OfferedCards;
             _quotas = snapshot.OfferedQuotas;
             _frontierCell = frontierCellId;
-            _stroke.Clear();
+            _gesture.Clear();
             _polygon = new List<CellPoint>();
             _pointers.Clear();
             _preview = null;
             _anchor = -1;
             _autoMode = false;
-            _drawing = false;
             _hasPose = false;
             _cardIndex = -1;
 
             _title.text = interactive ? TF("land.title", Ctx.PlayerName(winner)) : TF("land.watch", Ctx.PlayerName(winner));
-            _ownership.text = TF("land.ownership", Ctx.PlayerName(PlayerSide.A), snapshot.CellsA, Ctx.PlayerName(PlayerSide.B), snapshot.CellsB);
+            LandTotals totals = LandTotals.From(snapshot.CellsA, snapshot.CellsB);
+            _ownership.text = TF("land.totals", Ctx.PlayerName(PlayerSide.A), totals.CellsA, LandTotals.PercentText(totals.PermilleA),
+                Ctx.PlayerName(PlayerSide.B), totals.CellsB, LandTotals.PercentText(totals.PermilleB));
+            _overlay.Show(_territory, Ctx.Settings.ShowPatterns);
+            _legend.text = TF("land.legend", Ctx.PlayerName(PlayerSide.A), Ctx.PlayerName(PlayerSide.B));
+
+            PlayerSide loser = Board.Opponent(winner);
+            _choices = CardChoices.Explain(_cards, _quotas, snapshot.HpDifferenceUnits, snapshot.Cells(loser));
             foreach (Button b in _cardButtons)
             {
                 b.gameObject.SetActive(false);
                 UnityEngine.Object.Destroy(b.gameObject);
             }
             _cardButtons.Clear();
-            for (int i = 0; i < _cards.Count; i++)
+            for (int i = 0; i < _choices.Choices.Count; i++)
             {
                 int index = i;
-                CardId card = _cards[i];
-                int pct = Cards.CapPercent(card);
-                Button b = Ui.Button(_cardColumn, TF("land.card", T("card." + (int)card), _quotas[i], pct), () => SelectCard(index), UiTheme.Button,
+                CardChoice c = _choices.Choices[i];
+                Button b = Ui.Button(_cardColumn, TF("land.card", T(c.NameKey), c.Quota, c.CapPercent), () => SelectCard(index), UiTheme.Button,
                     UiFactory.SizeSmall);
                 b.interactable = interactive;
                 _cardButtons.Add(b);
             }
+            _explain.text = Explanation(snapshot.HpDifferenceUnits, snapshot.Cells(loser));
             _controls.gameObject.SetActive(interactive);
             _confirm.gameObject.SetActive(interactive);
             _image.raycastTarget = interactive;
@@ -161,6 +180,16 @@ namespace AstraKingdoms.Client.UI.Screens
             if (interactive && _cards.Count > 0) SelectCard(0);
             else Recompute();
             Show();
+        }
+
+        /// <summary>One line per card: the formula term that set its allowance (ticket 38).</summary>
+        private string Explanation(int hpDifferenceUnits, int loserCells)
+        {
+            var lines = new List<string> { TF("land.margin", Hp.Format(hpDifferenceUnits)) };
+            foreach (CardChoice c in _choices.Choices)
+                lines.Add(TF(c.ReasonKey, T(c.NameKey), c.CapPercent, c.Quota, loserCells));
+            if (_choices.VajraLockedByMargin) lines.Add(T("land.vajraLocked"));
+            return string.Join("\n", lines);
         }
 
         public void SetRemaining(double seconds) => _timer.text = TF("hud.time", UiFactory.Seconds(seconds));
@@ -189,7 +218,7 @@ namespace AstraKingdoms.Client.UI.Screens
                 UiFactory.SetButtonColor(_cardButtons[i], i == index ? UiTheme.ButtonSelected : UiTheme.Button);
             _hasPose = CutAssist.DefaultPose(_territory, _winner, _cards[index], _quotas[index], _frontierCell, out _pose);
             if (_hasPose) _pose = new CardPose(_pose.CenterX, _pose.CenterY, CutAssist.ClampScale(_cards[index], _pose.Rotation, _quotas[index], _pose.ScaleQuarters), _pose.Rotation);
-            Ctx.Audio?.Play(Services.Sfx.Click);
+            Ctx.Audio?.Play(Audio.AudioCue.CardSelect);
             SetDrawMode(false);
             Recompute();
         }
@@ -230,7 +259,7 @@ namespace AstraKingdoms.Client.UI.Screens
         {
             if (_cardIndex < 0) return;
             _autoMode = true;
-            _stroke.Clear();
+            _gesture.Clear();
             _polygon = new List<CellPoint>();
             Recompute();
         }
@@ -238,15 +267,17 @@ namespace AstraKingdoms.Client.UI.Screens
         private void ClearCut()
         {
             _autoMode = false;
-            _stroke.Clear();
+            _gesture.Clear();
             _polygon = new List<CellPoint>();
+            _gestureHint = GestureHint.None;
             Recompute();
         }
 
         private void Confirm()
         {
             if (_cardIndex < 0 || _preview == null || !_preview.IsAccepted || _anchor < 0) return;
-            Ctx.Audio?.Play(Services.Sfx.Lock);
+            Ctx.Audio?.Play(Audio.AudioCue.Lock);
+            Confirmed?.Invoke();
             CutRequested?.Invoke(_cards[_cardIndex], _pose, _anchor, _autoMode ? CutMode.Auto : CutMode.Manual,
                 _autoMode ? (IReadOnlyList<CellPoint>)Array.Empty<CellPoint>() : _polygon);
         }
@@ -261,9 +292,7 @@ namespace AstraKingdoms.Client.UI.Screens
             {
                 if (_pointers.Count > 1) return;
                 _autoMode = false;
-                _drawing = true;
-                _stroke.Clear();
-                AddStrokePoint(screen);
+                if (ToUv(screen, out double u, out double v)) _gesture.Begin(u, v);
                 return;
             }
             if (_pointers.Count == 2) BeginTwoFinger();
@@ -276,7 +305,11 @@ namespace AstraKingdoms.Client.UI.Screens
             _pointers[id] = screen;
             if (_drawMode)
             {
-                if (_drawing) AddStrokePoint(screen);
+                if (_gesture.Drawing && ToUv(screen, out double u, out double v) && _gesture.Add(u, v))
+                {
+                    _polygon = _gesture.Polygon(out _gestureHint);
+                    _dirty = true;
+                }
                 return;
             }
             if (_pointers.Count >= 2) UpdateTwoFinger();
@@ -286,11 +319,11 @@ namespace AstraKingdoms.Client.UI.Screens
         private void OnUp(int id, Vector2 screen)
         {
             if (!_pointers.Remove(id)) return;
-            if (_drawMode && _drawing && _pointers.Count == 0)
+            if (_drawMode && _gesture.Drawing && _pointers.Count == 0)
             {
-                AddStrokePoint(screen);
-                _drawing = false;
-                _polygon = StrokeSimplifier.Simplify(_stroke);
+                ToUv(screen, out double u, out double v);
+                _gesture.End(u, v);
+                _polygon = _gesture.Polygon(out _gestureHint);
                 Recompute();
             }
         }
@@ -331,28 +364,20 @@ namespace AstraKingdoms.Client.UI.Screens
 
         private void MoveCentre(Vector2 screen)
         {
-            if (!ToCell(screen, out CellPoint cell) || !_hasPose) return;
+            if (!ToUv(screen, out double u, out double v) || !_hasPose || u < 0 || u > 1 || v < 0 || v > 1) return;
+            CellPoint cell = BoardMapping.Snap(u, v);
             SetPose(cell.X, cell.Y, _pose.ScaleQuarters, _pose.Rotation);
         }
 
-        private void AddStrokePoint(Vector2 screen)
+        /// <summary>Screen point to normalized board-image coordinates (top-left origin); may lie outside 0..1.</summary>
+        private bool ToUv(Vector2 screen, out double u, out double vDown)
         {
-            if (!ToCell(screen, out CellPoint cell)) return;
-            if (_stroke.Count == 0 || _stroke[_stroke.Count - 1] != cell) _stroke.Add(cell);
-            _polygon = StrokeSimplifier.Simplify(_stroke);
-            _dirty = true;
-        }
-
-        /// <summary>Screen point to a snapped cell-centre vertex on the board image.</summary>
-        private bool ToCell(Vector2 screen, out CellPoint cell)
-        {
-            cell = default;
+            u = vDown = -1;
             RectTransform rt = _image.rectTransform;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screen, null, out Vector2 local)) return false;
             Rect r = rt.rect;
-            double u = (local.x - r.xMin) / r.width;
-            double vDown = 1.0 - (local.y - r.yMin) / r.height;
-            cell = BoardMapping.Snap(u, vDown);
+            u = (local.x - r.xMin) / r.width;
+            vDown = 1.0 - (local.y - r.yMin) / r.height;
             return true;
         }
 
@@ -398,9 +423,11 @@ namespace AstraKingdoms.Client.UI.Screens
                 }
                 if (!_autoMode && _polygon.Count > 0)
                 {
-                    raster.OverlayPolyline(_polygon, !_drawing);
+                    raster.OverlayPolyline(_polygon, !_gesture.Drawing);
                     status += "\n" + TF("land.vertices", _polygon.Count);
                 }
+                string gestureKey = CutGesture.HintKey(_gestureHint);
+                if (!_autoMode && gestureKey != null) status += "\n" + T(gestureKey);
                 raster.OverlayCells(_anchor >= 0 ? new[] { _anchor } : null, CellPaint.Anchor);
             }
             _board.Upload();

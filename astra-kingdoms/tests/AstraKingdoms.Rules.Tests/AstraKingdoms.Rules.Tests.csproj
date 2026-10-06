@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <!-- Ticket 25: balance review report and playtest ingest live in the simulator. -->
+    <ProjectReference Include="..\..\tools\AstraKingdoms.Sim\AstraKingdoms.Sim.csproj" />
   </ItemGroup>
 
 </Project>

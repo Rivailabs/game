@@ -29,6 +29,13 @@ namespace AstraKingdoms.Client.UI
             Upload();
         }
 
+        /// <summary>Shows an ownership snapshot (transfer animation frames).</summary>
+        public void ShowOwners(byte[] owners)
+        {
+            Raster.PaintOwners(owners);
+            Upload();
+        }
+
         /// <summary>Copies the raster's paints into the texture.</summary>
         public void Upload()
         {

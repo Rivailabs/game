@@ -17,6 +17,15 @@ namespace AstraKingdoms.Client.Settings
     }
 
     /// <summary>
+    /// Optional deletion seam for a key-value store (kept separate from <see cref="IKeyValueStore"/>
+    /// so existing store implementations stay source compatible).
+    /// </summary>
+    public interface IKeyValueEraser
+    {
+        void DeleteKey(string key);
+    }
+
+    /// <summary>
     /// Player settings required by the plan's accessibility list: independent music and effects
     /// volume, reduced camera shake, haptics, readable text scaling and language, all persistent.
     /// </summary>
@@ -33,6 +42,27 @@ namespace AstraKingdoms.Client.Settings
         public string Language = Localizer.English;
         /// <summary>First launch asks for language and basic settings before anything else.</summary>
         public bool FirstRunComplete;
+        /// <summary>Reduced motion: no camera shake, no pulsing timers or sweeping transfers (instant state changes instead).</summary>
+        public bool ReducedMotion;
+        /// <summary>Colour-independent cues: owner patterns on the land map and shape glyphs on effects (on by default).</summary>
+        public bool ShowPatterns = true;
+        /// <summary>The tutorial runs without deadlines (on by default; it is a practice match).</summary>
+        public bool TutorialUntimed = true;
+        /// <summary>The guided starter duel was offered after the first-run settings.</summary>
+        public bool TutorialOffered;
+        /// <summary>The guided starter duel was completed at least once.</summary>
+        public bool TutorialCompleted;
+
+        /// <summary>Camera shake is off when either reduced shake or reduced motion is chosen.</summary>
+        public bool ShakeDisabled => ReducedCameraShake || ReducedMotion;
+
+        /// <summary>Every persisted key (for the local data controls' delete action).</summary>
+        public static readonly string[] Keys =
+        {
+            Prefix + "music", Prefix + "effects", Prefix + "reducedShake", Prefix + "haptics", Prefix + "textScale", Prefix + "language",
+            Prefix + "firstRunComplete", Prefix + "reducedMotion", Prefix + "showPatterns", Prefix + "tutorialUntimed",
+            Prefix + "tutorialOffered", Prefix + "tutorialCompleted",
+        };
 
         public event Action Changed;
 
@@ -46,6 +76,11 @@ namespace AstraKingdoms.Client.Settings
             TextScale = store.GetFloat(Prefix + "textScale", TextScale);
             Language = store.GetString(Prefix + "language", Language);
             FirstRunComplete = store.GetInt(Prefix + "firstRunComplete", 0) != 0;
+            ReducedMotion = store.GetInt(Prefix + "reducedMotion", ReducedMotion ? 1 : 0) != 0;
+            ShowPatterns = store.GetInt(Prefix + "showPatterns", ShowPatterns ? 1 : 0) != 0;
+            TutorialUntimed = store.GetInt(Prefix + "tutorialUntimed", TutorialUntimed ? 1 : 0) != 0;
+            TutorialOffered = store.GetInt(Prefix + "tutorialOffered", 0) != 0;
+            TutorialCompleted = store.GetInt(Prefix + "tutorialCompleted", 0) != 0;
             Sanitize();
         }
 
@@ -60,6 +95,11 @@ namespace AstraKingdoms.Client.Settings
             store.SetFloat(Prefix + "textScale", TextScale);
             store.SetString(Prefix + "language", Language);
             store.SetInt(Prefix + "firstRunComplete", FirstRunComplete ? 1 : 0);
+            store.SetInt(Prefix + "reducedMotion", ReducedMotion ? 1 : 0);
+            store.SetInt(Prefix + "showPatterns", ShowPatterns ? 1 : 0);
+            store.SetInt(Prefix + "tutorialUntimed", TutorialUntimed ? 1 : 0);
+            store.SetInt(Prefix + "tutorialOffered", TutorialOffered ? 1 : 0);
+            store.SetInt(Prefix + "tutorialCompleted", TutorialCompleted ? 1 : 0);
             store.Save();
         }
 

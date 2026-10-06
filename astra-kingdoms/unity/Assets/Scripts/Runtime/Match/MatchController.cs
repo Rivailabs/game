@@ -21,6 +21,12 @@ namespace AstraKingdoms.Client.MatchFlow
 
         public event Action<LocalMatchHost> MatchStarted;
 
+        /// <summary>
+        /// Optional per-frame filter (seconds in, seconds out) applied before the host clock: the
+        /// session lifecycle returns 0 while the app is backgrounded or covered (ticket 47).
+        /// </summary>
+        public Func<double, double> DeltaFilter { get; set; }
+
         /// <summary>Creates a fresh match: new seed, new engine, no state or secret carried over.</summary>
         public LocalMatchHost StartMatch(MatchConfig config, SeatKind seatA, SeatKind seatB, BotDifficulty difficulty,
             HostTimings timings = null, byte[] seed = null, string matchId = null, Func<string> requestIds = null)
@@ -38,7 +44,8 @@ namespace AstraKingdoms.Client.MatchFlow
         private void Update()
         {
             if (Host == null) return;
-            float dt = Mathf.Min(Time.unscaledDeltaTime, MaxStepSeconds) * ClockSpeed;
+            double dt = Mathf.Min(Time.unscaledDeltaTime, MaxStepSeconds) * ClockSpeed;
+            if (DeltaFilter != null) dt = DeltaFilter(dt);
             Host.Tick(dt);
         }
     }

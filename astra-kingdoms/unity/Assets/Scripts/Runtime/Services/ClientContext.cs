@@ -14,6 +14,12 @@ namespace AstraKingdoms.Client.Services
         public Localizer Loc;
         public AudioService Audio;
 
+        /// <summary>
+        /// Account level for Owned/Loaned labels and drills. Defaults to 1 until the progression
+        /// service (ticket 57, outside this client layer) provides the saved level.
+        /// </summary>
+        public Func<int> AccountLevel = () => 1;
+
         /// <summary>Display names for the two seats of the current match.</summary>
         public Func<PlayerSide, string> PlayerName = side => side == PlayerSide.A ? "A" : "B";
 
