@@ -37,17 +37,27 @@ namespace AstraKingdoms.Rules.Match
         public string TerrainTemplateId { get; }
         /// <summary>Private-room experimental Brahmastra flag (Full catalog only, never in the pilot).</summary>
         public bool BrahmastraEnabled { get; }
-        /// <summary>Rules version the match is pinned to.</summary>
+        /// <summary>
+        /// Rules version the match is pinned to: <c>AK-TR-1</c>, or the ID of the balance bundle in
+        /// <see cref="Parameters"/> (for example <c>AK-TR-1.b2</c>).
+        /// </summary>
         public string RulesVersion { get; }
+
+        /// <summary>
+        /// The immutable balance snapshot this match runs with (ticket 24). Defaults to
+        /// <see cref="RulesParameters.Default"/>; use <see cref="WithParameters"/> to pin a tuned
+        /// bundle. Never null.
+        /// </summary>
+        public RulesParameters Parameters { get; }
 
         public MatchConfig(MatchMode mode, CatalogPreset catalog, CardOfferRule cardOffers, string terrainTemplateId,
             bool brahmastraEnabled = false, string rulesVersion = RulesConstants.RulesVersion)
-            : this(mode, catalog, cardOffers, terrainTemplateId, brahmastraEnabled, rulesVersion, validate: true)
+            : this(mode, catalog, cardOffers, terrainTemplateId, brahmastraEnabled, rulesVersion, RulesParameters.Default, validate: true)
         {
         }
 
         private MatchConfig(MatchMode mode, CatalogPreset catalog, CardOfferRule cardOffers, string terrainTemplateId,
-            bool brahmastraEnabled, string rulesVersion, bool validate)
+            bool brahmastraEnabled, string rulesVersion, RulesParameters parameters, bool validate)
         {
             Mode = mode;
             Catalog = catalog;
@@ -55,13 +65,29 @@ namespace AstraKingdoms.Rules.Match
             TerrainTemplateId = terrainTemplateId;
             BrahmastraEnabled = brahmastraEnabled;
             RulesVersion = rulesVersion;
+            Parameters = parameters ?? RulesParameters.Default;
             if (validate) Validate();
         }
 
-        /// <summary>Reconstructs a stored config without validating it (records of other rules versions).</summary>
+        /// <summary>
+        /// Reconstructs a stored config without validating it (records of other rules versions).
+        /// Its <see cref="Parameters"/> are the default; a replayer pins the record's bundle with
+        /// <see cref="WithParameters"/> after resolving it.
+        /// </summary>
         internal static MatchConfig CreateUnvalidated(MatchMode mode, CatalogPreset catalog, CardOfferRule cardOffers,
             string terrainTemplateId, bool brahmastraEnabled, string rulesVersion) =>
-            new MatchConfig(mode, catalog, cardOffers, terrainTemplateId, brahmastraEnabled, rulesVersion, validate: false);
+            new MatchConfig(mode, catalog, cardOffers, terrainTemplateId, brahmastraEnabled, rulesVersion, RulesParameters.Default, validate: false);
+
+        /// <summary>
+        /// The same room pinned to a balance snapshot (ticket 24): <see cref="RulesVersion"/> becomes
+        /// the snapshot's bundle ID and every tunable rule of the match reads from it. Validates the
+        /// result. Passing <see cref="RulesParameters.Default"/> yields a plain AK-TR-1 config.
+        /// </summary>
+        public MatchConfig WithParameters(RulesParameters parameters)
+        {
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            return new MatchConfig(Mode, Catalog, CardOffers, TerrainTemplateId, BrahmastraEnabled, parameters.RulesVersion, parameters, validate: true);
+        }
 
         /// <summary>Pilot: Starter catalog, plain terrain, Chakra/Suchi offers, no Brahmastra.</summary>
         public static MatchConfig Pilot(MatchMode mode = MatchMode.SharedPhone) =>
@@ -78,7 +104,7 @@ namespace AstraKingdoms.Rules.Match
         /// <summary>Throws <see cref="RulesViolationException"/> for an illegal combination.</summary>
         public void Validate()
         {
-            if (RulesVersion != RulesConstants.RulesVersion)
+            if (Parameters.BaseRulesVersion != RulesConstants.RulesVersion || RulesVersion != Parameters.RulesVersion)
                 throw new RulesViolationException("RULES_VERSION", "Unsupported rules version '" + RulesVersion + "'.");
             if (!Enum.IsDefined(typeof(MatchMode), Mode)) throw new RulesViolationException("CONFIG_MODE", "Unknown match mode.");
             if (!Enum.IsDefined(typeof(CatalogPreset), Catalog)) throw new RulesViolationException("CONFIG_CATALOG", "Unknown catalog.");
@@ -97,10 +123,10 @@ namespace AstraKingdoms.Rules.Match
             TerrainTemplateId == TerrainTemplates.FullId ? TerrainTemplates.FullMirrored : TerrainTemplates.PlainOnly;
 
         /// <summary>Choice deadline (the shared-phone value is per player, entered in sequence).</summary>
-        public int ChoiceDeadlineMs => RulesConstants.ChoiceDeadlineMs;
+        public int ChoiceDeadlineMs => Parameters.ChoiceDeadlineMs;
 
         /// <summary>Combined card choice, pose and cut window.</summary>
-        public int CutWindowMs => Mode == MatchMode.Online ? RulesConstants.OnlineCutWindowMs : RulesConstants.SharedPhoneCutWindowMs;
+        public int CutWindowMs => Mode == MatchMode.Online ? Parameters.OnlineCutWindowMs : Parameters.SharedPhoneCutWindowMs;
 
         /// <summary>Canonical encoding used by records and hashes.</summary>
         public void WriteTo(CanonicalWriter w) =>

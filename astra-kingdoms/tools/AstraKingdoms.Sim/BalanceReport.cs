@@ -16,6 +16,14 @@ public sealed class ReportContext
     public List<string> Errors { get; init; } = new();
 }
 
+/// <summary>One screened comparison against its provisional band, with its screening status.</summary>
+public sealed record ScreenedComparison(string Kind, string Key, Tally Tally, double BandLo, double BandHi,
+    (double Lo, double Hi) Wilson95, (double Lo, double Hi) Family, string Status)
+{
+    /// <summary>Stable identity used to line up the same comparison across two runs.</summary>
+    public string Id => Kind + " | " + Key;
+}
+
 /// <summary>
 /// The stratified human/bot balance review (ticket 25). It runs identically over simulated bot
 /// matches and verified human playtest records and makes these inspectable: policy pairings,
@@ -422,6 +430,27 @@ public sealed class BalanceReport
         sb.Append('\n');
     }
 
+    /// <summary>
+    /// Every screened comparison (including those consistent with their band), in report order,
+    /// with the same status rules as the "Screening flags" section. Used by bundle comparisons.
+    /// </summary>
+    public IReadOnlyList<ScreenedComparison> Screened()
+    {
+        if (_screen.Count == 0 && _all.Count > 0) Markdown();
+        double zFamily = Stats.BonferroniZ(_screen.Count);
+        return _screen.Select(s => Screen(s, zFamily)).ToList();
+    }
+
+    private static ScreenedComparison Screen((string Kind, string Key, Tally T, double Lo, double Hi) s, double zFamily)
+    {
+        var ci = s.T.Wilson();
+        var fam = s.T.Wilson(zFamily);
+        string status = s.T.Decisive < Stats.MinDecisive ? "insufficient"
+            : fam.Hi < s.Lo || fam.Lo > s.Hi ? "FLAG"
+            : ci.Hi < s.Lo || ci.Lo > s.Hi ? "watch" : "ok";
+        return new ScreenedComparison(s.Kind, s.Key, s.T, s.Lo, s.Hi, ci, fam, status);
+    }
+
     private void Screening(StringBuilder sb)
     {
         int k = _screen.Count;
@@ -433,11 +462,10 @@ public sealed class BalanceReport
         sb.Append("| Kind | Key | n decisive | Win share | Band | Wilson 95% | Family interval | Status |\n|---|---|---:|---:|---|---|---|---|\n");
         foreach (var s in _screen)
         {
-            var ci = s.T.Wilson();
-            var fam = s.T.Wilson(zFamily);
-            string status = s.T.Decisive < Stats.MinDecisive ? "insufficient"
-                : fam.Hi < s.Lo || fam.Lo > s.Hi ? "FLAG"
-                : ci.Hi < s.Lo || ci.Lo > s.Hi ? "watch" : "ok";
+            ScreenedComparison screened = Screen(s, zFamily);
+            var ci = screened.Wilson95;
+            var fam = screened.Family;
+            string status = screened.Status;
             if (status == "ok") continue;
             sb.Append($"| {s.Kind} | {s.Key} | {s.T.Decisive} | {Stats.Pct(s.T.Rate)} | {Stats.Pct(s.Lo)}-{Stats.Pct(s.Hi)} | {Stats.Interval(ci)} | {Stats.Interval(fam)} | {status} |\n");
             _csv.Add(new[] { "screening_" + status.ToLowerInvariant(), s.Kind, s.Key, Stats.I(s.T.Total), Stats.I(s.T.Wins), Stats.I(s.T.Losses), Stats.I(s.T.Draws), Stats.F(s.T.Rate), Stats.F(fam.Lo), Stats.F(fam.Hi) });

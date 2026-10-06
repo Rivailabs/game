@@ -27,8 +27,9 @@ namespace AstraKingdoms.Rules.Combat
         {
             if (input == null) throw new System.ArgumentNullException(nameof(input));
             if (state.IsOver) throw new RulesViolationException(DuelOver, "The duel has already ended.");
-            if (input.VolleyIndex < 1 || input.VolleyIndex > RulesConstants.MaxVolleys)
-                throw new RulesViolationException(VolleyIndexInvalid, "Volley index must be 1-3.");
+            int maxVolleys = (state.Parameters ?? RulesParameters.Default).MaxVolleys;
+            if (input.VolleyIndex < 1 || input.VolleyIndex > maxVolleys)
+                throw new RulesViolationException(VolleyIndexInvalid, "Volley index must be 1-" + maxVolleys + ".");
             if (input.VolleyIndex != state.VolleyIndex)
                 throw new RulesViolationException(VolleyIndexInvalid, "Lock targets volley " + input.VolleyIndex + " but volley " + state.VolleyIndex + " is open.");
             if (input.Choice.IsPass)
