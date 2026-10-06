@@ -101,12 +101,19 @@ def find_hardcoded(sources: dict[str, str]) -> list[tuple[str, int, str]]:
     return sorted(out)
 
 
+# String tables are named by locale code (en.txt, hi.txt, pt-BR.txt); other .txt files such as
+# glossary.txt live beside them but are not tables.
+_LOCALE_CODE = re.compile(r"[a-z]{2,3}(?:[-_][A-Za-z]{2,4})?")
+
+
 def load_project(assets_dir: str | Path, *, reference: str = "en") -> tuple[dict[str, Table], dict[str, str]]:
     root = Path(assets_dir)
     loc_dirs = [p for p in root.rglob("Localization") if p.is_dir() and any(p.glob("*.txt"))]
     tables: dict[str, Table] = {}
     for d in loc_dirs:
         for f in sorted(d.glob("*.txt")):
+            if not _LOCALE_CODE.fullmatch(f.stem):
+                continue  # not a string table (e.g. glossary.txt)
             tables[f.stem] = parse_table(f.read_text(encoding="utf-8-sig"), f.stem)
     sources = {p.relative_to(root).as_posix(): p.read_text(encoding="utf-8", errors="replace")
                for p in sorted(root.rglob("*.cs"))}

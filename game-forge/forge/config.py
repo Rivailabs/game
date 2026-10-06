@@ -42,6 +42,7 @@ class ProjectConfig:
     data_dir: Path
     runtime: dict[str, Any] = field(default_factory=dict)
     catalogue: dict[str, Any] = field(default_factory=dict)
+    assets: dict[str, Any] = field(default_factory=dict)  # R2 generation lane ([assets])
 
 
 def load_project_config(path: str | Path) -> ProjectConfig:
@@ -77,6 +78,7 @@ def load_project_config(path: str | Path) -> ProjectConfig:
         check_specs=raw.get("checks") or {}, provider_specs=raw.get("providers") or {},
         reviewer_route=(raw.get("reviewer") or {}).get("route"), pricing=raw.get("pricing") or {},
         data_dir=data_dir, runtime=forge, catalogue=dict(raw.get("catalogue") or {}),
+        assets=dict(raw.get("assets") or {}),
     )
 
 
@@ -164,6 +166,12 @@ def build_runtime(cfg: ProjectConfig, providers: dict[str, ProviderAdapter] | No
         lease_ttl_s=float(rt.get("lease_ttl_s", 900)), unattended=bool(cfg.project.policy.unattended_mode),
     )
     runtime.catalogue = lane_config(cfg, manifest=manifest)
+    if cfg.assets:
+        from .assets.config import generation_lane_from_config
+
+        runtime.generation_lane = generation_lane_from_config(
+            cfg.assets, base=cfg.path.parent, project_id=cfg.project.id, repo_root=Path(cfg.project.repo_path),
+            data_dir=cfg.data_dir, manifest=manifest)
     return runtime
 
 

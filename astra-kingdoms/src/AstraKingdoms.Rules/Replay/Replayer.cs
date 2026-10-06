@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AstraKingdoms.Rules.Balance;
 using AstraKingdoms.Rules.Core;
 using AstraKingdoms.Rules.Match;
 
@@ -18,6 +19,11 @@ namespace AstraKingdoms.Rules.Replay
         CommandRejected = 5,
         RoundMismatch = 6,
         ResultMismatch = 7,
+        /// <summary>
+        /// The record is pinned to a balance bundle (ticket 24) that the supplied resolver does not
+        /// know, or no resolver was supplied. The record is refused, never reinterpreted.
+        /// </summary>
+        UnknownBundle = 8,
     }
 
     /// <summary>Outcome of <see cref="Replayer.Verify"/>.</summary>
@@ -43,21 +49,56 @@ namespace AstraKingdoms.Rules.Replay
     /// Re-executes a <see cref="MatchRecord"/> from its seed and command log and checks the seed
     /// commitment, initiative, every round's stream counters, volley log hashes and state hash, and
     /// the final result. Records of another rules version or hash are rejected, never reinterpreted.
+    /// <para>
+    /// <b>Balance bundles (ticket 24).</b> A tuned match records its bundle ID as rules version, the
+    /// bundle's content hash and its effective rules hash. <see cref="Verify(MatchRecord, Func{string, BalanceBundle})"/>
+    /// resolves the ID (for example with <see cref="BalanceChannel.Find"/>), checks the content and
+    /// the effective hash, and re-executes under that bundle's parameters. A bundle the resolver does
+    /// not know is <see cref="ReplayFailure.UnknownBundle"/>. Without a resolver only AK-TR-1 records
+    /// replay.
+    /// </para>
     /// </summary>
     public static class Replayer
     {
-        public static ReplayReport Verify(MatchRecord record)
+        /// <summary>Verifies an AK-TR-1 record (tuned records fail with <see cref="ReplayFailure.UnknownBundle"/>).</summary>
+        public static ReplayReport Verify(MatchRecord record) => Verify(record, null);
+
+        /// <summary>
+        /// Verifies a record, resolving a tuned record's balance bundle by ID through
+        /// <paramref name="bundleResolver"/> (returns null for an unknown ID). AK-TR-1 records never
+        /// consult the resolver.
+        /// </summary>
+        public static ReplayReport Verify(MatchRecord record, Func<string, BalanceBundle> bundleResolver)
         {
             if (record == null) throw new ArgumentNullException(nameof(record));
-            if (record.RulesVersion != RulesConstants.RulesVersion || record.Config == null || record.Config.RulesVersion != RulesConstants.RulesVersion)
-                return Fail(ReplayFailure.IncompatibleRules, "Record uses rules version '" + record.RulesVersion + "'; this build runs " + RulesConstants.RulesVersion + ".");
-            if (record.RulesHashHex != RulesBundle.HashHex)
-                return Fail(ReplayFailure.IncompatibleRules, "Record rules hash " + record.RulesHashHex + " differs from " + RulesBundle.HashHex + ".");
+            if (record.Config == null || record.Config.RulesVersion != record.RulesVersion)
+                return Fail(ReplayFailure.IncompatibleRules, "Record config rules version differs from the record's rules version '" + record.RulesVersion + "'.");
+
+            RulesParameters parameters;
+            if (record.RulesVersion == RulesConstants.RulesVersion)
+            {
+                if (record.BalanceContentHashHex != null)
+                    return Fail(ReplayFailure.IncompatibleRules, "An " + RulesConstants.RulesVersion + " record cannot name a balance bundle content hash.");
+                parameters = RulesParameters.Default;
+            }
+            else if (record.RulesVersion == null || !record.RulesVersion.StartsWith(RulesConstants.RulesVersion + ".", StringComparison.Ordinal))
+            {
+                return Fail(ReplayFailure.IncompatibleRules, "Record uses rules version '" + record.RulesVersion + "'; this build runs " +
+                    RulesConstants.RulesVersion + " and its balance bundles.");
+            }
+            else
+            {
+                string problem = ResolveBundle(record, bundleResolver, out parameters, out ReplayFailure failure);
+                if (problem != null) return Fail(failure, problem);
+            }
+            if (record.RulesHashHex != parameters.RulesHashHex)
+                return Fail(ReplayFailure.IncompatibleRules, "Record rules hash " + record.RulesHashHex + " differs from " + parameters.RulesHashHex + ".");
 
             MatchEngine engine;
             try
             {
-                engine = MatchEngine.Create(record.Config, Hex.Decode(record.SeedHex), record.MatchId);
+                MatchConfig config = parameters.IsDefault ? record.Config : record.Config.WithParameters(parameters);
+                engine = MatchEngine.Create(config, Hex.Decode(record.SeedHex), record.MatchId);
             }
             catch (Exception e) when (e is ArgumentException || e is FormatException || e is RulesViolationException)
             {
@@ -102,7 +143,10 @@ namespace AstraKingdoms.Rules.Replay
         }
 
         /// <summary>Parses and verifies a serialized record; malformed text is reported, not thrown.</summary>
-        public static ReplayReport Verify(string recordJson)
+        public static ReplayReport Verify(string recordJson) => Verify(recordJson, null);
+
+        /// <summary>Parses and verifies a serialized record, resolving its balance bundle by ID.</summary>
+        public static ReplayReport Verify(string recordJson, Func<string, BalanceBundle> bundleResolver)
         {
             MatchRecord record;
             try
@@ -117,7 +161,28 @@ namespace AstraKingdoms.Rules.Replay
             {
                 return Fail(ReplayFailure.Malformed, e.Message);
             }
-            return Verify(record);
+            return Verify(record, bundleResolver);
+        }
+
+        /// <summary>Resolves and checks a tuned record's bundle; returns a problem description or null.</summary>
+        private static string ResolveBundle(MatchRecord record, Func<string, BalanceBundle> resolver, out RulesParameters parameters,
+            out ReplayFailure failure)
+        {
+            parameters = null;
+            failure = ReplayFailure.UnknownBundle;
+            BalanceBundle bundle = resolver?.Invoke(record.RulesVersion);
+            if (bundle == null)
+                return "Record is pinned to balance bundle '" + record.RulesVersion + "', which is not known to this verifier.";
+            failure = ReplayFailure.IncompatibleRules;
+            if (bundle.BundleId != record.RulesVersion)
+                return "Resolver returned bundle '" + bundle.BundleId + "' for '" + record.RulesVersion + "'.";
+            if (record.BalanceContentHashHex == null || bundle.ContentHashHex != record.BalanceContentHashHex)
+                return "Bundle " + bundle.BundleId + " content " + bundle.ContentHashHex + " differs from the record's " +
+                       (record.BalanceContentHashHex ?? "(none)") + ".";
+            IReadOnlyList<BalanceIssue> issues = BalanceValidator.Validate(bundle);
+            if (issues.Count > 0) return "Bundle " + bundle.BundleId + " is invalid: " + string.Join("; ", issues);
+            parameters = bundle.ToParameters();
+            return null;
         }
 
         private static string CompareRound(RoundRecord e, RoundRecord a)

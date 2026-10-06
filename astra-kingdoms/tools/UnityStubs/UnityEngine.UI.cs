@@ -180,6 +180,40 @@ namespace UnityEngine.UI
         public SliderEvent onValueChanged { get; set; }
     }
 
+    /// <summary>Legacy uGUI text input (used by the online friend-room code entry).</summary>
+    public class InputField : Selectable
+    {
+        public enum ContentType
+        {
+            Standard = 0,
+            Autocorrected = 1,
+            IntegerNumber = 2,
+            DecimalNumber = 3,
+            Alphanumeric = 4,
+            Name = 5,
+            EmailAddress = 6,
+            Password = 7,
+            Pin = 8,
+            Custom = 9,
+        }
+
+        public class OnChangeEvent : UnityEvent<string>
+        {
+        }
+
+        public class SubmitEvent : UnityEvent<string>
+        {
+        }
+
+        public string text { get; set; }
+        public Text textComponent { get; set; }
+        public Graphic placeholder { get; set; }
+        public int characterLimit { get; set; }
+        public ContentType contentType { get; set; }
+        public OnChangeEvent onValueChanged { get; set; }
+        public SubmitEvent onEndEdit { get; set; }
+    }
+
     public class CanvasScaler : UIBehaviour
     {
         public enum ScaleMode

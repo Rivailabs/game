@@ -70,6 +70,9 @@ namespace AstraKingdoms.Rules.Land
         /// <summary>True when the player has reached the 90% shortcut (at least 45,936 cells).</summary>
         public bool HasReachedVictory(PlayerSide side) => _counts[(int)side] >= RulesConstants.VictoryCells;
 
+        /// <summary>Victory check against a pinned threshold (ticket 24 balance bundles).</summary>
+        public bool HasReachedVictory(PlayerSide side, int victoryCells) => _counts[(int)side] >= victoryCells;
+
         /// <summary>True when the cell is active and owned by <paramref name="side"/> (false off-board).</summary>
         public bool IsOwnedBy(int cellId, PlayerSide side) =>
             Board.IsValidCellId(cellId) && _owner[cellId] == (byte)side;

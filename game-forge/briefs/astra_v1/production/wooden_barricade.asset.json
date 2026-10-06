@@ -1,0 +1,22 @@
+{
+  "id": "wooden_barricade",
+  "kind": "prop",
+  "title": "Wooden barricade (cover prop)",
+  "intended_screen_size": "about 8% of screen height at the gameplay camera",
+  "art_reference": [
+    {"description": "Owner sketch: lashed wooden stakes, pre-modern, hand-crafted", "rights": "owner-created"}
+  ],
+  "silhouette": "Low row of sharpened stakes with rope lashing; reads as cover from the gameplay camera",
+  "scale_m": 2.0,
+  "scale_axis": "largest",
+  "pivot": "bottom_center",
+  "materials": "One wood material",
+  "max_triangles": 3000,
+  "max_texture_px": 512,
+  "max_materials": 1,
+  "collider": "box",
+  "prompt": "A pre-modern wooden barricade of lashed sharpened stakes, hand-crafted, single object, plain background",
+  "negative_prompt": "modern, metal fence, barbed wire, logo",
+  "catalogue_first": true,
+  "skip_stages": ["concept", "concept_approval", "rig", "deformation_review", "motion_retarget", "contact_transition_review"]
+}

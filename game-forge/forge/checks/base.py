@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextvars
 import os
 import shutil
 import subprocess
@@ -59,7 +60,22 @@ class ProcResult:
     missing_executable: bool = False
 
 
+#: Optional process wrapper installed by ``forge.sandbox`` while a sandboxed check runs. When set,
+#: every ``run_proc`` call made by that check executes inside the isolation backend instead of
+#: directly on the host. Context-local, so concurrent checks never see each other's wrapper.
+PROC_WRAPPER: contextvars.ContextVar = contextvars.ContextVar("forge_proc_wrapper", default=None)
+
+
 def run_proc(argv: list[str], cwd: Path, timeout_s: float, env_extra: dict[str, str] | None = None) -> ProcResult:
+    wrapper = PROC_WRAPPER.get()
+    if wrapper is not None:
+        return wrapper(argv, cwd, timeout_s, env_extra)
+    return run_proc_direct(argv, cwd, timeout_s, env_extra)
+
+
+def run_proc_direct(argv: list[str], cwd: Path, timeout_s: float, env_extra: dict[str, str] | None = None
+                    ) -> ProcResult:
+    """Run on the host (scrubbed environment, no isolation). Used directly only by the sandbox runner."""
     t0 = time.monotonic()
     exe = argv[0]
     if os.sep not in exe and shutil.which(exe) is None:

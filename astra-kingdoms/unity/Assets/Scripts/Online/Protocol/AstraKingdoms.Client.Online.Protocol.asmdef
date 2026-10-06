@@ -1,0 +1,16 @@
+{
+    "name": "AstraKingdoms.Client.Online.Protocol",
+    "rootNamespace": "AstraKingdoms.Client.Online.Protocol",
+    "references": [
+        "AstraKingdoms.Rules"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

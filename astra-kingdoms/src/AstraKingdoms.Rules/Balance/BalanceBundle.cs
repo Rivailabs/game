@@ -24,6 +24,7 @@ namespace AstraKingdoms.Rules.Balance
         private readonly SortedDictionary<string, long> _overrides;
         private byte[] _contentHash;
         private byte[] _effectiveHash;
+        private RulesParameters _parameters;
 
         public string BundleId { get; }
         public string BaseRulesVersion { get; }
@@ -78,6 +79,22 @@ namespace AstraKingdoms.Rules.Balance
         public byte[] EffectiveRulesHash => (byte[])(_effectiveHash ?? (_effectiveHash = ToRulesContents().ComputeHash())).Clone();
 
         public string EffectiveRulesHashHex => Hex.Encode(_effectiveHash ?? (_effectiveHash = ToRulesContents().ComputeHash()));
+
+        /// <summary>
+        /// The engine parameters of this release (ticket 24), cached. The AK-TR-1 baseline returns
+        /// the shared <see cref="RulesParameters.Default"/>. Throws <see cref="ArgumentException"/>
+        /// when the bundle fails <see cref="BalanceValidator"/>. Pin the result to a match with
+        /// <see cref="MatchConfig.WithParameters"/>.
+        /// </summary>
+        public RulesParameters ToParameters()
+        {
+            RulesParameters cached = _parameters;
+            if (cached != null) return cached;
+            bool compiledBaseline = IsBaseline && BundleId == RulesConstants.RulesVersion;
+            RulesParameters built = compiledBaseline ? RulesParameters.Default : RulesParameters.FromBundle(this);
+            // First writer wins, so every caller (and every pinned match) shares one instance.
+            return System.Threading.Interlocked.CompareExchange(ref _parameters, built, null) ?? built;
+        }
 
         /// <summary>The base rules contents with the overrides applied.</summary>
         public RulesBundleContents ToRulesContents()

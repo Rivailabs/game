@@ -255,7 +255,7 @@ a phone, and no person has played it.
 
 | # | Deliverable | Status | What remains |
 | --- | --- | --- | --- |
-| 24 | Versioned balance publication and rollback | Done in code: `src/AstraKingdoms.Rules/Balance/` — `TunableSchema` (closed list; board, physics, trig, abilities stay frozen), `BalanceBundle` (`AK-BALANCE-BUNDLE/1` JSON, new ID per change, effective rules hash), `BalanceValidator`, `BalanceChannel` (append-only log, idempotent per-match pins, rollback for new matches only, IDs never reused) | **Blocked on a parameterized engine:** AK-TR-1 compiles its constants, so a tuned bundle is refused as `NOT_EXECUTABLE`; it can be validated, hashed and reviewed but not served. Server-side storage is the online agent's work. |
+| 24 | Versioned balance publication and rollback | Done in code: `src/AstraKingdoms.Rules/Balance/` — `TunableSchema` (closed list; board, physics, trig, abilities stay frozen), `BalanceBundle` (`AK-BALANCE-BUNDLE/1` JSON, new ID per change, effective rules hash), `BalanceValidator`, `BalanceChannel` (append-only log, idempotent per-match pins, rollback for new matches only, IDs never reused). The engine is parameterized: `Core/RulesParameters` (immutable, from a validated bundle) is pinned per match via `MatchConfig.WithParameters` / `BalanceSnapshot.Pin`; duel, land and match rules read it; `RulesParameters.Default` is AK-TR-1 byte-for-byte (rules hash and goldens unchanged). Tuned records carry bundle ID + content hash + effective hash; `Replayer.Verify(record, channel.Find)` replays them and refuses unknown bundles. Sim: `--bundle FILE [--compare]`; PROPOSED tuning `tools/AstraKingdoms.Sim/examples/AK-TR-1.p1.PROPOSED.balance.json`, comparison `reports/bundle-comparison-AK-TR-1.p1-PROPOSED-n2000-cohorts.md` (bot screening only, not adopted). | Server-side bundle storage/distribution is the online agent's work. The Unity client still displays the compiled `RulesConstants` timers/HP/round counts; it must read `MatchConfig.Parameters` before a tuned bundle that changes those values goes live. No human playtest of any tuned bundle. |
 | 25 | Human/bot balance review report | Done in code: the simulator builds a source-independent `MatchObservation` and one stratified report (pairings, first attacker, unlock cohorts, comebacks by checkpoint and deficit, elements, terrain, weapons usage-conditioned vs loadout-contained, Wilson + Bonferroni flags, "insufficient" strata). Human records use `AK-PLAYTEST-RECORD/1` (match record + pseudonymous seats + consent, replay-verified on ingest). Reports: `reports/balance-review-AK-TR-1-n2000-cohorts.md`; format example in `tools/AstraKingdoms.Sim/examples/` (synthetic, skipped unless `--include-synthetic`). | No human playtest data exists yet. Bot cohorts use a stated familiarity assumption. |
 | 26 | Archer prefab and rig import | Done in code: `ArcherAttachments` contract, placeholder `ArcherRig` from primitives, editor `AssetBudgetValidatorMenu` with the plan's ceilings (`AssetBudgets`) | Needs the approved archer (ticket 65), the editor and deformation review |
 | 27 | Archer animation controller | Done in code: required clip set and transitions in `ArcherPoseLibrary`/`ArcherAnimator` (tested continuity and a single release marker); `ArcherAnimatorBuilder` writes the Animator controller with the `OnReleaseArrow` event | Controller never generated in an editor; production clips |
@@ -288,3 +288,26 @@ approved entry without licence, rights holder, provenance and hash.
 dotnet run -c Release --project tools/AstraKingdoms.Sim -- --matches 10000 --cohorts      # bot review
 dotnet run -c Release --project tools/AstraKingdoms.Sim -- --ingest path/to/playtests      # human review
 ```
+
+## Online play (V1 tickets 49-56)
+
+| Path | Contents |
+| --- | --- |
+| `server/AstraKingdoms.Server/` | Authoritative ASP.NET Core (net8.0) match service: Firebase ID-token or dev identity, friend rooms, queue with a consent-only labelled bot offer, server phase clock, per-player `PlayerView` delivery over WebSockets, SQLite persistence, append-only audit, rate limits, health, graceful drain, grievance intake. Runbook: `server/RUNBOOK.md`. Container: `server/Dockerfile`. |
+| `unity/Assets/Scripts/Online/` | Unity online client. `Protocol/` (its own asmdef) is the message schema the server also compiles. The core (no UnityEngine) holds `OnlineConnection` (reconnect with backoff), `OnlineClient` and `OnlineMatchSession`, which implements `IMatchSession`, the view-driven surface `LocalMatchSession` also exposes. `UI/` holds the lobby and match screens and registers the Home "Play online" hook. |
+| `src/AstraKingdoms.Rules/Match/PlayerViewCodec.cs` | Wire form of a private `PlayerView` (additive; no rules change). |
+| `tests/AstraKingdoms.Server.Tests/` | The service in-process (TestServer, fake clock) driven by the real client library. |
+| `tools/AstraKingdoms.LoadTest/` | Load and fault check of the declared initial capacity scenario. |
+
+```bash
+dotnet test tests/AstraKingdoms.Server.Tests
+cd server/AstraKingdoms.Server && ASPNETCORE_ENVIRONMENT=Development dotnet run   # dev auth, data/astra-server-dev.db
+```
+
+**Not verified here:**
+- a real Firebase project and the client-side Firebase sign-in adapter (`OnlineEntryPoint.IdentityTokenProvider`);
+- a Docker build (no daemon available; the publish step was checked);
+- the online UI in a Unity editor or on a phone;
+- the capacity numbers on the target host.
+
+The online cut window offers Auto Cut only: the drawn-cut `LandScreen` is tied to `LocalMatchHost`.

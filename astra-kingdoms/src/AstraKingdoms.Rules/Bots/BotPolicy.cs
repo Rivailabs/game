@@ -138,7 +138,7 @@ namespace AstraKingdoms.Rules.Bots
             var best = new List<int>();
             foreach (int id in candidates)
             {
-                WeaponDefinition w = WeaponCatalog.Get(id);
+                WeaponDefinition w = v.Config.Parameters.Weapon(id); // tuned damage of the pinned snapshot (ticket 24)
                 long attack = 0, exposure = 0;
                 for (int e = 1; e <= 5; e++)
                 {

@@ -1,0 +1,43 @@
+{
+  "id": "astra_archer",
+  "kind": "character",
+  "title": "Astra base archer (original mortal fantasy archer)",
+  "intended_screen_size": "about 18% of screen height at the gameplay camera on the reference phone; two archers on screen",
+  "art_reference": [
+    {
+      "description": "Owner mood board: original mortal archer, Indian-epic fantasy textiles and formation motifs, clear silhouette (to be added by the owner before concept generation)",
+      "path": "",
+      "rights": "owner-created"
+    }
+  ],
+  "silhouette": "Readable bow arm, quiver over the right shoulder, sash and dhoti-style lower garment; no god, revered figure or recognisable character",
+  "scale_m": 1.8,
+  "scale_axis": "height",
+  "pivot": "bottom_center",
+  "materials": "At most two materials (body, cloth/gear); URP Lit; base colour + normal + packed mask",
+  "attachment_points": ["bow_grip_socket", "string_hand_socket", "arrow_nock_socket", "quiver_socket"],
+  "animation_requirements": ["idle", "draw", "hold", "release", "recover", "hit", "dodge_left", "dodge_right", "jump", "defeat", "victory"],
+  "budget": "archer",
+  "collider": "capsule",
+  "licence": {"commercial_use": true, "public_demo": false, "attribution_allowed": true,
+              "notes": "Distribution countries come from [policy] intended_release_countries; confirm before first generation"},
+  "prompt": "An original mortal fantasy archer in a neutral A-pose, Indian-epic fantasy textiles, readable silhouette for a small phone screen, hand-crafted look, full body, plain background",
+  "negative_prompt": "deity, god, religious figure, famous character, franchise, logo, modern clothing, firearm",
+  "clip_prompts": {
+    "idle": "archer idle stance holding a bow at the side, breathing, loopable",
+    "draw": "archer nocks an arrow and draws the bowstring to the cheek",
+    "hold": "archer holds a full draw, steady aim, loopable",
+    "release": "archer releases the arrow, follow-through",
+    "recover": "archer lowers the bow after a shot back to ready stance",
+    "hit": "archer flinches from a hit to the torso",
+    "dodge_left": "archer side-steps quickly to the left",
+    "dodge_right": "archer side-steps quickly to the right",
+    "jump": "archer jumps in place and lands",
+    "defeat": "archer falls to the knees and collapses",
+    "victory": "archer raises the bow in victory"
+  },
+  "catalogue_first": false,
+  "skip_stages": [],
+  "separate_assets": ["recurve_bow", "arrow"],
+  "procedural_parts": ["bowstring"]
+}

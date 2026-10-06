@@ -50,9 +50,13 @@ namespace AstraKingdoms.Rules.Land
         }
 
         /// <summary>Selects the duel terrain for <paramref name="round"/> (1-8).</summary>
-        public static FrontierSelection SelectDuelTerrain(Territory territory, PlayerSide attacker, byte[] seed, int round)
+        public static FrontierSelection SelectDuelTerrain(Territory territory, PlayerSide attacker, byte[] seed, int round) =>
+            SelectDuelTerrain(territory, attacker, seed, round, RulesConstants.MaxRounds);
+
+        /// <summary>Selects the duel terrain for <paramref name="round"/> (1..<paramref name="maxRounds"/>, ticket 24).</summary>
+        public static FrontierSelection SelectDuelTerrain(Territory territory, PlayerSide attacker, byte[] seed, int round, int maxRounds)
         {
-            if (round < 1 || round > RulesConstants.MaxRounds) throw new ArgumentOutOfRangeException(nameof(round));
+            if (round < 1 || round > maxRounds) throw new ArgumentOutOfRangeException(nameof(round));
             List<int> frontier = Cells(territory, attacker);
             if (frontier.Count == 0) throw new InvalidOperationException("No frontier: one player owns no land.");
 

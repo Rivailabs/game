@@ -8,6 +8,8 @@ namespace AstraKingdoms.Rules.Combat
     /// </summary>
     public static class DamageCalculator
     {
+        // AK-TR-1 baselines. Matches read the values in force from RulesParameters (ticket 24).
+
         /// <summary>Chain Bolt's neutral bonus against a covered target (bypasses cover, element and dodge).</summary>
         public const int ChainBonusUnits = 10 * RulesConstants.HpUnitsPerHp;
         public const int BurnUnits = 5 * RulesConstants.HpUnitsPerHp;
@@ -44,5 +46,12 @@ namespace AstraKingdoms.Rules.Combat
         /// </summary>
         public static int ApplyHealthBatch(int oldUnits, int directUnits, int burnUnits, int oceanUnits, int riverUnits) =>
             Hp.Clamp((long)oldUnits - directUnits - burnUnits + oceanUnits + riverUnits);
+
+        /// <summary>
+        /// The same update with the match's starting HP as the ceiling (ticket 24 balance bundles):
+        /// clamp(old − direct − dueBurn + ocean + river, 0, <paramref name="maxUnits"/>).
+        /// </summary>
+        public static int ApplyHealthBatch(int oldUnits, int directUnits, int burnUnits, int oceanUnits, int riverUnits, int maxUnits) =>
+            Hp.Clamp((long)oldUnits - directUnits - burnUnits + oceanUnits + riverUnits, maxUnits);
     }
 }

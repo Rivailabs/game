@@ -35,13 +35,20 @@ namespace AstraKingdoms.Rules.Core
         /// Cards eligible after a won duel with the given positive HP difference (units).
         /// Vajra requires a difference strictly greater than 60.00 HP.
         /// </summary>
-        public static IReadOnlyList<CardId> Eligible(int hpDifferenceUnits)
+        public static IReadOnlyList<CardId> Eligible(int hpDifferenceUnits) =>
+            Eligible(hpDifferenceUnits, RulesConstants.VajraMinExclusiveDiffUnits);
+
+        /// <summary>
+        /// Eligible cards with an explicit Vajra gate (ticket 24 balance bundles): Vajra requires a
+        /// difference strictly greater than <paramref name="vajraMinExclusiveDiffUnits"/>.
+        /// </summary>
+        public static IReadOnlyList<CardId> Eligible(int hpDifferenceUnits, int vajraMinExclusiveDiffUnits)
         {
             if (hpDifferenceUnits <= 0) return Array.Empty<CardId>();
             var list = new List<CardId>(6);
             foreach (var c in All)
             {
-                if (c == CardId.Vajra && hpDifferenceUnits <= RulesConstants.VajraMinExclusiveDiffUnits) continue;
+                if (c == CardId.Vajra && hpDifferenceUnits <= vajraMinExclusiveDiffUnits) continue;
                 list.Add(c);
             }
             return list;

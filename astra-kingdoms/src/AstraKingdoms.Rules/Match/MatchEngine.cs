@@ -84,6 +84,8 @@ namespace AstraKingdoms.Rules.Match
         private int _hpDifference;
 
         public MatchConfig Config { get; }
+        /// <summary>The balance snapshot pinned to this match for its whole life (ticket 24).</summary>
+        public RulesParameters Parameters => Config.Parameters;
         public string MatchId { get; }
         public byte[] RulesHash => (byte[])_rulesHash.Clone();
         public byte[] SeedCommitment { get; }
@@ -113,7 +115,8 @@ namespace AstraKingdoms.Rules.Match
             Config = config;
             MatchId = matchId;
             _seed = (byte[])seed.Clone();
-            _rulesHash = RulesBundle.Hash;
+            // The pinned snapshot's effective rules hash (RulesBundle.Hash for AK-TR-1).
+            _rulesHash = config.Parameters.RulesHash;
             SeedCommitment = SeededStream.SeedCommitment(_rulesHash, _seed, matchId);
             _territory = Territory.CreateInitial(config.Template);
 
@@ -370,7 +373,7 @@ namespace AstraKingdoms.Rules.Match
             cellsMoved = outcome.CellsTransferred;
             _round.CellsTransferred = cellsMoved;
             Emit(MatchEventType.CutApplied, player, cellsMoved, (int)cmd.CardId);
-            if (outcome.WinnerReachedVictory)
+            if (_territory.HasReachedVictory(player, Parameters.VictoryCells))
             {
                 FinishRoundRecord();
                 EndMatch(TerminalReason.Territory90, player, null);
@@ -384,7 +387,7 @@ namespace AstraKingdoms.Rules.Match
 
         private CutResult EvaluateCut(PlayerSide player, SubmitCutCommand cmd)
         {
-            int quota = LandQuota.Compute(_territory.CellCount(Board.Opponent(player)), _hpDifference, cmd.CardId);
+            int quota = LandQuota.Compute(_territory.CellCount(Board.Opponent(player)), _hpDifference, cmd.CardId, Parameters);
             CellPoint anchor = CellPoint.FromCellId(cmd.AnchorCellId);
             return cmd.Mode == CutMode.Auto
                 ? CutValidator.AutoCut(_territory, player, cmd.CardId, cmd.Pose, anchor, quota)
@@ -412,7 +415,7 @@ namespace AstraKingdoms.Rules.Match
             lock (_gate)
             {
                 if (Phase != MatchPhase.CardAndCut || !_duelWinner.HasValue || !_offer.Contains(card)) return 0;
-                return LandQuota.Compute(_territory.CellCount(Board.Opponent(_duelWinner.Value)), _hpDifference, card);
+                return LandQuota.Compute(_territory.CellCount(Board.Opponent(_duelWinner.Value)), _hpDifference, card, Parameters);
             }
         }
 
@@ -486,8 +489,8 @@ namespace AstraKingdoms.Rules.Match
             RoundIndex = round;
             PlayerSide attacker = AttackerOf(round);
             PlayerSide defender = Board.Opponent(attacker);
-            _frontier = Frontier.SelectDuelTerrain(_territory, attacker, _seed, round);
-            _duel = Duel.Start(round, _frontier.Terrain, defender, _loadouts[0], _loadouts[1], Config.BrahmastraEnabled,
+            _frontier = Frontier.SelectDuelTerrain(_territory, attacker, _seed, round, Parameters.MaxRounds);
+            _duel = Duel.Start(round, _frontier.Terrain, defender, _loadouts[0], _loadouts[1], Parameters, Config.BrahmastraEnabled,
                 _brahmastraAvailable[0], _brahmastraAvailable[1]);
             _offer = null;
             _duelWinner = null;
@@ -527,7 +530,7 @@ namespace AstraKingdoms.Rules.Match
             }
             _offer = Config.CardOffers == CardOfferRule.Pilot
                 ? CardOffers.Pilot(_hpDifference)
-                : CardOffers.V1(_seed, RoundIndex, _hpDifference);
+                : CardOffers.V1(_seed, RoundIndex, _hpDifference, Parameters);
             _round.OfferedCards.AddRange(_offer.Cards);
             _round.CardsStreamCounter = _offer.StreamCounter;
             SetPhase(MatchPhase.CardAndCut);
@@ -538,7 +541,7 @@ namespace AstraKingdoms.Rules.Match
         {
             FinishRoundRecord();
             Emit(MatchEventType.RoundEnded, null, _territory.CellCount(PlayerSide.A), _territory.CellCount(PlayerSide.B));
-            if (RoundIndex >= RulesConstants.MaxRounds)
+            if (RoundIndex >= Parameters.MaxRounds)
             {
                 int a = _territory.CellCount(PlayerSide.A);
                 int b = _territory.CellCount(PlayerSide.B);
@@ -637,7 +640,7 @@ namespace AstraKingdoms.Rules.Match
                     view.OfferedCards = _offer.Cards;
                     var quotas = new int[_offer.Cards.Count];
                     int loserCells = _territory.CellCount(Board.Opponent(_duelWinner.Value));
-                    for (int i = 0; i < quotas.Length; i++) quotas[i] = LandQuota.Compute(loserCells, _hpDifference, _offer.Cards[i]);
+                    for (int i = 0; i < quotas.Length; i++) quotas[i] = LandQuota.Compute(loserCells, _hpDifference, _offer.Cards[i], Parameters);
                     view.OfferedQuotas = quotas;
                 }
                 var history = new List<RevealedVolley>(_history.Count);
@@ -651,7 +654,7 @@ namespace AstraKingdoms.Rules.Match
         {
             var s = new PlayerStatus
             {
-                HpUnits = RulesConstants.StartHpUnits,
+                HpUnits = Parameters.StartHpUnits,
                 BrahmastraAvailable = Config.BrahmastraEnabled && _brahmastraAvailable[(int)side],
                 ConsecutiveTimeouts = _timeoutStreak[(int)side],
                 Cells = _territory.CellCount(side),
