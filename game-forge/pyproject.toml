@@ -15,6 +15,7 @@ dependencies = ["pydantic>=2.5"]
 claude = ["anthropic>=1.0"]
 test = ["pytest>=8"]
 catalogue = ["objaverse==0.1.7", "datasets"]   # catalogue lane: Objaverse 1.0 + Objaverse++ tags
+backup = ["cryptography>=41"]                   # encrypted backups (AES-256-GCM + scrypt)
 
 [project.scripts]
 forge = "forge.cli:main"

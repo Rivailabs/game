@@ -352,6 +352,11 @@ def build_parser() -> argparse.ArgumentParser:
     cr = csub.add_parser("run", help="run one brief: exit 0 picked, 2 NONE, 3 blocked")
     add_run_arguments(cr)
     cr.set_defaults(fn=cmd_catalogue)
+    from .backup.cli import register as register_backup
+    from .sandbox.cli import register as register_sandbox
+
+    register_backup(sub)  # forge backup ... / forge retention ...
+    register_sandbox(sub)  # forge sandbox detect
     return p
 
 
