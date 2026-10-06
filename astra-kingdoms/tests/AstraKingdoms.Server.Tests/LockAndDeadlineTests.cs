@@ -148,6 +148,34 @@ public class LockAndDeadlineTests
         Assert.That(host.Engine.GetView(PlayerSide.A).History[0][b.Match.LocalSide].TimedOut, Is.True);
     }
 
+    /// <summary>Like real system timers: fires a little before the requested time.</summary>
+    private sealed class EarlyClock : FakeTimeProvider
+    {
+        public EarlyClock() : base(ServerHarness.Epoch)
+        {
+        }
+
+        public override ITimer CreateTimer(TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period) =>
+            base.CreateTimer(callback, state, dueTime > TimeSpan.FromMilliseconds(5) ? dueTime - TimeSpan.FromMilliseconds(3) : dueTime, period);
+    }
+
+    [Test]
+    public async Task ATimerFiringEarlyIsReArmedNotLost()
+    {
+        var clock = new EarlyClock();
+        await using ServerHarness h = ServerHarness.Start(time: clock);
+        await using TestPlayer a = await TestPlayer.ConnectAsync(h, "alice");
+        await using TestPlayer b = await TestPlayer.ConnectAsync(h, "bob");
+        MatchHost host = await Play.FriendMatch(h, a, b);
+        Play.SubmitLoadout(a);
+        Play.SubmitLoadout(b);
+        await Play.ViewAt(host, a, MatchPhase.TerrainAnnounce);
+        h.AdvanceMs(1997); // the early timer fires 3 ms before the deadline
+        Assert.That(host.Engine.Phase, Is.EqualTo(MatchPhase.TerrainAnnounce), "not before the deadline");
+        h.AdvanceMs(3);
+        Assert.That(host.Engine.Phase, Is.EqualTo(MatchPhase.Selection), "the re-armed timer applies the deadline");
+    }
+
     [Test]
     public async Task TwoConsecutiveTimeoutsForfeitOnlineWithoutReward()
     {

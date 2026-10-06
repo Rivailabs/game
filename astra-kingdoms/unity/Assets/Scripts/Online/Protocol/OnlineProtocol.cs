@@ -90,6 +90,8 @@ namespace AstraKingdoms.Client.Online.Protocol
         public const string NoBotOffer = "NO_BOT_OFFER";
         public const string BadCatalog = "BAD_CATALOG";
         public const string ServerDraining = "SERVER_DRAINING";
+        /// <summary>An operator paused new matches (all, or one catalog) during an incident.</summary>
+        public const string NewMatchesPaused = "NEW_MATCHES_PAUSED";
         public const string Internal = "INTERNAL";
     }
 

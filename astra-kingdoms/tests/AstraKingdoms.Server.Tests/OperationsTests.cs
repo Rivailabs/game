@@ -182,6 +182,38 @@ public class OperationsTests
     }
 
     [Test]
+    public async Task IncidentSwitchesStopNewMatchesWithoutTouchingActiveOnes()
+    {
+        await using ServerHarness h = ServerHarness.Start(new Dictionary<string, string> { ["AstraServer:Lifecycle:DisabledCatalogs:0"] = "Full" });
+        await using TestPlayer a = await TestPlayer.ConnectAsync(h, "alice");
+        await using TestPlayer b = await TestPlayer.ConnectAsync(h, "bob");
+        a.Client.SendRaw(ClientMessages.RoomCreate("full", CatalogPreset.Full));
+        await ServerHarness.Until(() => a.HasError(ErrorCodes.NewMatchesPaused, "full"), "Full catalog paused");
+        b.Client.SendRaw(ClientMessages.QueueJoin("q", CatalogPreset.Full));
+        await ServerHarness.Until(() => b.HasError(ErrorCodes.NewMatchesPaused, "q"), "queue for Full paused");
+        MatchHost starter = await Play.FriendMatch(h, a, b, CatalogPreset.Starter);
+        Assert.That(starter.IsSettled, Is.False, "other catalogs keep working");
+    }
+
+    [Test]
+    public async Task CheckpointsNeverOverwriteADurableWrite()
+    {
+        await using ServerHarness h = ServerHarness.Start();
+        await using TestPlayer a = await TestPlayer.ConnectAsync(h, "alice");
+        await using TestPlayer b = await TestPlayer.ConnectAsync(h, "bob");
+        MatchHost host = await Play.FriendMatch(h, a, b);
+        CheckpointWriter writer = h.Get<CheckpointWriter>();
+        StoredMatch stale = h.Stored(host.MatchId).Copy();
+        stale.OutcomeDetail = "stale-checkpoint";
+        writer.Enqueue(stale);
+        host.TechnicalVoid("test"); // durable settlement discards the queued checkpoint
+        writer.Flush();
+        await ServerHarness.Until(() => writer.Backlog == 0, "writer idle");
+        Assert.That(h.Stored(host.MatchId).Status, Is.EqualTo(MatchStatus.Finished));
+        Assert.That(h.Stored(host.MatchId).OutcomeDetail, Is.EqualTo("test"));
+    }
+
+    [Test]
     public async Task RetentionPurgesOnlyExpiredSettledRecords()
     {
         await using ServerHarness h = ServerHarness.Start();

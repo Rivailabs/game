@@ -24,6 +24,8 @@ namespace AstraKingdoms.Server
     /// <summary>Service registration and the HTTP pipeline, shared by the executable and the tests.</summary>
     public static class ServerSetup
     {
+        private const string GoogleKeysClient = "google-signing-keys";
+
         public static void ConfigureServices(WebApplicationBuilder builder)
         {
             builder.Services.AddOptions<ServerOptions>().Bind(builder.Configuration.GetSection(ServerOptions.Section));
@@ -41,8 +43,10 @@ namespace AstraKingdoms.Server
             builder.Services.AddSingleton<IAuditLog>(sp => sp.GetRequiredService<SqliteStore>());
             builder.Services.AddSingleton<IGrievanceStore>(sp => sp.GetRequiredService<SqliteStore>());
 
-            builder.Services.AddHttpClient<GoogleX509KeySource>();
-            builder.Services.AddSingleton<ISigningKeySource>(sp => sp.GetRequiredService<GoogleX509KeySource>());
+            builder.Services.AddHttpClient(GoogleKeysClient, c => c.Timeout = TimeSpan.FromSeconds(10));
+            builder.Services.AddSingleton<ISigningKeySource>(sp => new GoogleX509KeySource(
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient(GoogleKeysClient), sp.GetRequiredService<TimeProvider>(),
+                sp.GetRequiredService<IOptions<ServerOptions>>().Value.Auth.SigningKeysUrl));
             builder.Services.AddSingleton<IIdentityVerifier>(sp =>
             {
                 ServerOptions o = sp.GetRequiredService<IOptions<ServerOptions>>().Value;
@@ -63,6 +67,9 @@ namespace AstraKingdoms.Server
             builder.Services.AddSingleton<LobbyService>();
             builder.Services.AddSingleton<RealtimeEndpoint>();
             builder.Services.AddSingleton<DrainState>();
+            builder.Services.AddSingleton<ServiceMetrics>();
+            builder.Services.AddSingleton(sp => new CheckpointWriter(sp.GetRequiredService<IMatchRepository>(),
+                sp.GetRequiredService<ILogger<CheckpointWriter>>()));
             builder.Services.AddSingleton<HttpLimiters>();
             builder.Services.AddSingleton<LifecycleService>();
             builder.Services.AddHostedService(sp => sp.GetRequiredService<LifecycleService>());

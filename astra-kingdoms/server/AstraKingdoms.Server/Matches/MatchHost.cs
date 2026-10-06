@@ -46,12 +46,15 @@ public sealed class MatchServices
     public TimeProvider Time { get; init; }
     public TimingOptions Timings { get; init; }
     public ILogger Log { get; init; }
+    public Ops.ServiceMetrics Metrics { get; init; }
+    public CheckpointWriter Checkpoints { get; init; }
 }
 
 /// <summary>
 /// Hosts one authoritative match (tickets 50, 51, 54): the shared rules engine with an immutable
-/// config and rules hash, the online phase clock, private per-player delivery, persistence after
-/// every accepted command, idempotent finalization and the audit trail.
+/// config and rules hash, the online phase clock, private per-player delivery, durable writes at
+/// creation, suspension and settlement plus a background checkpoint each round, idempotent
+/// finalization and the audit trail.
 /// <para>
 /// <b>Authority.</b> Clients send typed commands; the authenticated connection decides the seat.
 /// Every outcome comes from <see cref="MatchEngine"/>. The server alone issues
@@ -81,6 +84,7 @@ public sealed class MatchHost
     private readonly ulong[] _botRevision = new ulong[2];
     private bool _started;
     private bool _settling;
+    private int _persistedRound = -1;
 
     public MatchHost(MatchEngine engine, StoredMatch stored, Participant a, Participant b, MatchServices services)
     {
@@ -147,6 +151,8 @@ public sealed class MatchHost
         {
             if (_started) return;
             _started = true;
+            _persistedRound = Engine.RoundIndex;
+            Persist(); // the row exists (participants, rules) before anyone can act
             _s.Audit.Append(MatchId, "server", "match_created",
                 "origin=" + Origin + " a=" + _seats[0].Ref + " b=" + _seats[1].Ref + " rules=" + Rules.RulesHashHex + " config=" + Engine.Config);
             _s.Log.LogInformation("Match {MatchId} created ({Origin}) {PlayerA} vs {PlayerB}", MatchId, Origin, _seats[0].Ref, _seats[1].Ref);
@@ -210,6 +216,19 @@ public sealed class MatchHost
 
     /// <summary>A player's command, already decoded. Sends the receipt (or error) back to that player.</summary>
     public void HandleCommand(string uid, string rid, MatchCommand command)
+    {
+        long started = System.Diagnostics.Stopwatch.GetTimestamp();
+        try
+        {
+            HandleCommandTimed(uid, rid, command);
+        }
+        finally
+        {
+            _s.Metrics?.RecordCommand(started);
+        }
+    }
+
+    private void HandleCommandTimed(string uid, string rid, MatchCommand command)
     {
         lock (_gate)
         {
@@ -341,7 +360,14 @@ public sealed class MatchHost
     {
         lock (_gate)
         {
-            if (IsSettled || IsSuspended || Engine.StateRevision != revision) return;
+            if (IsSettled || IsSuspended || Engine.StateRevision != revision || !_deadline.HasValue) return;
+            // System timers run on a coarse tick and can fire a few milliseconds before the deadline
+            // as measured by the wall clock: re-arm for the remainder instead of dropping the deadline.
+            if (_s.Time.GetUtcNow() < _deadline.Value)
+            {
+                SetDeadline(_deadline.Value);
+                return;
+            }
             ExpireDueLocked();
         }
     }
@@ -432,7 +458,14 @@ public sealed class MatchHost
 
     private void AfterChange()
     {
-        Persist();
+        // Checkpoint once per round (and at creation). Settlement and graceful suspension always write
+        // the full record; a crash between checkpoints settles the match as a technical void anyway,
+        // so writing every command would only serialize all matches on the single SQLite writer.
+        if (Engine.RoundIndex != _persistedRound && !Engine.IsOver)
+        {
+            _persistedRound = Engine.RoundIndex;
+            Checkpoint();
+        }
         if (Engine.IsOver)
         {
             Finish();
@@ -444,11 +477,26 @@ public sealed class MatchHost
         ScheduleBots();
     }
 
+    /// <summary>Durable write now (creation, resume, suspension).</summary>
     private void Persist()
     {
         _stored.RecordJson = MatchRecord.FromEngine(Engine).ToJson();
         _stored.UpdatedAt = _s.Time.GetUtcNow();
-        _s.Repository.Save(_stored);
+        if (_s.Checkpoints != null) _s.Checkpoints.WriteNow(_stored, _s.Repository.Save);
+        else _s.Repository.Save(_stored);
+    }
+
+    /// <summary>Background checkpoint of a copy of the current state (never blocks command handling on storage).</summary>
+    private void Checkpoint()
+    {
+        if (_s.Checkpoints == null)
+        {
+            Persist();
+            return;
+        }
+        _stored.RecordJson = MatchRecord.FromEngine(Engine).ToJson();
+        _stored.UpdatedAt = _s.Time.GetUtcNow();
+        _s.Checkpoints.Enqueue(_stored.Copy());
     }
 
     private void Finish()
@@ -476,7 +524,9 @@ public sealed class MatchHost
         _stored.PhaseDeadlineMs = null;
         _stored.RecordJson = MatchRecord.FromEngine(Engine).ToJson();
         _stored.UpdatedAt = _s.Time.GetUtcNow();
-        IReadOnlyList<RewardGrant> granted = _s.Repository.Finalize(_stored, grants);
+        IReadOnlyList<RewardGrant> granted = Array.Empty<RewardGrant>();
+        if (_s.Checkpoints != null) _s.Checkpoints.WriteNow(_stored, m => granted = _s.Repository.Finalize(m, grants));
+        else granted = _s.Repository.Finalize(_stored, grants);
         _s.Audit.Append(MatchId, "server", "match_settled",
             "outcome=" + _stored.Outcome + " detail=" + _stored.OutcomeDetail + " result=" + (result?.ToString() ?? "-") + " result_id=" + _stored.ResultId +
             " grants_new=" + granted.Count);

@@ -35,7 +35,8 @@ public static class HttpEndpoints
     {
         // ---- health (ticket 56)
         app.MapGet("/healthz", () => Results.Json(new { status = "ok" }));
-        app.MapGet("/readyz", (DrainState drain, IMatchRepository repo, MatchRegistry matches, ConnectionRegistry connections, LobbyService lobby) =>
+        app.MapGet("/readyz", (DrainState drain, IMatchRepository repo, MatchRegistry matches, ConnectionRegistry connections, LobbyService lobby,
+            ServiceMetrics metrics) =>
         {
             bool storage = repo.Ping();
             var body = new
@@ -46,6 +47,10 @@ public static class HttpEndpoints
                 rooms = lobby.RoomCount,
                 queue = lobby.QueueLength,
                 rules_hash = Rules.Match.RulesBundle.HashHex,
+                commands = metrics.Commands,
+                command_ms_p50 = Math.Round(metrics.Quantile(0.50), 2),
+                command_ms_p95 = Math.Round(metrics.Quantile(0.95), 2),
+                command_ms_p99 = Math.Round(metrics.Quantile(0.99), 2),
             };
             return drain.IsDraining || !storage ? Results.Json(body, statusCode: StatusCodes.Status503ServiceUnavailable) : Results.Json(body);
         });

@@ -38,13 +38,15 @@ public sealed class LifecycleService : IHostedService
     private readonly MatchRegistry _matches;
     private readonly LobbyService _lobby;
     private readonly ConnectionRegistry _connections;
+    private readonly CheckpointWriter _checkpoints;
     private readonly DrainState _drain;
     private readonly ServerOptions _options;
     private readonly ILogger<LifecycleService> _log;
 
     public LifecycleService(MatchRegistry matches, LobbyService lobby, ConnectionRegistry connections, DrainState drain,
-        IOptions<ServerOptions> options, ILogger<LifecycleService> log)
+        IOptions<ServerOptions> options, ILogger<LifecycleService> log, CheckpointWriter checkpoints)
     {
+        _checkpoints = checkpoints;
         _matches = matches;
         _lobby = lobby;
         _connections = connections;
@@ -73,6 +75,7 @@ public sealed class LifecycleService : IHostedService
         _log.LogInformation("Draining: {Matches} active matches, policy {Policy}", _matches.ActiveCount, _options.Lifecycle.ShutdownPolicy);
         _lobby.CloseAll();
         _matches.OnShutdown(_options.Lifecycle.ShutdownPolicy);
+        _checkpoints.Flush();
         JsonNode notice = Json.Message(MessageTypes.ServerDraining)
             .Add("policy", _options.Lifecycle.ShutdownPolicy == ShutdownMatchPolicy.Preserve ? "preserve" : "void");
         foreach (ClientConnection c in _connections.All)

@@ -133,11 +133,6 @@ public sealed class GoogleX509KeySource : ISigningKeySource
     private DateTimeOffset _expires = DateTimeOffset.MinValue;
     private DateTimeOffset _lastFetch = DateTimeOffset.MinValue;
 
-    public GoogleX509KeySource(HttpClient http, TimeProvider time, IOptions<ServerOptions> options)
-        : this(http, time, options.Value.Auth.SigningKeysUrl)
-    {
-    }
-
     public GoogleX509KeySource(HttpClient http, TimeProvider time, string url)
     {
         _http = http;

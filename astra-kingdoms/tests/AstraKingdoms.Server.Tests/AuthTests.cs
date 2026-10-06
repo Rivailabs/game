@@ -192,6 +192,22 @@ public class AuthTests
     }
 
     [Test]
+    public async Task ProductionWiringUsesGoogleKeysAndRequiresAProjectId()
+    {
+        await using (ServerHarness h = ServerHarness.Start(new Dictionary<string, string>
+                     {
+                         ["AstraServer:Auth:Mode"] = "Firebase",
+                         ["AstraServer:Auth:FirebaseProjectId"] = Jwt.ProjectId,
+                     }, environment: "Production"))
+        {
+            Assert.That(h.Get<IIdentityVerifier>(), Is.InstanceOf<FirebaseIdTokenVerifier>());
+            Assert.That(h.Get<ISigningKeySource>(), Is.InstanceOf<GoogleX509KeySource>());
+        }
+        Assert.That(() => ServerHarness.Start(new Dictionary<string, string> { ["AstraServer:Auth:Mode"] = "Firebase" }, environment: "Production"),
+            Throws.InstanceOf<Exception>(), "Firebase mode without a project ID fails at startup");
+    }
+
+    [Test]
     public void DevAuthenticationIsRefusedOutsideDevelopment()
     {
         Assert.That(() => ServerHarness.Start(environment: "Production"), Throws.InstanceOf<Exception>());

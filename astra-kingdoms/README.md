@@ -243,3 +243,26 @@ choose what human tests to run.
 - **Match length.** 83.3% of matches reach round 8; 20.3% end by the 90% shortcut.
 - **Comebacks.** Almost none: a player below 35% of the board after duel 4 wins 2.6% of mirror
   matches.
+
+## Online play (V1 tickets 49-56)
+
+| Path | Contents |
+| --- | --- |
+| `server/AstraKingdoms.Server/` | Authoritative ASP.NET Core (net8.0) match service: Firebase ID-token or dev identity, friend rooms, queue with a consent-only labelled bot offer, server phase clock, per-player `PlayerView` delivery over WebSockets, SQLite persistence, append-only audit, rate limits, health, graceful drain, grievance intake. Runbook: `server/RUNBOOK.md`. Container: `server/Dockerfile`. |
+| `unity/Assets/Scripts/Online/` | Unity online client. `Protocol/` (its own asmdef) is the message schema the server also compiles. The core (no UnityEngine) holds `OnlineConnection` (reconnect with backoff), `OnlineClient` and `OnlineMatchSession`, which implements `IMatchSession`, the view-driven surface `LocalMatchSession` also exposes. `UI/` holds the lobby and match screens and registers the Home "Play online" hook. |
+| `src/AstraKingdoms.Rules/Match/PlayerViewCodec.cs` | Wire form of a private `PlayerView` (additive; no rules change). |
+| `tests/AstraKingdoms.Server.Tests/` | The service in-process (TestServer, fake clock) driven by the real client library. |
+| `tools/AstraKingdoms.LoadTest/` | Load and fault check of the declared initial capacity scenario. |
+
+```bash
+dotnet test tests/AstraKingdoms.Server.Tests
+cd server/AstraKingdoms.Server && ASPNETCORE_ENVIRONMENT=Development dotnet run   # dev auth, data/astra-server-dev.db
+```
+
+**Not verified here:**
+- a real Firebase project and the client-side Firebase sign-in adapter (`OnlineEntryPoint.IdentityTokenProvider`);
+- a Docker build (no daemon available; the publish step was checked);
+- the online UI in a Unity editor or on a phone;
+- the capacity numbers on the target host.
+
+The online cut window offers Auto Cut only: the drawn-cut `LandScreen` is tied to `LocalMatchHost`.

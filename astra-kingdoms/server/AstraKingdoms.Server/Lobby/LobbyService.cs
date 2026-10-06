@@ -82,15 +82,27 @@ public sealed class LobbyService
     private readonly ServerOptions _options;
     private readonly ILogger<LobbyService> _log;
 
-    public LobbyService(MatchRegistry matches, IPlayerChannel channel, IAuditLog audit, TimeProvider time, IOptions<ServerOptions> options,
+    private readonly IOptionsMonitor<ServerOptions> _live;
+
+    public LobbyService(MatchRegistry matches, IPlayerChannel channel, IAuditLog audit, TimeProvider time, IOptionsMonitor<ServerOptions> options,
         ILogger<LobbyService> log)
     {
         _matches = matches;
         _channel = channel;
         _audit = audit;
         _time = time;
-        _options = options.Value;
+        _live = options;
+        _options = options.CurrentValue;
         _log = log;
+    }
+
+    /// <summary>The incident switches (read live): may a new match with this catalog start now?</summary>
+    private bool NewMatchesAllowed(CatalogPreset catalog, string uid, string rid)
+    {
+        LifecycleOptions l = _live.CurrentValue.Lifecycle;
+        if (l.NewMatchesEnabled && Array.IndexOf(l.DisabledCatalogs ?? Array.Empty<string>(), catalog.ToString()) < 0) return true;
+        Error(uid, rid, ErrorCodes.NewMatchesPaused, "New matches of this kind are paused; please try again later.");
+        return false;
     }
 
     /// <summary>Set during shutdown: new rooms and queue entries are refused.</summary>
@@ -124,7 +136,7 @@ public sealed class LobbyService
     {
         lock (_gate)
         {
-            if (!CheckFree(uid, rid)) return;
+            if (!CheckFree(uid, rid) || !NewMatchesAllowed(catalog, uid, rid)) return;
             string code;
             int guard = 0;
             do code = RoomCodes.New(_options.Rooms.CodeLength);
@@ -216,6 +228,7 @@ public sealed class LobbyService
                 SendRoom(room);
                 return;
             }
+            if (!NewMatchesAllowed(room.Catalog, uid, rid)) return;
             room.Confirmed.Add(uid);
             if (room.GuestUid != null && room.Confirmed.Contains(room.HostUid) && room.Confirmed.Contains(room.GuestUid))
             {
@@ -319,7 +332,7 @@ public sealed class LobbyService
                 SendQueue(_queue.First(e => e.Uid == uid), QueueStatus.Waiting); // idempotent
                 return;
             }
-            if (!CheckFree(uid, rid)) return;
+            if (!CheckFree(uid, rid) || !NewMatchesAllowed(catalog, uid, rid)) return;
             QueueEntry partner = _queue.FirstOrDefault(e => e.Catalog == catalog);
             if (partner != null)
             {
@@ -369,6 +382,7 @@ public sealed class LobbyService
                 Error(uid, rid, ErrorCodes.NoBotOffer, "No bot match has been offered yet.");
                 return;
             }
+            if (!NewMatchesAllowed(entry.Catalog, uid, rid)) return;
             RemoveEntry(entry);
             MatchHost match = _matches.Create(ConfigFor(entry.Catalog), SeatSpec.Human(uid, MatchRegistry.LabelFor(MatchOrigins.Queue)),
                 SeatSpec.ForBot(_options.Queue.BotDifficulty), MatchOrigins.QueueBot);

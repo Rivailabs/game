@@ -33,6 +33,13 @@ public sealed class SqliteStore : IMatchRepository, IRewardLedger, IAuditLog, IG
     {
         var c = new SqliteConnection(_connectionString);
         c.Open();
+        // WAL with synchronous=NORMAL: commits are atomic and the database cannot corrupt; a power
+        // loss may drop the last commits, which recovery treats like any interrupted match.
+        using (SqliteCommand pragma = c.CreateCommand())
+        {
+            pragma.CommandText = "PRAGMA synchronous=NORMAL;";
+            pragma.ExecuteNonQuery();
+        }
         return c;
     }
 

@@ -44,6 +44,9 @@ public sealed class StoredMatch
     public DateTimeOffset? RetainUntil { get; set; }
 
     public bool IsParticipant(string uid) => uid != null && (uid == PlayerA || uid == PlayerB);
+
+    /// <summary>Shallow copy (all members are immutable values or strings).</summary>
+    public StoredMatch Copy() => (StoredMatch)MemberwiseClone();
 }
 
 /// <summary>One reward grant. (ResultId, PlayerUid) is unique: a repeated grant request is a no-op.</summary>

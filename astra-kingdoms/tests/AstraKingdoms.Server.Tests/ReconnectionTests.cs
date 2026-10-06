@@ -31,6 +31,7 @@ public class ReconnectionTests
         a.Client.Connection.DropLink();
         h.AdvanceToDeadline(host); // the world moves on while A is away
         await ServerHarness.Until(() => a.Client.Connection.ConnectCount >= 2 && a.Client.Status == ConnectionStatus.Connected, "automatic reconnection");
+        await ServerHarness.Until(() => a.OfType(MessageTypes.MatchUpdate).Select(MatchUpdateMessage.Parse).Any(u => u.Snapshot), "resume snapshot");
         await Play.Quiesce(host, a, b);
 
         Assert.That(a.Match.View.ToCanonicalText(), Is.EqualTo(ServerHarness.ServerViewText(host, a.Match.LocalSide)));

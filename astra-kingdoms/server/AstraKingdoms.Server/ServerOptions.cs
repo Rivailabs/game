@@ -115,6 +115,13 @@ public enum ShutdownMatchPolicy
 public sealed class LifecycleOptions
 {
     public ShutdownMatchPolicy ShutdownPolicy { get; set; } = ShutdownMatchPolicy.Preserve;
+    /// <summary>
+    /// Incident switch: false refuses new rooms and queue entries (active matches continue untouched).
+    /// Read live from configuration, so an appsettings change applies without a restart.
+    /// </summary>
+    public bool NewMatchesEnabled { get; set; } = true;
+    /// <summary>Incident switch: catalogs ("Starter", "Full") refused for new matches.</summary>
+    public string[] DisabledCatalogs { get; set; } = Array.Empty<string>();
     /// <summary>A suspended match older than this at startup is settled as a technical void instead of resumed.</summary>
     public int MaxSuspendMinutes { get; set; } = 10;
 }
