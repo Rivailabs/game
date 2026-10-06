@@ -305,6 +305,9 @@ class GenerationLane:
     def __call__(self, root: RootTask, target: Path, brief_unused: Any) -> SegmentResult:
         """Called by the orchestrator when the catalogue returned NONE (inside the attempt's workspace)."""
         attempt = self.store.latest_attempt(root.id)
+        why = self.preflight(root)  # same pre-spend checks as a direct dispatch (tools, paths, countries)
+        if why:
+            return SegmentResult(EXIT_BLOCKED, Path(root.asset_brief or "?").stem, f"generation lane: {why}")
         return self.run_segment(root, attempt, Path(target))
 
     # ================================================================ own dispatch (later segments)

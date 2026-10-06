@@ -18,7 +18,7 @@ from .catalogue_fakes import bow_brief, build_index, lane_config
 from .test_asset_generation import CRATE_BRIEF, KEY, meshy_routes
 
 
-def test_catalogue_none_falls_through_to_the_generation_lane(make_env, tmp_path):
+def build(make_env, tmp_path):
     env = make_env(provider=FakeProvider(judge_pick="NONE", judge_cost_micros=4_000), checks={})
     index = tmp_path / "index.sqlite"
     build_index(index)
@@ -50,6 +50,11 @@ def test_catalogue_none_falls_through_to_the_generation_lane(make_env, tmp_path)
                     permitted_paths=["game/assets/source/wooden_longbow/**"], permitted_routes=["fake", "meshy"],
                     verification_checks=[])
     env.orch.approve_task(root.id)
+    return env, root, gl, transport, blender
+
+
+def test_catalogue_none_falls_through_to_the_generation_lane(make_env, tmp_path):
+    env, root, gl, transport, blender = build(make_env, tmp_path)
     env.orch.run_until_idle()
     r = env.store.get_root(root.id)
     assert r.state == S.AWAITING_APPROVAL, r.state_reason
@@ -62,3 +67,12 @@ def test_catalogue_none_falls_through_to_the_generation_lane(make_env, tmp_path)
     assert sorted(x["settled_micros"] for x in res) == [4_000, 400_000]
     norm = blender.calls[0]
     assert norm[norm.index("--auto-attachments") + 1] == "bow_string_top,bow_string_bottom"
+
+
+def test_generation_preflight_runs_before_any_generation_spend(make_env, tmp_path):
+    env, root, gl, transport, blender = build(make_env, tmp_path)
+    gl.blender = BlenderAssetTools(None)
+    env.orch.run_until_idle()
+    r = env.store.get_root(root.id)
+    assert r.state == S.PAUSED and "generation lane blocked" in r.state_reason and "Blender not found" in r.state_reason
+    assert transport.calls == []  # nothing was sent to the generation provider
