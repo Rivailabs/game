@@ -295,6 +295,69 @@ VALUES ($id, $at, $reporter, $category, $match, $description, $contact, $status)
 
     Grievance IGrievanceStore.Get(string id) => GetGrievance(id);
 
+    // ------------------------------------------------------------------ account deletion (V1 ticket 64 / store deletion readiness)
+
+    /// <summary>
+    /// Replaces an account id with <paramref name="pseudonym"/> in settled match rows and reward
+    /// grants. Match records stay for their diagnostic retention window (30 days, then purged) and
+    /// grants stay as the idempotency record of settled results; neither then names the account.
+    /// Returns (matches, grants) rows changed.
+    /// </summary>
+    public (int Matches, int Grants) PseudonymiseAccount(string uid, string pseudonym)
+    {
+        using SqliteConnection c = Open();
+        using SqliteTransaction tx = c.BeginTransaction();
+        int m = 0;
+        foreach (string col in new[] { "player_a", "player_b" })
+        {
+            using SqliteCommand cmd = c.CreateCommand();
+            cmd.Transaction = tx;
+            cmd.CommandText = "UPDATE matches SET " + col + " = $new WHERE " + col + " = $old AND status = $finished;";
+            P(cmd, "$new", pseudonym); P(cmd, "$old", uid); P(cmd, "$finished", MatchStatus.Finished);
+            m += cmd.ExecuteNonQuery();
+        }
+        int g;
+        using (SqliteCommand cmd = c.CreateCommand())
+        {
+            cmd.Transaction = tx;
+            cmd.CommandText = "UPDATE reward_grants SET player = $new WHERE player = $old;";
+            P(cmd, "$new", pseudonym); P(cmd, "$old", uid);
+            g = cmd.ExecuteNonQuery();
+        }
+        tx.Commit();
+        return (m, g);
+    }
+
+    /// <summary>Audit entries whose actor is this pseudonymous reference (they are append-only and kept).</summary>
+    public int CountAuditByActor(string actorRef)
+    {
+        using SqliteConnection c = Open();
+        using SqliteCommand cmd = c.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM audit_log WHERE actor = $a;";
+        P(cmd, "$a", actorRef);
+        return Convert.ToInt32(cmd.ExecuteScalar(), CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>Grievances filed by this pseudonymous reference (support cases, kept for the Rule 20 record).</summary>
+    public int CountGrievancesByReporter(string reporterRef)
+    {
+        using SqliteConnection c = Open();
+        using SqliteCommand cmd = c.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM grievances WHERE reporter = $r;";
+        P(cmd, "$r", reporterRef);
+        return Convert.ToInt32(cmd.ExecuteScalar(), CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>Rows in matches or reward_grants that still name the account id.</summary>
+    public int RowsNaming(string uid)
+    {
+        using SqliteConnection c = Open();
+        using SqliteCommand cmd = c.CreateCommand();
+        cmd.CommandText = "SELECT (SELECT COUNT(*) FROM matches WHERE player_a = $u OR player_b = $u) + (SELECT COUNT(*) FROM reward_grants WHERE player = $u);";
+        P(cmd, "$u", uid);
+        return Convert.ToInt32(cmd.ExecuteScalar(), CultureInfo.InvariantCulture);
+    }
+
     // ------------------------------------------------------------------ helpers
 
     private static StoredMatch ReadMatch(SqliteDataReader r)

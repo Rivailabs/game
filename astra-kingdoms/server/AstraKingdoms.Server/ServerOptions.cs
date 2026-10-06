@@ -22,6 +22,8 @@ public sealed class ServerOptions
     public ClientPolicyOptions Clients { get; set; } = new();
     public GrievanceOptions Grievance { get; set; } = new();
     public ConnectionOptions Connections { get; set; } = new();
+    /// <summary>Hosted progression, economy, billing, ads, analytics and privacy services (V1 tickets 57-64).</summary>
+    public MetaHost.MetaOptions Meta { get; set; } = new();
 }
 
 public enum AuthMode

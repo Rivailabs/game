@@ -37,7 +37,8 @@ public sealed class MatchRegistry
     private readonly ILogger<MatchRegistry> _log;
 
     public MatchRegistry(IMatchRepository repo, IAuditLog audit, IPlayerChannel channel, TimeProvider time, IOptions<ServerOptions> options,
-        ILogger<MatchRegistry> log, ILoggerFactory loggers, Ops.ServiceMetrics metrics, CheckpointWriter checkpoints)
+        ILogger<MatchRegistry> log, ILoggerFactory loggers, Ops.ServiceMetrics metrics, CheckpointWriter checkpoints,
+        IMatchSettlementHook settlement = null)
     {
         _repo = repo;
         _options = options.Value;
@@ -52,6 +53,7 @@ public sealed class MatchRegistry
             Log = loggers.CreateLogger<MatchHost>(),
             Metrics = metrics,
             Checkpoints = checkpoints,
+            Settlement = settlement,
         };
     }
 

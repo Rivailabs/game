@@ -74,15 +74,18 @@ namespace AstraKingdoms.Server
             builder.Services.AddSingleton<LifecycleService>();
             builder.Services.AddHostedService(sp => sp.GetRequiredService<LifecycleService>());
             builder.Services.AddHostedService<RetentionService>();
+            MetaHost.MetaSetup.ConfigureServices(builder);
         }
 
         public static void ConfigurePipeline(WebApplication app)
         {
             // Resolve the verifier eagerly so a misconfigured auth mode fails at startup, not on the first player.
             app.Services.GetRequiredService<IIdentityVerifier>();
+            MetaHost.MetaSetup.ValidateAtStartup(app.Services);
             app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(20) });
             app.Map(OnlineProtocol.WebSocketPath, (HttpContext http, RealtimeEndpoint endpoint) => endpoint.HandleAsync(http));
             HttpEndpoints.Map(app);
+            MetaHost.MetaEndpoints.Map(app);
         }
     }
 }

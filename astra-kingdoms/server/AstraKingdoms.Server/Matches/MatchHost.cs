@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using AstraKingdoms.Client.Online.Protocol;
+using AstraKingdoms.Meta.Progression;
 using AstraKingdoms.Rules.Bots;
 using AstraKingdoms.Rules.Core;
 using AstraKingdoms.Rules.Match;
@@ -29,6 +30,12 @@ public sealed class Participant
     internal long AckSeq;
 }
 
+/// <summary>A person's seat (account and side), as the reward rules need it.</summary>
+public sealed record HumanSeat(string Uid, PlayerSide Side)
+{
+    public static IReadOnlyList<HumanSeat> Of(IEnumerable<Participant> seats) => seats.Where(p => !p.IsBot).Select(p => new HumanSeat(p.Uid, p.Side)).ToArray();
+}
+
 /// <summary>Delivers messages to a player's live connection, if any.</summary>
 public interface IPlayerChannel
 {
@@ -48,6 +55,8 @@ public sealed class MatchServices
     public ILogger Log { get; init; }
     public Ops.ServiceMetrics Metrics { get; init; }
     public CheckpointWriter Checkpoints { get; init; }
+    /// <summary>Receives every settled match after it is durably stored (meta grants, daily tasks, summaries).</summary>
+    public IMatchSettlementHook Settlement { get; init; }
 }
 
 /// <summary>
@@ -533,6 +542,9 @@ public sealed class MatchHost
         if (result != null)
             _s.Audit.Append(MatchId, "server", "choices_revealed", "record_sha256=" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(_stored.RecordJson))).ToLowerInvariant());
         _s.Log.LogInformation("Match {MatchId} settled: {Outcome} ({Detail})", MatchId, _stored.Outcome, _stored.OutcomeDetail);
+        _s.Settlement?.Enqueue(new SettledMatch(MatchId, _stored.ResultId, _stored.Outcome, result, _stored.RecordJson,
+            HumanSeat.Of(_seats), _seats.Any(p => p.IsBot), _stored.CreatedAt, _stored.UpdatedAt,
+            Engine.RoundIndex, grants));
         IsSettled = true; // only now: everything above is stored before anyone observes the settlement
         foreach (Participant p in _seats)
         {
@@ -621,35 +633,37 @@ public sealed class MatchHost
 }
 
 /// <summary>
-/// Proposed V1 reward values (plan: "Modes and fair progression"): a completed human match gives
-/// 100 XP (+25 win, +10 draw) and 10 coins (+5 win); a completed unranked bot match counts like
-/// practice (50 XP). Forfeits, voids and technical voids grant nothing. Each grant is keyed by the
-/// match's result ID, so repeating a finalization or reward request cannot duplicate it.
+/// Reward rules for a settled online match, delegated to the meta library (ticket 57/58,
+/// <see cref="RewardCalculator"/>): a completed human match gives 100 XP (+25 win, +10 draw) and 10
+/// coins (+5 win); a completed, labelled bot match follows the practice rule (50 XP and 10 coins, no
+/// outcome bonus). Forfeits, voids and technical voids are not normally completed and grant nothing.
+/// Each grant is keyed by the match's result ID, so repeating a finalization or reward request
+/// cannot duplicate it (the <c>reward_grants</c> primary key and the meta ledger's unique key).
 /// </summary>
 public static class RewardPolicy
 {
+    /// <summary>The meta library's outcome report for each human seat (empty for a technical void).</summary>
+    public static IReadOnlyList<MatchOutcomeReport> Reports(string resultId, string outcome, MatchResult result, IEnumerable<HumanSeat> humans,
+        bool versusBot, DateTimeOffset completedAt, MatchRecord record = null)
+    {
+        var list = new List<MatchOutcomeReport>();
+        if (result == null || outcome == MatchOutcomes.TechnicalVoid) return list;
+        foreach (HumanSeat p in humans)
+            list.Add(new MatchOutcomeReport(resultId, p.Uid, versusBot ? MatchKind.OnlineBot : MatchKind.OnlineHuman,
+                MatchOutcomeReport.OutcomeFrom(result, p.Side), MatchOutcomeReport.EndingFrom(result), completedAt,
+                record == null ? null : MatchReportBuilder.WeaponsUsed(record, p.Side), record?.Config?.Catalog ?? CatalogPreset.Starter,
+                isValid: true)); // authoritative server result; eligibility then depends only on how the match ended
+        return list;
+    }
+
     public static IReadOnlyList<RewardGrant> Grants(string resultId, string outcome, MatchResult result, IReadOnlyList<Participant> seats)
     {
-        var list = new List<RewardGrant>();
-        if (outcome != MatchOutcomes.Completed || result == null) return list;
-        bool vsBot = seats.Any(s => s.IsBot);
-        foreach (Participant p in seats)
+        var grants = new List<RewardGrant>();
+        foreach (MatchOutcomeReport r in Reports(resultId, outcome, result, HumanSeat.Of(seats), seats.Any(s => s.IsBot), DateTimeOffset.UnixEpoch))
         {
-            if (p.IsBot) continue;
-            int xp, coins;
-            if (vsBot)
-            {
-                xp = 50;
-                coins = 0;
-            }
-            else
-            {
-                bool won = result.Winner == p.Side;
-                xp = 100 + (won ? 25 : 0) + (result.Winner == null ? 10 : 0);
-                coins = 10 + (won ? 5 : 0);
-            }
-            list.Add(new RewardGrant(resultId, p.Uid, xp, coins));
+            MatchReward reward = RewardCalculator.Compute(r);
+            if (reward.Eligibility == GrantEligibility.Eligible) grants.Add(new RewardGrant(resultId, r.PlayerId, reward.Xp, reward.Coins));
         }
-        return list;
+        return grants;
     }
 }
