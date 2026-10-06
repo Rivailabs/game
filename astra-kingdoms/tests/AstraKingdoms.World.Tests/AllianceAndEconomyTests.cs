@@ -105,13 +105,15 @@ public class AllianceAndEconomyTests
         Assert.That(e.Credit("a", "p", 20, 7, CoinSource.EncounterWin), Is.Zero, "same key");
         Assert.That(e.Credit("b", "p", 30, 7, CoinSource.EncounterWin), Is.EqualTo(30));
         Assert.That(e.Credit("c", "p", 30, 7, CoinSource.EncounterWin), Is.EqualTo(10), "daily cap of 60");
-        Assert.That(e.Credit("d", "p", 30, 7, CoinSource.SeasonParticipation), Is.Zero);
+        Assert.That(e.Credit("d", "p", 30, 7, CoinSource.AllianceObjective), Is.Zero, "objectives share the cap");
+        Assert.That(e.Credit("d2", "p", 100, 7, CoinSource.SeasonParticipation), Is.EqualTo(100), "a once-per-season grant is outside the daily cap");
+        Assert.That(e.EarnedOnDay("p", 7), Is.EqualTo(60));
         Assert.That(e.Credit("e", "p", 30, 8, CoinSource.EncounterWin), Is.EqualTo(30), "new UTC day");
         Assert.That(e.Credit("f", "p", 500, 8, CoinSource.IncidentCompensation), Is.EqualTo(500), "recorded compensation is outside the cap");
-        Assert.That(e.Balance("p"), Is.EqualTo(590));
+        Assert.That(e.Balance("p"), Is.EqualTo(690));
         Assert.That(e.Spend("s1", "p", "decoration-garden"), Is.True);
         Assert.That(e.Spend("s1", "p", "decoration-garden"), Is.True, "replayed spend is not charged twice");
-        Assert.That(e.Balance("p"), Is.EqualTo(440));
+        Assert.That(e.Balance("p"), Is.EqualTo(540));
         Assert.That(e.Spend("s2", "poor", "decoration-small"), Is.False, "no overdraft");
         Assert.That(e.Spend("s3", "p", "extra-attack"), Is.False, "no power sinks exist");
         Assert.That(EconomyRules.Sinks.All(s => s.Key.StartsWith("decoration") || s.Key.StartsWith("banner")), Is.True);

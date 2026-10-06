@@ -1,0 +1,4 @@
+season,players,attempts,accepted,attacker_wins,defender_wins,draws,expired,max_loss_day,max_loss_season,below_allocation,min_tiles,max_tiles_honest,ring_main_tiles,gini_tiles,gini_world_coins,gini_all_coins,top10_share,world_minted,world_spent,duel_minted,max_world_coins_day,restored,reentry_offers,migrations
+1,351,22088,4307,2009,2008,193,11,2,6,208,6,44,30,0.262,0.151,0.199,0.186,129145,85030,109368,60,True,208,5
+2,375,25898,4576,2167,2085,231,11,2,6,228,6,39,29,0.256,0.155,0.223,0.201,139285,134650,121446,60,True,228,11
+3,400,28329,4925,2286,2282,259,7,2,6,240,6,38,26,0.251,0.145,0.224,0.207,148925,144750,128472,60,True,240,6

@@ -26,7 +26,7 @@ namespace AstraKingdoms.World.Economy
     {
         public const int CoinsPerEncounterWin = 20;
         public const int CoinsPerEncounterParticipation = 5;
-        /// <summary>World-earned coins per account per UTC day (all world sources together).</summary>
+        /// <summary>Repeatable world-earned coins per account per UTC day (encounters and alliance objectives together).</summary>
         public const int DailyWorldCoinCap = 60;
         public const int SeasonParticipationCoins = 100;
 
@@ -46,7 +46,12 @@ namespace AstraKingdoms.World.Economy
             new KeyValuePair<string, int>("banner-redye", 30),
         };
 
-        public static bool IsWorldSource(CoinSource s) => s != CoinSource.IncidentCompensation;
+        /// <summary>
+        /// Repeatable earning sources share the daily cap. One-off grants (season participation,
+        /// recorded incident compensation) are bounded by their own once-per-key rule instead.
+        /// </summary>
+        public static bool CountsTowardDailyCap(CoinSource s) =>
+            s == CoinSource.EncounterWin || s == CoinSource.EncounterParticipation || s == CoinSource.AllianceObjective;
 
         /// <summary>The single best recognition cosmetic for a tile count, or null.</summary>
         public static string RecognitionFor(int tilesHeld)
@@ -73,8 +78,8 @@ namespace AstraKingdoms.World.Economy
 
     /// <summary>
     /// Thread-safe, idempotent coin ledger. Every credit and spend carries a unique key; repeating a
-    /// key (retry, duplicated settlement, restored backup) changes nothing. World credits are clipped
-    /// to the daily cap; spends never overdraw; there is no transfer between accounts.
+    /// key (retry, duplicated settlement, restored backup) changes nothing. Repeatable world earnings
+    /// are clipped to the daily cap; spends never overdraw; there is no transfer between accounts.
     /// </summary>
     public sealed class EconomyLedger
     {
@@ -96,7 +101,7 @@ namespace AstraKingdoms.World.Economy
             {
                 if (_applied.ContainsKey(key)) return 0;
                 int credited = amount;
-                if (EconomyRules.IsWorldSource(source))
+                if (EconomyRules.CountsTowardDailyCap(source))
                 {
                     string dayKey = account + "@" + utcDay;
                     _earnedOnDay.TryGetValue(dayKey, out int earned);

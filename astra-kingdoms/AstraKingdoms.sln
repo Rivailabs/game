@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.World", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.World.Tests", "tests\AstraKingdoms.World.Tests\AstraKingdoms.World.Tests.csproj", "{D41877A5-2507-4BBF-B6B4-E7FCBC6760A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstraKingdoms.EconomySim", "tools\AstraKingdoms.EconomySim\AstraKingdoms.EconomySim.csproj", "{0D5A7A56-77BE-4461-B058-A1A6DA888071}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{D41877A5-2507-4BBF-B6B4-E7FCBC6760A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D41877A5-2507-4BBF-B6B4-E7FCBC6760A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D41877A5-2507-4BBF-B6B4-E7FCBC6760A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D5A7A56-77BE-4461-B058-A1A6DA888071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D5A7A56-77BE-4461-B058-A1A6DA888071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D5A7A56-77BE-4461-B058-A1A6DA888071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D5A7A56-77BE-4461-B058-A1A6DA888071}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EED833A6-335B-4B92-9AEB-8B90EC98A24E} = {81FDD592-A258-4BDD-83CA-A16908863F1E}
@@ -125,5 +131,6 @@ Global
 		{49322366-7680-4178-AC39-3F5662DAA90E} = {19192187-92B5-4EDE-9FF7-0221D9E51B10}
 		{F471E85E-9470-428C-990E-03B85D6AEA3F} = {81FDD592-A258-4BDD-83CA-A16908863F1E}
 		{D41877A5-2507-4BBF-B6B4-E7FCBC6760A7} = {19192187-92B5-4EDE-9FF7-0221D9E51B10}
+		{0D5A7A56-77BE-4461-B058-A1A6DA888071} = {91F3B0A8-D8B1-4926-B1B6-B47B92B30C1F}
 	EndGlobalSection
 EndGlobal
