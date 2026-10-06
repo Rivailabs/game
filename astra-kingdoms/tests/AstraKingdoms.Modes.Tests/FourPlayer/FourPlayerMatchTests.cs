@@ -169,6 +169,42 @@ public class FourPlayerMatchTests
     }
 
     [Test]
+    public void LoserForfeitAfterTheDuel_EarnedCutAppliesThenTheRestTurnsNeutral()
+    {
+        FourPlayerMatch m = FourKit.NewFull();
+        FourKit.SubmitLoadouts(m);
+        FourKit.PlayDuel(m, Kingdom.A, Kingdom.A);
+        Assert.That(m.Submit(new Forfeit4P(Kingdom.B)).Accepted, Is.True);
+        Assert.That(m.GetView(Kingdom.A).IsCutTurn, Is.True, "the won duel's cut stays open");
+        Assert.That(m.Submit(FourKit.AutoCut(m, Kingdom.A, FourKit.Interior(Kingdom.B))).Accepted, Is.True);
+        FourKit.PlayDuel(m, Kingdom.C, null);
+        int gain = m.WaveRecords[0].Pairs[0].CellsTransferred;
+        Assert.That(gain, Is.GreaterThan(0));
+        Assert.That(m.Cells(Kingdom.A), Is.EqualTo(12760 + gain));
+        Assert.That(m.NeutralCells, Is.EqualTo(12760 - gain));
+        Assert.That(m.IsAlive(Kingdom.B), Is.False);
+        FourKit.AssertConserved(m);
+    }
+
+    [Test]
+    public void ByePlayerForfeit_IsLockedAtSettlement()
+    {
+        FourPlayerMatch m = FourKit.NewFull();
+        Assert.That(m.Submit(new Forfeit4P(Kingdom.D)).Accepted, Is.True);
+        Assert.That(m.NeutralCells, Is.EqualTo(12760), "a setup forfeit locks at once");
+        FourKit.SubmitLoadouts(m);
+        Kingdom bye = m.CurrentPlan.Bye!.Value;
+        Assert.That(m.Submit(new Forfeit4P(bye)).Accepted, Is.True);
+        Assert.That(m.Cells(bye), Is.EqualTo(12760), "the board is frozen during the wave");
+        FourKit.PlayDuel(m, m.CurrentPlan.Pairs[0].First, null);
+        Assert.That(m.Cells(bye), Is.Zero);
+        Assert.That(m.NeutralCells, Is.EqualTo(2 * 12760));
+        Assert.That(m.Wave, Is.EqualTo(2));
+        Assert.That(m.CurrentPlan.Pairs, Has.Count.EqualTo(1));
+        Assert.That(m.CurrentPlan.Bye, Is.Null, "two survivors duel");
+    }
+
+    [Test]
     public void TwoConsecutiveTimeouts_Forfeit()
     {
         FourPlayerMatch m = FourKit.NewFull();
