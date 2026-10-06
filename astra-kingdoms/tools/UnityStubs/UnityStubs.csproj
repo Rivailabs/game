@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile-only stand-ins for the Unity APIs the client uses (UnityEngine, UnityEngine.UI,
+    UnityEngine.EventSystems, Input System UI module, URP asset types, UnityEditor, Unity Test
+    Framework attribute). Signatures follow the Unity 6 API as documented; bodies are placeholders
+    and never run. This is NOT a Unity build: it lets `dotnet build` catch C# errors in the client
+    without an editor. Anything outside this surface is caught only by the pinned Unity editor.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>UnityStubs</AssemblyName>
+    <RootNamespace>UnityEngine</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <!-- Placeholder bodies intentionally leave members unassigned/unused. -->
+    <NoWarn>$(NoWarn);CS0067;CS0649;CS0169;CS0414</NoWarn>
+  </PropertyGroup>
+
+</Project>
