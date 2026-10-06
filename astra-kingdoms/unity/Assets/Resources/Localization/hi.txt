@@ -1,0 +1,236 @@
+# Astra Kingdoms player-facing strings - Hindi (hi)
+# STATUS: needs fluent-speaker review. Draft translation; not yet checked by a native speaker,
+# not yet checked for font coverage, line wrapping or button widths on the reference phone.
+# Proper names (elements, weapons, cards) follow the glossary decision still to be made.
+# Same keys and the same {n} parameters as en.txt (tests enforce it); missing keys fall back to English.
+
+app.title = अस्त्र किंगडम्स
+app.footer = नियम {0} - पायलट बिल्ड {1}
+common.back = वापस
+common.continue = आगे बढ़ें
+common.seconds = {0} सेकंड
+
+home.play = एक फ़ोन पर खेलें
+home.playHint = दो खिलाड़ी यह फ़ोन साझा करते हैं। हर विकल्प गोपनीय रूप से चुना जाता है।
+home.practice = बॉट के साथ अभ्यास
+home.practiceHint = बॉट को हमेशा बॉट के रूप में दिखाया जाता है। वह केवल वही देखता है जो आप देख सकते हैं।
+home.difficulty = बॉट स्तर: {0}
+home.settings = सेटिंग्स
+home.replay = रीप्ले व्यूअर (डेवलपमेंट)
+
+difficulty.easy = आसान
+difficulty.normal = सामान्य
+difficulty.hard = कठिन
+
+player.one = खिलाड़ी 1
+player.two = खिलाड़ी 2
+player.you = आप
+player.bot = बॉट ({0})
+player.botSeat = बॉट {0}
+
+loadout.title = {0}: अपने हथियार चुनें
+loadout.hint = शुरुआती सेट: 1 से 5 हथियार चुनें। आपका चयन गोपनीय रहता है।
+loadout.count = 5 में से {0} चुने गए
+loadout.confirm = चयन पक्का करें
+loadout.needOne = कम से कम एक हथियार चुनें।
+
+privacy.passTo = फ़ोन {0} को दें
+privacy.hint = फ़ोन ऐसे पकड़ें कि केवल आप देख सकें। दूसरे खिलाड़ी की बारी का कुछ भी नहीं दिखाया जाता।
+privacy.ready = मैं {0} हूँ - मेरे नियंत्रण दिखाएँ
+privacy.timer = आपका समय चल रहा है: {0} सेकंड
+privacy.handoverTimer = अगली बारी {0} सेकंड में शुरू होगी
+
+announce.round = राउंड {0} / 8
+announce.terrain = भूभाग: {0}
+announce.attacker = इस राउंड में {0} आक्रमण करेगा
+
+terrain.plain = मैदान
+terrain.fort = किला
+terrain.river = नदी
+terrain.forest = वन
+terrain.armoury = शस्त्रागार
+
+hud.round = राउंड {0}/8 - वार {1}/3
+hud.hp = HP {0}
+hud.cells = भूमि {0} खाने
+hud.time = {0} सेकंड
+hud.ready = तैयार
+hud.waiting = चुन रहा है
+hud.pause = रोकें
+hud.resume = जारी रखें
+hud.paused = रुका हुआ
+hud.statusNone = कोई प्रभाव नहीं
+
+status.burn = जलन
+status.shock = झटका
+status.net = जाल
+status.quake = कंपन
+status.ironWall = लौह दीवार
+
+select.title = {0}: गुप्त चयन
+select.weapon = हथियार
+select.aimPad = निशाना लगाने के लिए यहाँ खींचें
+select.pitch = ऊपर/नीचे कोण {0} डिग्री
+select.yaw = बाएँ/दाएँ कोण {0} डिग्री
+select.power = शक्ति {0}%
+select.dodge = बचाव
+select.lock = मेरा चयन लॉक करें
+select.rejected = स्वीकार नहीं हुआ ({0})। अपना चयन बदलकर फिर कोशिश करें।
+select.lastVolley = पिछला वार
+select.hideLastVolley = पिछला वार छिपाएँ
+select.noLastVolley = इस द्वंद्व में अभी कोई वार नहीं हुआ।
+
+dodge.none = खड़े रहें
+dodge.left = बाएँ
+dodge.right = दाएँ
+dodge.jump = कूदें
+
+weapon.1 = अंगार बाण
+weapon.2 = पवन बाण
+weapon.3 = पाषाण बाण
+weapon.4 = चिंगारी बाण
+weapon.5 = ज्वार बाण
+weapon.6 = अग्नि पंखा
+weapon.7 = जुड़वाँ झोंका
+weapon.8 = शिला प्रहार
+weapon.9 = शृंखला वज्र
+weapon.10 = धुंध परदा
+weapon.11 = भस्म ढाल
+weapon.12 = चक्रवात
+weapon.13 = लौह दीवार
+weapon.14 = तूफ़ान जाल
+weapon.15 = बाढ़ बाण
+weapon.16 = सूर्य भाला
+weapon.17 = आकाश गोता
+weapon.18 = भूकंप बाण
+weapon.19 = गर्जन मुकुट
+weapon.20 = सागर पुकार
+weapon.brahmastra = ब्रह्मास्त्र
+weapon.withElement = {0} ({1})
+
+element.neutral = तटस्थ (वलय)
+element.agni = अग्नि (ज्वाला)
+element.vayu = वायु (चक्कर)
+element.prithvi = पृथ्वी (पत्थर)
+element.vidyut = विद्युत (बिजली)
+element.varuna = वरुण (लहर)
+
+contact.core = सीधा वार
+contact.graze = छूता वार
+contact.burst = विस्फोट वार
+contact.burstGraze = विस्फोट की छुअन
+contact.strike = प्रहार
+contact.multiple = {0} x{1}
+
+element.effect.strong = {0}, {1} {2} पर भारी है
+element.effect.weak = {0}, {1} {2} के सामने कमज़ोर है
+element.effect.even = {0}, कोई तत्व लाभ नहीं
+element.effect.hidden = {0}
+
+modifier.dodge = बचाव {0} {1}।
+modifier.cover = आड़ {0}।
+modifier.coverIgnored = आड़ का असर नहीं।
+
+explain.hit = {0}: {1} - {3} पर {2}, {4} HP ({5})।{6}
+explain.miss = {0}: {1} - चूक गया।
+explain.missDodged = {0}: {1} - चूक गया; {2} ने {3} बचाव किया।
+explain.clash = {0}: {1} - हवा में टकराकर नष्ट हुआ।
+explain.blocked = {0}: {1} - {2} की भस्म ढाल ने रोका।
+explain.pass = {0}: समय पर चयन नहीं, इसलिए न वार न बचाव (पास)।
+explain.pass.short = पास
+explain.veiled = छिपा हुआ वार
+explain.hp = {0}: HP {1} -> {2}
+explain.burn = (जलन {0})
+explain.heal = (उपचार {0})
+explain.duelWon = {0} ने द्वंद्व जीता।
+explain.duelDraw = द्वंद्व बराबर रहा। कोई भूमि नहीं बदली।
+
+card.1 = चक्र (गोल)
+card.2 = गरुड़ (पंख)
+card.3 = सूची (भाला)
+card.4 = मकर (हुक)
+card.5 = पद्म (पंखुड़ियाँ)
+card.6 = वज्र (हीरा)
+
+land.title = {0} ने द्वंद्व जीता: भूमि लें
+land.watch = {0} कार्ड चुन रहा है और कटाव बना रहा है।
+land.card = {0}: अधिकतम {1} खाने (बोर्ड का {2}%)
+land.chooseCard = कार्ड चुनें
+land.modeMove = कार्ड खिसकाएँ
+land.modeDraw = कटाव बनाएँ
+land.rotateLeft = बाएँ घुमाएँ
+land.rotateRight = दाएँ घुमाएँ
+land.bigger = बड़ा
+land.smaller = छोटा
+land.auto = स्वचालित कटाव
+land.clear = मिटाएँ
+land.confirm = कटाव पक्का करें
+land.hintMove = कार्ड को सीमा पर खींचें। घुमाने और आकार बदलने के लिए दो उँगलियों का प्रयोग करें।
+land.hintDraw = कार्ड के अंदर, चिह्नित सीमा-खाने के चारों ओर एक बंद घेरा बनाएँ।
+land.preview = यह कटाव आपके {1} अनुमत खानों में से {0} लेता है।
+land.previewDiscarded = {0} खाने जुड़े नहीं हैं और {1} के पास रहेंगे।
+land.noAnchor = कार्ड के अंदर कोई सीमा-खाना नहीं है। कार्ड को सीमा पर ले जाएँ।
+land.vertices = {0} बिंदु (सीमा 128)
+land.applied = {0} ने {1} खाने लिए।
+land.timeout = समय समाप्त। कोई भूमि नहीं बदली।
+land.ownership = {0}: {1} खाने - {2}: {3} खाने
+land.allowance = अनुमति {0} खाने
+
+cut.reject.None = वैध कटाव।
+cut.reject.NoAllowance = इस द्वंद्व के लिए कोई भूमि अनुमति नहीं है।
+cut.reject.InvalidPose = कार्ड की स्थिति मान्य नहीं है।
+cut.reject.EnvelopeTooLarge = इस अनुमति के लिए कार्ड बहुत बड़ा है। इसे छोटा करें।
+cut.reject.AnchorNotOnBoard = चिह्नित खाना बोर्ड से बाहर है।
+cut.reject.AnchorNotOpponentOwned = चिह्नित खाना दूसरे खिलाड़ी का होना चाहिए।
+cut.reject.AnchorNotOnBorder = चिह्नित खाना पूरी भुजा से आपकी भूमि को छूना चाहिए।
+cut.reject.AnchorOutsideEnvelope = चिह्नित सीमा-खाना कार्ड के अंदर होना चाहिए।
+cut.reject.TooManyVertices = कटाव में 128 से अधिक बिंदु हैं।
+cut.reject.VertexOutOfRange = कटाव का कुछ भाग बोर्ड से बाहर है।
+cut.reject.TooFewVertices = कम से कम तीन अलग बिंदुओं वाला घेरा बनाएँ।
+cut.reject.ZeroArea = घेरे में कोई क्षेत्र नहीं है।
+cut.reject.SelfIntersecting = घेरा स्वयं को काटता या छूता है। सरल घेरा बनाएँ।
+cut.reject.OverlappingEdges = घेरा अपने ऊपर ही लौटता है। सरल घेरा बनाएँ।
+cut.reject.AnchorOutsidePolygon = घेरे में चिह्नित सीमा-खाना होना चाहिए।
+cut.reject.ExceedsQuota = जुड़ा हुआ क्षेत्र अनुमति से बड़ा है। छोटा घेरा बनाएँ।
+
+result.title = मैच समाप्त
+result.winner = {0} ने मैच जीता!
+result.draw = बराबरी: दोनों राज्यों के पास बिल्कुल बराबर भूमि है।
+result.void = मैच रद्द: दोनों खिलाड़ियों ने लगातार दो बार चयन नहीं किया।
+result.areas = {0}: {1} खाने - {2}: {3} खाने
+result.rounds = खेले गए राउंड: {0}
+result.rematch = फिर से खेलें
+result.home = होम
+
+reason.Territory90 = बोर्ड का 90% हासिल किया।
+reason.RoundsComplete = आठ राउंड पूरे हुए; अधिक भूमि वाला जीता।
+reason.Forfeit = {0} ने लगातार दो बार चयन नहीं किया और हार मानी गई।
+reason.Void = कोई विजेता नहीं।
+
+settings.title = सेटिंग्स
+settings.firstRun = स्वागत है! अपनी भाषा और सुविधा सेटिंग्स चुनें।
+settings.language = भाषा
+settings.music = संगीत ध्वनि {0}%
+settings.effects = प्रभाव ध्वनि {0}%
+settings.shake = कैमरा कंपन कम: {0}
+settings.haptics = कंपन: {0}
+settings.textScale = अक्षर आकार: {0}%
+settings.on = चालू
+settings.off = बंद
+settings.done = हो गया
+settings.reviewNote = हिंदी और कन्नड़ पाठ की समीक्षा धाराप्रवाह वक्ताओं द्वारा होनी बाकी है।
+
+replay.title = रीप्ले व्यूअर
+replay.loadLatest = नवीनतम रिकॉर्ड खोलें
+replay.none = {0} पर कोई मैच रिकॉर्ड नहीं मिला
+replay.loaded = {0} आदेश लोड हुए। नियम {1}।
+replay.step = आदेश {0} / {1}
+replay.next = अगला
+replay.playAll = अंत तक चलाएँ
+replay.verify = रिकॉर्ड जाँचें
+replay.verified = रिकॉर्ड सत्यापित: वही परिणाम और वही स्थिति हैश।
+replay.failed = रिकॉर्ड सत्यापन विफल: {0}
+
+auto.running = स्वचालित रन: सीड {0} ({2} में से {1})
+auto.done = स्वचालित रन समाप्त: {0}
+error.generic = कुछ गलत हो गया: {0}

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compiles unity/Assets/Scripts/Core exactly as its asmdef declares: noEngineReferences, only the
+    rules assembly. No Unity stubs are referenced, so any UnityEngine use here fails the build.
+    The Core tests (tests/AstraKingdoms.Client.Core.Tests) run against this assembly.
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Core</AssemblyName>
+    <RootNamespace>AstraKingdoms.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Core/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+  </ItemGroup>
+
+</Project>

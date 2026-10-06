@@ -1,0 +1,234 @@
+# Astra Kingdoms player-facing strings - English (complete reference table)
+# Format: key = value. {0}, {1}... are parameters; \n is a line break. Never concatenate fragments.
+# Every key here must exist in hi.txt and kn.txt (tests enforce it); a missing key falls back to English.
+
+app.title = Astra Kingdoms
+app.footer = Rules {0} - pilot build {1}
+common.back = Back
+common.continue = Continue
+common.seconds = {0} s
+
+home.play = Play on one phone
+home.playHint = Two players share this phone. Each choice is entered privately.
+home.practice = Practice against a bot
+home.practiceHint = The bot is always labelled as a bot. It sees only what you could see.
+home.difficulty = Bot level: {0}
+home.settings = Settings
+home.replay = Replay viewer (development)
+
+difficulty.easy = Easy
+difficulty.normal = Normal
+difficulty.hard = Hard
+
+player.one = Player 1
+player.two = Player 2
+player.you = You
+player.bot = Bot ({0})
+player.botSeat = Bot {0}
+
+loadout.title = {0}: choose your weapons
+loadout.hint = Starter set: equip 1 to 5 weapons. Your loadout stays private.
+loadout.count = {0} of 5 equipped
+loadout.confirm = Confirm loadout
+loadout.needOne = Equip at least one weapon.
+
+privacy.passTo = Pass the phone to {0}
+privacy.hint = Hold the phone so only you can see it. Nothing from the other player's turn is shown.
+privacy.ready = I am {0} - show my controls
+privacy.timer = Your time is running: {0} s
+privacy.handoverTimer = Next turn starts in {0} s
+
+announce.round = Round {0} of 8
+announce.terrain = Terrain: {0}
+announce.attacker = {0} attacks this round
+
+terrain.plain = Plain
+terrain.fort = Fort
+terrain.river = River
+terrain.forest = Forest
+terrain.armoury = Armoury
+
+hud.round = Round {0}/8 - Volley {1}/3
+hud.hp = HP {0}
+hud.cells = Land {0} cells
+hud.time = {0} s
+hud.ready = Ready
+hud.waiting = Choosing
+hud.pause = Pause
+hud.resume = Resume
+hud.paused = Paused
+hud.statusNone = No effects
+
+status.burn = Burn
+status.shock = Shock
+status.net = Net
+status.quake = Quake
+status.ironWall = Iron Wall
+
+select.title = {0}: secret choice
+select.weapon = Weapon
+select.aimPad = Drag here to aim
+select.pitch = Up/down angle {0} deg
+select.yaw = Left/right angle {0} deg
+select.power = Power {0}%
+select.dodge = Dodge
+select.lock = Lock my choice
+select.rejected = Not accepted ({0}). Change your choice and try again.
+select.lastVolley = Last volley
+select.hideLastVolley = Hide last volley
+select.noLastVolley = No volley yet in this duel.
+
+dodge.none = Stand
+dodge.left = Left
+dodge.right = Right
+dodge.jump = Jump
+
+weapon.1 = Ember Arrow
+weapon.2 = Gale Arrow
+weapon.3 = Stone Arrow
+weapon.4 = Spark Arrow
+weapon.5 = Tide Arrow
+weapon.6 = Fire Fan
+weapon.7 = Twin Gust
+weapon.8 = Boulder Shot
+weapon.9 = Chain Bolt
+weapon.10 = Mist Veil
+weapon.11 = Ash Shield
+weapon.12 = Cyclone
+weapon.13 = Iron Wall
+weapon.14 = Storm Net
+weapon.15 = Flood Arrow
+weapon.16 = Sun Lance
+weapon.17 = Sky Dive
+weapon.18 = Quake Arrow
+weapon.19 = Thunder Crown
+weapon.20 = Ocean Call
+weapon.brahmastra = Brahmastra
+weapon.withElement = {0} ({1})
+
+element.neutral = Neutral (ring)
+element.agni = Agni (flame)
+element.vayu = Vayu (spiral)
+element.prithvi = Prithvi (stone)
+element.vidyut = Vidyut (bolt)
+element.varuna = Varuna (wave)
+
+contact.core = hit
+contact.graze = graze
+contact.burst = burst hit
+contact.burstGraze = burst graze
+contact.strike = strike
+contact.multiple = {0} x{1}
+
+element.effect.strong = {0}, {1} beats {2}
+element.effect.weak = {0}, {1} is weak against {2}
+element.effect.even = {0}, no element advantage
+element.effect.hidden = {0}
+
+modifier.dodge = Dodge {0} {1}.
+modifier.cover = Cover {0}.
+modifier.coverIgnored = Cover ignored.
+
+explain.hit = {0}: {1} - {2} on {3} for {4} HP ({5}).{6}
+explain.miss = {0}: {1} - missed.
+explain.missDodged = {0}: {1} - missed; {2} dodged {3}.
+explain.clash = {0}: {1} - cancelled in a mid-air clash.
+explain.blocked = {0}: {1} - blocked by {2}'s Ash Shield.
+explain.pass = {0}: no choice in time, so no shot and no dodge (Pass).
+explain.pass.short = Pass
+explain.veiled = veiled shot
+explain.hp = {0}: HP {1} -> {2}
+explain.burn = (burn {0})
+explain.heal = (healed {0})
+explain.duelWon = {0} wins the duel.
+explain.duelDraw = The duel is a draw. No land moves.
+
+card.1 = Chakra (disk)
+card.2 = Garuda (wings)
+card.3 = Suchi (spear)
+card.4 = Makara (hook)
+card.5 = Padma (petals)
+card.6 = Vajra (diamond)
+
+land.title = {0} won the duel: take land
+land.watch = {0} is choosing a card and drawing a cut.
+land.card = {0}: up to {1} cells ({2}% of the board)
+land.chooseCard = Choose a card
+land.modeMove = Move card
+land.modeDraw = Draw cut
+land.rotateLeft = Turn left
+land.rotateRight = Turn right
+land.bigger = Bigger
+land.smaller = Smaller
+land.auto = Auto Cut
+land.clear = Clear
+land.confirm = Confirm cut
+land.hintMove = Drag the card onto the border. Use two fingers to turn and resize it.
+land.hintDraw = Draw one closed loop inside the card around the marked border cell.
+land.preview = This cut takes {0} of your {1} allowed cells.
+land.previewDiscarded = {0} cells are not connected and stay with {1}.
+land.noAnchor = No border cell is inside the card. Move the card onto the border.
+land.vertices = {0} points (limit 128)
+land.applied = {0} took {1} cells.
+land.timeout = Time ran out. No land moved.
+land.ownership = {0}: {1} cells - {2}: {3} cells
+land.allowance = Allowance {0} cells
+
+cut.reject.None = Legal cut.
+cut.reject.NoAllowance = There is no land allowance for this duel.
+cut.reject.InvalidPose = The card position is not valid.
+cut.reject.EnvelopeTooLarge = The card is too large for this allowance. Make it smaller.
+cut.reject.AnchorNotOnBoard = The marked cell is outside the board.
+cut.reject.AnchorNotOpponentOwned = The marked cell must belong to the other player.
+cut.reject.AnchorNotOnBorder = The marked cell must touch your land along a full edge.
+cut.reject.AnchorOutsideEnvelope = The marked border cell must be inside the card.
+cut.reject.TooManyVertices = The cut has more than 128 points.
+cut.reject.VertexOutOfRange = Part of the cut is outside the board.
+cut.reject.TooFewVertices = Draw a loop with at least three distinct points.
+cut.reject.ZeroArea = The loop encloses no area.
+cut.reject.SelfIntersecting = The loop crosses or touches itself. Draw a simple loop.
+cut.reject.OverlappingEdges = The loop doubles back on itself. Draw a simple loop.
+cut.reject.AnchorOutsidePolygon = The loop must enclose the marked border cell.
+cut.reject.ExceedsQuota = The connected area is larger than the allowance. Draw a smaller loop.
+
+result.title = Match over
+result.winner = {0} wins the match!
+result.draw = Draw: both kingdoms hold exactly the same land.
+result.void = Void match: both players missed two choices in a row.
+result.areas = {0}: {1} cells - {2}: {3} cells
+result.rounds = Rounds played: {0}
+result.rematch = Rematch
+result.home = Home
+
+reason.Territory90 = Reached 90% of the board.
+reason.RoundsComplete = Eight rounds finished; more land wins.
+reason.Forfeit = {0} missed two choices in a row and forfeited.
+reason.Void = No winner.
+
+settings.title = Settings
+settings.firstRun = Welcome! Choose your language and comfort settings.
+settings.language = Language
+settings.music = Music volume {0}%
+settings.effects = Effects volume {0}%
+settings.shake = Reduced camera shake: {0}
+settings.haptics = Vibration: {0}
+settings.textScale = Text size: {0}%
+settings.on = On
+settings.off = Off
+settings.done = Done
+settings.reviewNote = Hindi and Kannada text is waiting for review by fluent speakers.
+
+replay.title = Replay viewer
+replay.loadLatest = Load latest record
+replay.none = No match record found at {0}
+replay.loaded = Loaded {0} commands. Rules {1}.
+replay.step = Command {0} of {1}
+replay.next = Next
+replay.playAll = Play to end
+replay.verify = Verify record
+replay.verified = Record verified: same result and state hashes.
+replay.failed = Record verification failed: {0}
+
+auto.running = Automation run: seed {0} ({1} of {2})
+auto.done = Automation finished: {0}
+error.generic = Something went wrong: {0}
