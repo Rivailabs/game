@@ -234,3 +234,150 @@ replay.failed = ದಾಖಲೆ ಪರಿಶೀಲನೆ ವಿಫಲ: {0}
 auto.running = ಸ್ವಯಂಚಾಲಿತ ಓಟ: ಸೀಡ್ {0} ({2} ರಲ್ಲಿ {1})
 auto.done = ಸ್ವಯಂಚಾಲಿತ ಓಟ ಮುಗಿಯಿತು: {0}
 error.generic = ಏನೋ ತಪ್ಪಾಗಿದೆ: {0}
+
+# ---- V1 ದ್ವಂದ್ವ ಪ್ರಸ್ತುತಿ, ಭೂಮಿ, ಪರದೆಗಳು ಮತ್ತು ಬಳಕೆ (ಟಿಕೆಟ್ 26-48) - needs fluent-speaker review ----
+
+announce.text = ಸುತ್ತು {0} / 8\nಭೂಪ್ರದೇಶ: {1}\nಈ ಸುತ್ತಿನಲ್ಲಿ {2} ದಾಳಿ ಮಾಡುತ್ತಾರೆ
+announce.withLand = {0}\n\n{1}
+
+cue.release = {0} ಬಿಡಲಾಯಿತು
+cue.dodge = {0} {1}
+cue.shieldRaised = {0} ಬೂದಿ ಗುರಾಣಿ ಎತ್ತಲಾಗಿದೆ
+cue.wallRaised = {0} ಕಬ್ಬಿಣದ ಗೋಡೆಯ ಮರೆ
+cue.clashSurvived = {0} ಢಿಕ್ಕಿಯಲ್ಲಿ ಉಳಿಯಿತು
+cue.clashCancelled = {0} ಢಿಕ್ಕಿಯಲ್ಲಿ ನಾಶವಾಯಿತು
+cue.hit = {0} {1} HP
+cue.hitCovered = {0} {1} HP, ಮರೆಯಿಂದ ಕಡಿಮೆ
+cue.graze = {0} ತಾಗಿತು {1} HP
+cue.grazeCovered = {0} ತಾಗಿತು {1} HP, ಮರೆಯಿಂದ ಕಡಿಮೆ
+cue.blocked = {0} ತಡೆಯಲಾಯಿತು
+cue.miss = {0} ತಪ್ಪಿತು
+cue.coverRemoved = {0} ಮರೆ ಕೊಚ್ಚಿಹೋಯಿತು
+cue.health = {0} HP {1}
+
+hud.hpLand = {0} - {1}
+hud.nameReady = {0} [{1}]
+hud.timeUrgent = ! {0}
+
+home.weapons = ಆಯುಧಗಳು ಮತ್ತು ಪರಿಣತಿ
+home.catalog = ಅಭ್ಯಾಸ ಸೆಟ್: {0}
+home.arena = ಅಖಾಡ: {0}
+catalog.starter = ಆರಂಭಿಕ (5 ಆಯುಧಗಳು)
+catalog.full = ಪೂರ್ಣ (20 ಆಯುಧಗಳು, ಎರವಲು)
+arena.courtyard = ಅರಮನೆಯ ಅಂಗಳ
+arena.riverside = ನದಿಯ ಮೆಟ್ಟಿಲುಗಳು
+
+mode.online = ಆನ್‌ಲೈನ್ ಆಡಿ
+mode.online.hint = ಮತ್ತೊಬ್ಬ ಆಟಗಾರನ ವಿರುದ್ಧ ಪಂದ್ಯ. ಕಾಯುವಿಕೆಯ ನಂತರವೇ ಬಾಟ್ ನೀಡಲಾಗುತ್ತದೆ, ಮತ್ತು ಅದನ್ನು ಯಾವಾಗಲೂ ಬಾಟ್ ಎಂದು ತೋರಿಸಲಾಗುತ್ತದೆ.
+mode.friend = ಸ್ನೇಹಿತನೊಂದಿಗೆ ಆಡಿ
+mode.friend.hint = ರೂಮ್ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ. ಆರಂಭಿಸುವ ಮೊದಲು ಇಬ್ಬರೂ ಒಂದೇ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ನೋಡುತ್ತಾರೆ.
+mode.tutorial = ಟ್ಯುಟೋರಿಯಲ್
+mode.tutorial.hint = ಮಾರ್ಗದರ್ಶಿತ ಆರಂಭಿಕ ದ್ವಂದ್ವ, ಒಮ್ಮೆಗೆ ಒಂದು ಆಯ್ಕೆ.
+mode.unavailable.offline = ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಬೇಕು.
+mode.unavailable.notInThisBuild = ಈ ಬಿಲ್ಡ್‌ನಲ್ಲಿ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.
+
+loadout.countOf = {1} ರಲ್ಲಿ {0} ಆಯ್ಕೆಯಾಗಿವೆ
+loadout.loanNote = ಎರವಲು ಆಯುಧಗಳನ್ನು ಈ ರೂಮ್‌ಗೆ ಮಾತ್ರ ಇಬ್ಬರೂ ಆಟಗಾರರಿಗೆ ನೀಡಲಾಗುತ್ತದೆ.
+loadout.owned = ಸ್ವಂತ
+loadout.loaned = ಎರವಲು
+loadout.row = {0} - {1}
+loadout.rowReserve = {0} - {1} - ಮೀಸಲು (ಶಸ್ತ್ರಾಗಾರದ ರಕ್ಷಣೆಯಲ್ಲಿ ಮಾತ್ರ)
+loadout.pickReserve = ಮೀಸಲು ಆಯುಧ ಆರಿಸಿ
+loadout.pickReserveActive = ಮೀಸಲಾಗಿ ಇಡಬೇಕಾದ ಆಯುಧದ ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ
+loadout.hintStarter = ಆರಂಭಿಕ ಸೆಟ್: 1 ರಿಂದ {0} ಆಯುಧಗಳನ್ನು ಆರಿಸಿ. ನಿಮ್ಮ ಆಯ್ಕೆ ಗೌಪ್ಯವಾಗಿರುತ್ತದೆ.
+loadout.hintFull = ಪೂರ್ಣ ಸೆಟ್: 1 ರಿಂದ {0} ಆಯುಧಗಳನ್ನು ಆರಿಸಿ; ಆರು ಆದಾಗ ಒಂದು ಮೀಸಲು ಸೇರಿಸಬಹುದು. ನಿಮ್ಮ ಆಯ್ಕೆ ಗೌಪ್ಯವಾಗಿರುತ್ತದೆ.
+loadout.full = ಎಲ್ಲಾ ಸ್ಥಾನಗಳು ತುಂಬಿವೆ. ಮೊದಲು ಒಂದು ಆಯುಧ ತೆಗೆಯಿರಿ.
+loadout.reserveDistinct = ಮೀಸಲು ಆಯುಧವು ನೀವು ಆರಿಸದ ಆಯುಧವಾಗಿರಬೇಕು.
+loadout.reserveFullOnly = ಮೀಸಲು ಆಯುಧಗಳು ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.
+loadout.reserveNeedsSix = ಮೀಸಲು ಆರಿಸುವ ಮೊದಲು ಆರು ಆಯುಧಗಳನ್ನು ಆರಿಸಿ.
+loadout.notInRoom = ಆ ಆಯುಧ ಈ ರೂಮ್‌ನ ಸೆಟ್‌ನಲ್ಲಿ ಇಲ್ಲ.
+
+select.dodgeOption = {0} {1}
+select.locked = ಲಾಕ್ ಆಗಿದೆ
+select.lockedWaiting = ಲಾಕ್ ಆಗಿದೆ. ಇನ್ನೊಂದು ಆಯ್ಕೆಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ.
+select.pitchLimit = ಮೇಲೆ/ಕೆಳಗೆ ಕೋನ {0} ಡಿಗ್ರಿ (ಮಿತಿ)
+select.yawLimit = ಎಡ/ಬಲ ಕೋನ {0} ಡಿಗ್ರಿ (ಮಿತಿ)
+
+land.totals = {0}: {1,number} ಕೋಶಗಳು ({2}%) - {3}: {4,number} ಕೋಶಗಳು ({5}%)
+land.legend = {0}: ಪಟ್ಟೆಗಳು - {1}: ಚುಕ್ಕೆಗಳು - ಬಿಳಿ ಗೆರೆ: ಗಡಿ - ವಜ್ರಾಕಾರ: ವಿಶೇಷ ಭೂಪ್ರದೇಶ
+land.margin = HP ಅಂತರ: {0}
+land.withGlyph = {0} {1}
+land.vajraLocked = ವಜ್ರ 60.00 HP ಗಿಂತ ಹೆಚ್ಚಿನ ಅಂತರದ ನಂತರ ಮಾತ್ರ ಸಿಗುತ್ತದೆ.
+land.reason.floor = {0}: {2,number} ಕೋಶಗಳು - 3% ಕನಿಷ್ಠ, ಏಕೆಂದರೆ HP ಅಂತರ ಚಿಕ್ಕದಾಗಿತ್ತು.
+land.reason.margin = {0}: {2,number} ಕೋಶಗಳು - ಅದರ {1}% ಮಿತಿ ಗುಣಿಸು ನಿಮ್ಮ HP ಅಂತರ.
+land.reason.loserLand = {0}: {2,number} ಕೋಶಗಳು - ಇನ್ನೊಬ್ಬ ಆಟಗಾರನ ಉಳಿದ ಎಲ್ಲಾ ಭೂಮಿ.
+land.gesture.TooShort = ಬರೆಯುತ್ತಲೇ ಇರಿ: ಸುತ್ತಿಗೆ ಕನಿಷ್ಠ ಮೂರು ಬಿಂದುಗಳು ಬೇಕು.
+land.gesture.ClosedAutomatically = ಬೆರಳು ಆರಂಭದಿಂದ ದೂರದಲ್ಲಿ ಎತ್ತಲಾಯಿತು, ಹಾಗಾಗಿ ಸುತ್ತನ್ನು ನೇರ ಗೆರೆಯಿಂದ ಮುಚ್ಚಲಾಯಿತು.
+land.gesture.LeftTheBoard = ಬೋರ್ಡ್‌ನ ಹೊರಗಿನ ಬಿಂದುಗಳನ್ನು ಬಿಡಲಾಯಿತು.
+land.gesture.Simplified = ಸುತ್ತನ್ನು 128 ಬಿಂದುಗಳಿಗೆ ಸರಳಗೊಳಿಸಲಾಯಿತು.
+
+result.areasPercent = {0}: {1,number} ಕೋಶಗಳು ({2}%) - {3}: {4,number} ಕೋಶಗಳು ({5}%)
+result.detail = {0}\n{1}\n{2}
+
+settings.motion = ಕಡಿಮೆ ಚಲನೆ: {0}
+settings.patterns = ಮಾದರಿಗಳು ಮತ್ತು ಆಕಾರಗಳು (ಕೇವಲ ಬಣ್ಣವಲ್ಲ): {0}
+settings.tutorialUntimed = ಸಮಯ ಮಿತಿ ಇಲ್ಲದ ಟ್ಯುಟೋರಿಯಲ್: {0}
+settings.dataTitle = ಈ ಫೋನ್‌ನಲ್ಲಿರುವ ಡೇಟಾ
+settings.dataHint = ಈ ಫೋನ್ ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, ಟ್ಯುಟೋರಿಯಲ್ ಪ್ರಗತಿ ಮತ್ತು ಪಂದ್ಯದ ದಾಖಲೆಗಳನ್ನು ಇಡುತ್ತದೆ.
+settings.deleteData = ಈ ಫೋನ್‌ನ ಡೇಟಾ ಅಳಿಸಿ
+settings.deleteConfirm = ಅಳಿಸಲು ಮತ್ತೆ ಟ್ಯಾಪ್ ಮಾಡಿ
+settings.deleteWarning = ಇದು ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಮರುಹೊಂದಿಸುತ್ತದೆ ಮತ್ತು ಈ ಫೋನ್‌ನ ಉಳಿಸಿದ ದಾಖಲೆಗಳನ್ನು ತೆಗೆಯುತ್ತದೆ.
+settings.deleted = ಈ ಫೋನ್‌ನ ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗಿದೆ.
+settings.deleteFailed = ಕೆಲವು ಡೇಟಾವನ್ನು ಅಳಿಸಲು ಆಗಲಿಲ್ಲ: {0}
+
+data.settings = ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಟ್ಯುಟೋರಿಯಲ್ ಪ್ರಗತಿ
+data.records = ಪಂದ್ಯದ ದಾಖಲೆಗಳು
+data.practice = ಅಭ್ಯಾಸದ ಅಂಕಿಅಂಶಗಳು
+
+session.overlay.None = ಸಿದ್ಧ
+session.overlay.ResumeCover = ಮರಳಿ ಸ್ವಾಗತ
+session.overlay.PauseMenu = ವಿರಾಮ
+session.overlay.Reconnecting = ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತಿದೆ
+session.overlay.ConnectionLost = ಸಂಪರ್ಕ ಕಡಿದಿದೆ
+session.overlay.Recovered = ಪಂದ್ಯಕ್ಕೆ ಮರಳಿದ್ದೀರಿ
+session.resumeTitle = ಮರಳಿ ಸ್ವಾಗತ
+session.resumeHint = ಆ್ಯಪ್ ಹೊರಗಿದ್ದಾಗ ಪಂದ್ಯದ ಗಡಿಯಾರ ನಿಂತಿತ್ತು. ಸರಿಯಾದ ಆಟಗಾರ ಮಾತ್ರ ಪರದೆ ನೋಡುತ್ತಿದ್ದಾರೆ ಎಂದು ಖಚಿತಪಡಿಸಿ, ನಂತರ ಮುಂದುವರಿಸಿ.
+session.reconnecting = ಪಂದ್ಯಕ್ಕೆ ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತಿದೆ. ಪಂದ್ಯದ ಗಡಿಯಾರವನ್ನು ಸರ್ವರ್ ನಡೆಸುತ್ತದೆ.
+session.lost = ಸಂಪರ್ಕ ಕಡಿದಿದೆ. ನೀವು ಕಾಯಬಹುದು ಅಥವಾ ಪಂದ್ಯ ಬಿಡಬಹುದು.
+session.recovered = ಪಂದ್ಯ ಈಗ ಇಲ್ಲಿದೆ: {0}
+session.keepWaiting = ಕಾಯುತ್ತಿರಿ
+session.leave = ಪಂದ್ಯ ಬಿಡಿ
+session.continue = ಮುಂದುವರಿಸಿ
+
+phase.setup = ಆಯುಧಗಳನ್ನು ಆರಿಸಲಾಗುತ್ತಿದೆ
+phase.terrainAnnounce = ಭೂಪ್ರದೇಶದ ಘೋಷಣೆ
+phase.selection = ಗುರಿ ಆರಿಸಲಾಗುತ್ತಿದೆ
+phase.resolution = ಬಾಣಗಳ ಸುತ್ತು ನೋಡಲಾಗುತ್ತಿದೆ
+phase.cardAndCut = ಭೂಮಿ ತೆಗೆದುಕೊಳ್ಳಲಾಗುತ್ತಿದೆ
+phase.matchOver = ಪಂದ್ಯ ಮುಗಿದಿದೆ
+phase.unknown = ಪಂದ್ಯಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ
+
+tutorial.title = ಟ್ಯುಟೋರಿಯಲ್
+tutorial.offerTitle = ಮಾರ್ಗದರ್ಶಿತ ದ್ವಂದ್ವದಿಂದ ಕಲಿಯುವಿರಾ?
+tutorial.offerHint = ಯಾವಾಗಲೂ ಬಾಟ್ ಎಂದು ತೋರಿಸಲಾದ ಬಾಟ್ ವಿರುದ್ಧ ಒಂದು ಚಿಕ್ಕ ಅಭ್ಯಾಸ ಪಂದ್ಯ. ಒಮ್ಮೆಗೆ ಒಂದು ಆಯ್ಕೆ, ಮತ್ತು ನೀವು ಆನ್ ಮಾಡುವವರೆಗೆ ಟೈಮರ್ ಇಲ್ಲ.
+tutorial.start = ಟ್ಯುಟೋರಿಯಲ್ ಆರಂಭಿಸಿ
+tutorial.skip = ಈಗ ಬೇಡ
+tutorial.step.Welcome = ಇಬ್ಬರು ಬಿಲ್ಲುಗಾರರು ಒಂದೇ ಸಮಯದಲ್ಲಿ ಬಾಣ ಬಿಡುತ್ತಾರೆ. ದ್ವಂದ್ವ ಗೆಲ್ಲಿ, ನಂತರ ಭೂಮಿ ತೆಗೆದುಕೊಳ್ಳಿ. ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.ChooseWeapon = ಒಂದು ಆಯುಧ ಆರಿಸಿ. ಪ್ರತಿ ತತ್ವ ಇತರ ಎರಡನ್ನು ಮೀರಿಸುತ್ತದೆ; ಬಟನ್ ಮೇಲಿನ ಆಕಾರ ಅದರ ತತ್ವವನ್ನು ತೋರಿಸುತ್ತದೆ.
+tutorial.step.AimAndPower = ಕೋನ ಬದಲಿಸಲು ಗುರಿ ಪ್ಯಾಡ್ ಮೇಲೆ ಎಳೆಯಿರಿ, ನಂತರ ಶಕ್ತಿಯನ್ನು ಹೊಂದಿಸಿ. ಗೆರೆ ನಿಮ್ಮ ಬಾಣದ ಹಾರಾಟದ ಆರಂಭವನ್ನು ತೋರಿಸುತ್ತದೆ.
+tutorial.step.ChooseDodge = ತಪ್ಪಿಸಿಕೊಳ್ಳುವಿಕೆ ಆರಿಸಿ: ನಿಲ್ಲಿ, ಎಡ, ಬಲ ಅಥವಾ ಜಿಗಿತ. ಇದರಿಂದ ಇನ್ನೊಂದು ಬಾಣ ತಪ್ಪಬಹುದು.
+tutorial.step.Lock = ನಿಮ್ಮ ಆಯ್ಕೆಯನ್ನು ಲಾಕ್ ಮಾಡಿ. ಲಾಕ್ ನಂತರ ಅದು ಬದಲಾಗುವುದಿಲ್ಲ, ಮತ್ತು ಬಾಟ್ ಅದನ್ನು ಎಂದಿಗೂ ನೋಡುವುದಿಲ್ಲ.
+tutorial.step.WatchReveal = ಎರಡೂ ಬಾಣಗಳು ಒಂದೇ ಸಮಯದಲ್ಲಿ ಹಾರುತ್ತವೆ. ಪ್ರತಿ ಬಾಣ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತದೆ ನೋಡಿ.
+tutorial.step.ReadOutcome = ಏನಾಯಿತು ಓದಿ, ನಂತರ ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.FreePlay = ಕಲಿತದ್ದರೊಂದಿಗೆ ಆಡುತ್ತಲೇ ಇರಿ. ಸುಳಿವುಗಳು ಆನ್ ಆಗಿರುತ್ತವೆ.
+tutorial.step.DrawCut = ನೀವು ದ್ವಂದ್ವ ಗೆದ್ದಿದ್ದೀರಿ. ಒಂದು ಕಾರ್ಡ್ ಆರಿಸಿ, ನಂತರ ಗುರುತಿಸಿದ ಗಡಿ ಕೋಶದ ಸುತ್ತ ಸುತ್ತು ಬರೆಯಿರಿ, ಅಥವಾ ಸ್ವಯಂ ಕತ್ತರಿಸು ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.AdvancedStatuses = ಕೆಲವು ಆಯುಧಗಳು ಸುಡುವಿಕೆ, ಆಘಾತ ಅಥವಾ ಬಲೆಯಂತಹ ಪರಿಣಾಮಗಳನ್ನು ಸೇರಿಸುತ್ತವೆ. HUD ಅವನ್ನು ಪ್ರತಿ ಆಟಗಾರನ ಕೆಳಗೆ ತೋರಿಸುತ್ತದೆ. ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.Complete = ಟ್ಯುಟೋರಿಯಲ್ ಪೂರ್ಣಗೊಂಡಿದೆ.
+tutorial.why.pass = ನೀವು ಸಮಯಕ್ಕೆ ಆರಿಸಲಿಲ್ಲ, ಹಾಗಾಗಿ ಈ ಸುತ್ತನ್ನು ಬಿಟ್ಟಿರಿ.
+tutorial.why.clashed = ನಿಮ್ಮ ಬಾಣ ಗಾಳಿಯಲ್ಲಿನ ಢಿಕ್ಕಿಯಲ್ಲಿ ನಾಶವಾಯಿತು.
+tutorial.why.theyDodged = {0} ತಪ್ಪಿಸಿಕೊಂಡಿದ್ದರಿಂದ ನಿಮ್ಮ ಬಾಣ ತಪ್ಪಿತು: {1}.
+tutorial.why.blocked = ನಿಮ್ಮ ಬಾಣ {0} ಅವರ ಬೂದಿ ಗುರಾಣಿಗೆ ತಾಗಿತು.
+tutorial.why.missed = ನಿಮ್ಮ ಬಾಣ ತಪ್ಪಿತು. ಬೇರೆ ಕೋನ ಅಥವಾ ಶಕ್ತಿ ಪ್ರಯತ್ನಿಸಿ.
+tutorial.why.elementBeatYou = ಅವರ {0} ನಿಮ್ಮ {1} ಅನ್ನು ಮೀರಿಸುತ್ತದೆ, ಹಾಗಾಗಿ ಅವರ ಹೊಡೆತ 1.5 ಪಟ್ಟು ಎಣಿಕೆಯಾಯಿತು.
+tutorial.why.noDodge = ನೀವು ನಿಂತೇ ಇದ್ದಿರಿ, ಹಾಗಾಗಿ ಅವರ ಬಾಣ ನಿಮ್ಮನ್ನು ತಲುಪಿತು.
+tutorial.why.hpSummary = ನೀವು {0} HP ಕಳೆದುಕೊಂಡಿರಿ ಮತ್ತು ಅವರಿಂದ {1} HP ತೆಗೆದುಕೊಂಡಿರಿ.
+
+weapons.title = ಆಯುಧಗಳು ಮತ್ತು ಪರಿಣತಿ
+weapons.summary = ಖಾತೆ ಮಟ್ಟ {0}. ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಪ್ರತಿ ಆಯುಧವನ್ನು ಇಬ್ಬರೂ ಆಟಗಾರರಿಗೆ ಎರವಲು ನೀಡಲಾಗುತ್ತದೆ.
+weapons.row = {0} - {1} - {2} ({3,plural,one{# ಬಾಣ} other{# ಬಾಣಗಳು}})
+weapons.unlocksAt = ಮಟ್ಟ {0} ರಲ್ಲಿ ತೆರೆಯುತ್ತದೆ (ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಎರವಲು)

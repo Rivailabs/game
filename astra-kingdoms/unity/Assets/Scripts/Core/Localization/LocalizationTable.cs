@@ -70,11 +70,22 @@ namespace AstraKingdoms.Client.Localization
 
         public bool Contains(string key) => _values.ContainsKey(key);
 
-        /// <summary>Number of distinct {n} parameters used by a value (highest index + 1).</summary>
+        /// <summary>
+        /// Number of positional parameters a value uses (highest index + 1), understanding the
+        /// <see cref="MessageFormat"/> syntax ({0}, {0,number}, {0,plural,...}). A malformed value
+        /// falls back to a plain scan so tests can still compare parameter sets.
+        /// </summary>
         public static int ParameterCount(string value)
         {
-            int max = -1;
             if (value == null) return 0;
+            try
+            {
+                return MessageFormat.ArgumentCount(value);
+            }
+            catch (FormatException)
+            {
+            }
+            int max = -1;
             for (int i = 0; i < value.Length; i++)
             {
                 if (value[i] != '{') continue;
@@ -87,7 +98,7 @@ namespace AstraKingdoms.Client.Localization
                     digits = true;
                     j++;
                 }
-                if (digits && j < value.Length && value[j] == '}' && n > max) max = n;
+                if (digits && j < value.Length && (value[j] == '}' || value[j] == ',') && n > max) max = n;
             }
             return max + 1;
         }
