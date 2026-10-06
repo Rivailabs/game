@@ -1,0 +1,27 @@
+{
+    "name": "AstraKingdoms.Tests.EditMode",
+    "rootNamespace": "AstraKingdoms.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "AstraKingdoms.Rules",
+        "AstraKingdoms.Client.Core",
+        "AstraKingdoms.Client",
+        "AstraKingdoms.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
