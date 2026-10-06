@@ -1,0 +1,26 @@
+{
+    "name": "AstraKingdoms.Client.Meta.Iap",
+    "rootNamespace": "AstraKingdoms.Client.Meta.Store",
+    "references": [
+        "AstraKingdoms.Meta",
+        "AstraKingdoms.Client.Meta",
+        "UnityEngine.Purchasing"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "AK_UNITY_IAP"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.purchasing",
+            "expression": "4.0.0",
+            "define": "AK_UNITY_IAP"
+        }
+    ],
+    "noEngineReferences": false
+}

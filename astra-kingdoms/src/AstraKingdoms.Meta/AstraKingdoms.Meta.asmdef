@@ -1,0 +1,16 @@
+{
+    "name": "AstraKingdoms.Meta",
+    "rootNamespace": "AstraKingdoms.Meta",
+    "references": [
+        "AstraKingdoms.Rules"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
