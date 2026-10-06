@@ -1,0 +1,21 @@
+{
+  "manifest_version": "2026.10.0",
+  "profile": "linux-x86_64-ubuntu-lts",
+  "note": "No automatic downloads are shipped yet: each automatic entry needs a sha256 recorded from the real artifact during preflight. The items below are manual steps that need an account or a licence decision.",
+  "entries": [
+    {"name": "unity-editor", "version": "6000.0 LTS (exact patch pinned in toolchain-manifest.json)", "kind": "tool",
+     "licence": "Unity Editor Software Terms (proprietary)", "terms_url": "https://unity.com/legal/editor-terms-of-service/software",
+     "delivery": "manual", "account_required": true, "requires_acceptance": true,
+     "note": "Install through Unity Hub with Android Build Support (SDK/NDK/OpenJDK). Choose the Unity plan that matches your revenue/funding; Forge cannot decide this for you."},
+    {"name": "android-sdk-terms", "version": "per Unity-bundled SDK", "kind": "tool",
+     "licence": "Android Software Development Kit License Agreement", "terms_url": "https://developer.android.com/studio/terms",
+     "delivery": "manual", "requires_acceptance": true,
+     "note": "Accepted when the Android modules are installed; required before any Android build."},
+    {"name": "dotnet-sdk", "version": "8.0 (exact version recorded by preflight)", "kind": "tool",
+     "licence": "MIT", "terms_url": "https://github.com/dotnet/sdk/blob/main/LICENSE.TXT", "delivery": "manual",
+     "note": "Install from the distribution package feed; needed for rules checks and the template sample build."},
+    {"name": "blender", "version": "4.2 LTS (exact version recorded by preflight)", "kind": "tool",
+     "licence": "GPL-2.0-or-later (applies to Blender itself, not to your files)", "terms_url": "https://www.blender.org/about/license/",
+     "delivery": "manual", "note": "Only needed for asset lanes."}
+  ]
+}
