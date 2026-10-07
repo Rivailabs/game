@@ -1,0 +1,38 @@
+{
+  "_comment": "Default catalogue reject list. Any object whose name or tags contain one of these terms (case-insensitive, whole words) is skipped before download. Override with --reject-list PATH or [catalogue] reject_list in project.toml. Ambiguous everyday words (apple, link, halo, frozen, thor) are deliberately left out so ordinary objects are not lost; the visual judge is also told to return NONE for anything resembling a recognisable game, film or brand asset.",
+  "franchises": [
+    "star wars", "star trek", "marvel", "dc comics", "avengers", "pokemon", "super mario", "mario", "sonic the hedgehog",
+    "minecraft", "fortnite", "overwatch", "league of legends", "dota", "warcraft", "world of warcraft", "diablo",
+    "starcraft", "skyrim", "elder scrolls", "fallout", "master chief", "call of duty", "battlefield", "assassins creed",
+    "assassin's creed", "god of war", "dark souls", "elden ring", "bloodborne", "sekiro", "witcher", "final fantasy",
+    "kingdom hearts", "genshin", "genshin impact", "honkai", "apex legends", "valorant", "counter strike",
+    "csgo", "cs go", "pubg", "free fire", "clash of clans", "clash royale", "harry potter", "hogwarts", "lord of the rings",
+    "lotr", "hobbit", "game of thrones", "hunger games", "naruto", "one piece", "dragon ball", "attack on titan",
+    "demon slayer", "disney", "pixar", "dreamworks", "shrek", "transformers", "gundam", "warhammer", "tomb raider",
+    "horizon zero dawn", "resident evil", "metal gear", "street fighter", "mortal kombat", "tekken", "devil may cry",
+    "monster hunter", "ghost of tsushima", "baahubali", "bahubali", "rrr", "brawl stars", "among us", "roblox",
+    "terraria", "hollow knight", "destiny 2", "mass effect", "dragon age", "the last of us", "uncharted", "red dead",
+    "gta", "grand theft auto", "bioshock", "half life", "portal 2", "team fortress", "fire emblem", "xenoblade",
+    "smash bros", "kirby", "metroid", "donkey kong", "spyro", "crash bandicoot", "ratchet and clank", "jak and daxter",
+    "sea of thieves", "rainbow six", "far cry", "dishonored", "quake", "titanfall", "hearthstone", "magic the gathering",
+    "yu gi oh", "digimon", "ben 10", "power rangers", "teenage mutant ninja turtles", "legend of zelda"
+  ],
+  "characters": [
+    "pikachu", "link zelda", "kratos", "lara croft", "aloy", "geralt", "legolas", "aragorn", "gandalf", "frodo",
+    "katniss", "hawkeye", "green arrow", "iron man", "spider man", "spiderman", "batman", "superman", "wonder woman",
+    "hulk", "captain america", "deadpool", "wolverine", "thanos", "joker", "harley quinn", "darth vader", "yoda",
+    "stormtrooper", "mandalorian", "goku", "vegeta", "luffy", "mickey mouse", "donald duck", "elsa", "merida",
+    "moana", "mulan", "shrek", "solid snake", "cloud strife", "sephiroth", "tifa", "ezio", "altair", "chun li",
+    "sub zero", "pac man", "pacman", "steve minecraft", "hanzo", "genji", "jett", "sage valorant", "lucina"
+  ],
+  "brands": [
+    "coca cola", "cocacola", "pepsi", "nike", "adidas", "reebok", "ferrari", "lamborghini", "bmw", "mercedes",
+    "mercedes benz", "audi", "toyota", "tesla", "porsche", "harley davidson", "jeep", "iphone", "macbook",
+    "samsung", "lego", "nerf", "red bull", "mcdonalds", "mcdonald's", "starbucks", "ikea", "playstation", "xbox",
+    "nintendo", "sega", "ubisoft", "riot games", "epic games", "bandai", "hasbro", "mattel", "barbie", "hot wheels",
+    "logo", "trademark", "blizzard entertainment", "valve corporation", "ford mustang"
+  ],
+  "generic": [
+    "fan art", "fanart", "fan made", "replica", "cosplay", "inspired by", "nsfw", "nude", "naked"
+  ]
+}

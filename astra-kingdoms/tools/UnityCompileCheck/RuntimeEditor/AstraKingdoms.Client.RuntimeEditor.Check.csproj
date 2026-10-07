@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Scripts/Runtime against tools/UnityStubs.
+    Variant: Editor play mode (development tools, Input System UI module).
+    Defines: UNITY_EDITOR;DEVELOPMENT_BUILD;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.RuntimeEditor</AssemblyName>
+    <RootNamespace>AstraKingdoms.Client</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_EDITOR;DEVELOPMENT_BUILD;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Runtime/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+  </ItemGroup>
+
+</Project>

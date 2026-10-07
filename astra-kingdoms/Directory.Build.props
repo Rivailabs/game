@@ -1,0 +1,12 @@
+<Project>
+  <!--
+    Redirect all build outputs out of the source folders so src/AstraKingdoms.Rules stays clean
+    for a direct Unity import (no bin/ or obj/ next to the .cs files).
+    Layout: astra-kingdoms/.build/<ProjectName>/{bin,obj}/
+  -->
+  <PropertyGroup>
+    <AkBuildRoot>$(MSBuildThisFileDirectory).build/</AkBuildRoot>
+    <BaseIntermediateOutputPath>$(AkBuildRoot)$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(AkBuildRoot)$(MSBuildProjectName)/bin/</BaseOutputPath>
+  </PropertyGroup>
+</Project>

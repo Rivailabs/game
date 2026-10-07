@@ -1,0 +1,23 @@
+{
+  "id": "arrow",
+  "kind": "projectile",
+  "title": "Arrow (projectile)",
+  "intended_screen_size": "small in flight; the silhouette must read against both arena treatments",
+  "art_reference": [
+    {"description": "Owner sketch: reed shaft, bronze head, two-colour fletching", "rights": "owner-created"}
+  ],
+  "silhouette": "Long thin shaft with a distinct head and fletching",
+  "scale_m": 0.8,
+  "scale_axis": "largest",
+  "pivot": "nock",
+  "materials": "One material",
+  "attachment_points": ["nock", "tip"],
+  "budget": "arrow",
+  "max_texture_px": 256,
+  "max_materials": 1,
+  "collider": "none",
+  "prompt": "A single arrow with a reed shaft, bronze arrowhead and two-colour feather fletching, plain background",
+  "negative_prompt": "bow, quiver, modern carbon arrow, logo",
+  "catalogue_first": true,
+  "skip_stages": ["concept", "concept_approval", "rig", "deformation_review", "motion_retarget", "contact_transition_review"]
+}

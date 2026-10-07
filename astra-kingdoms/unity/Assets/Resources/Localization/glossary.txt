@@ -1,0 +1,45 @@
+# Astra Kingdoms proper-name glossary (plan: "Language and accessibility acceptance").
+# STATUS: draft decisions - needs fluent-speaker review and the cultural review at the first public-art gate.
+# Format: key | treatment (transliterate, translate, keep) | en | hi | kn | note
+# Every string-table value for the key must START with the form for its language (tests enforce it);
+# elements and cards may add a shape hint in brackets after the name, e.g. "Agni (flame)".
+# The working title "Astra Kingdoms" is not yet approved for public branding (plan: review names before branding).
+app.title | transliterate | Astra Kingdoms | अस्त्र किंगडम्स | ಅಸ್ತ್ರ ಕಿಂಗ್‌ಡಮ್ಸ್ | Working title; transliterated, not translated, so store listings match.
+element.neutral | translate | Neutral | तटस्थ | ತಟಸ್ಥ | Pass and Brahmastra; shape hint: ring.
+element.agni | transliterate | Agni | अग्नि | ಅಗ್ನಿ | Element names are Sanskrit and shared by all three scripts; shape hint: flame.
+element.vayu | transliterate | Vayu | वायु | ವಾಯು | Shape hint: spiral.
+element.prithvi | transliterate | Prithvi | पृथ्वी | ಪೃಥ್ವಿ | Shape hint: stone.
+element.vidyut | transliterate | Vidyut | विद्युत | ವಿದ್ಯುತ್ | Shape hint: bolt.
+element.varuna | transliterate | Varuna | वरुण | ವರುಣ | Shape hint: wave.
+card.1 | transliterate | Chakra | चक्र | ಚಕ್ರ | Formation card; shape hint: disk.
+card.2 | transliterate | Garuda | गरुड़ | ಗರುಡ | Formation card named after the mythic bird (a motif, never a fighter); shape hint: wings.
+card.3 | transliterate | Suchi | सूची | ಸೂಚಿ | Formation card; shape hint: spear.
+card.4 | transliterate | Makara | मकर | ಮಕರ | Formation card; shape hint: hook.
+card.5 | transliterate | Padma | पद्म | ಪದ್ಮ | Formation card; shape hint: petals.
+card.6 | transliterate | Vajra | वज्र | ವಜ್ರ | Formation card; shape hint: diamond.
+weapon.brahmastra | transliterate | Brahmastra | ब्रह्मास्त्र | ಬ್ರಹ್ಮಾಸ್ತ್ರ | Private-room experiment only.
+weapon.1 | translate | Ember Arrow | अंगार बाण | ಕೆಂಡ ಬಾಣ | Weapon names are translated descriptions ("arrow" = बाण / ಬಾಣ).
+weapon.2 | translate | Gale Arrow | पवन बाण | ಗಾಳಿ ಬಾಣ |
+weapon.3 | translate | Stone Arrow | पाषाण बाण | ಕಲ್ಲಿನ ಬಾಣ |
+weapon.4 | translate | Spark Arrow | चिंगारी बाण | ಕಿಡಿ ಬಾಣ |
+weapon.5 | translate | Tide Arrow | ज्वार बाण | ಅಲೆ ಬಾಣ |
+weapon.6 | translate | Fire Fan | अग्नि पंखा | ಅಗ್ನಿ ಬೀಸಣಿಗೆ |
+weapon.7 | translate | Twin Gust | जुड़वाँ झोंका | ಅವಳಿ ಗಾಳಿ |
+weapon.8 | translate | Boulder Shot | शिला प्रहार | ಬಂಡೆ ಹೊಡೆತ |
+weapon.9 | translate | Chain Bolt | शृंखला वज्र | ಸರಪಳಿ ಸಿಡಿಲು | Hindi uses वज्र (thunderbolt); review against the Vajra card name for confusion.
+weapon.10 | translate | Mist Veil | धुंध परदा | ಮಂಜಿನ ಮುಸುಕು |
+weapon.11 | translate | Ash Shield | भस्म ढाल | ಬೂದಿ ಗುರಾಣಿ |
+weapon.12 | translate | Cyclone | चक्रवात | ಚಂಡಮಾರುತ |
+weapon.13 | translate | Iron Wall | लौह दीवार | ಕಬ್ಬಿಣದ ಗೋಡೆ |
+weapon.14 | translate | Storm Net | तूफ़ान जाल | ಬಿರುಗಾಳಿ ಬಲೆ |
+weapon.15 | translate | Flood Arrow | बाढ़ बाण | ಪ್ರವಾಹ ಬಾಣ |
+weapon.16 | translate | Sun Lance | सूर्य भाला | ಸೂರ್ಯ ಭರ್ಜಿ |
+weapon.17 | translate | Sky Dive | आकाश गोता | ಆಕಾಶ ಧುಮುಕು |
+weapon.18 | translate | Quake Arrow | भूकंप बाण | ಭೂಕಂಪ ಬಾಣ |
+weapon.19 | translate | Thunder Crown | गर्जन मुकुट | ಗುಡುಗು ಕಿರೀಟ |
+weapon.20 | translate | Ocean Call | सागर पुकार | ಸಾಗರ ಕರೆ |
+terrain.plain | translate | Plain | मैदान | ಬಯಲು |
+terrain.fort | translate | Fort | किला | ಕೋಟೆ |
+terrain.river | translate | River | नदी | ನದಿ |
+terrain.forest | translate | Forest | वन | ಕಾಡು |
+terrain.armoury | translate | Armoury | शस्त्रागार | ಶಸ್ತ್ರಾಗಾರ |

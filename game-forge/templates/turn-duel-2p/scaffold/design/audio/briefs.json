@@ -1,0 +1,12 @@
+{
+  "template": "turn-duel-2p",
+  "note": "Audio lane input. Clips come from a documented licensed library; the lane writes a rights record per pick.",
+  "allowed_licences": ["CC0-1.0", "CC-BY-4.0"],
+  "loudness_target_dbfs": -16,
+  "briefs": [
+    {"id": "reveal", "purpose": "both choices revealed", "tags": ["whoosh", "reveal"], "max_seconds": 1.5, "loop": false, "mono": true},
+    {"id": "hit", "purpose": "a player loses health", "tags": ["hit", "impact"], "max_seconds": 1.0, "loop": false, "mono": true},
+    {"id": "win", "purpose": "match won", "tags": ["win", "fanfare"], "max_seconds": 3.0, "loop": false, "mono": true},
+    {"id": "draw", "purpose": "match drawn", "tags": ["draw", "neutral"], "max_seconds": 2.0, "loop": false, "mono": true}
+  ]
+}

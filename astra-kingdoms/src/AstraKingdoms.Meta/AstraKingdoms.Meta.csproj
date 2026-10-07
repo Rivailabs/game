@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Account meta-game for Astra Kingdoms V1 (tickets 57-64): progression, daily cosmetic tasks,
+    cosmetics, shop eligibility, Play Billing entitlements, ad policy and rewarded-ad verification,
+    analytics schema/consent and decision metrics, privacy retention and deletion.
+
+    netstandard2.1 + C# 9 with no UnityEngine references, like AstraKingdoms.Rules. Everything
+    outside Server/ is also a local Unity package (com.astrakingdoms.meta). Server/ holds the parts
+    that need secrets or network access (Google Play Developer API, AdMob SSV keys); it has its own
+    asmdef whose define constraint keeps it out of the Unity client, while dotnet compiles it here so
+    the server can host it.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>AstraKingdoms.Meta</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../AstraKingdoms.Rules/AstraKingdoms.Rules.csproj" />
+  </ItemGroup>
+
+</Project>

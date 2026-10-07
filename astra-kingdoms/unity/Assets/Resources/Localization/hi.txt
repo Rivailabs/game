@@ -1,0 +1,444 @@
+# Astra Kingdoms player-facing strings - Hindi (hi)
+# STATUS: needs fluent-speaker review. Draft translation; not yet checked by a native speaker,
+# not yet checked for font coverage, line wrapping or button widths on the reference phone.
+# Proper names (elements, weapons, cards) follow the glossary decision still to be made.
+# Same keys and the same {n} parameters as en.txt (tests enforce it); missing keys fall back to English.
+
+app.title = अस्त्र किंगडम्स
+app.footer = नियम {0} - पायलट बिल्ड {1}
+common.back = वापस
+common.continue = आगे बढ़ें
+common.seconds = {0} सेकंड
+
+home.play = एक फ़ोन पर खेलें
+home.playHint = दो खिलाड़ी यह फ़ोन साझा करते हैं। हर विकल्प गोपनीय रूप से चुना जाता है।
+home.practice = बॉट के साथ अभ्यास
+home.practiceHint = बॉट को हमेशा बॉट के रूप में दिखाया जाता है। वह केवल वही देखता है जो आप देख सकते हैं।
+home.difficulty = बॉट स्तर: {0}
+home.settings = सेटिंग्स
+home.replay = रीप्ले व्यूअर (डेवलपमेंट)
+
+difficulty.easy = आसान
+difficulty.normal = सामान्य
+difficulty.hard = कठिन
+
+player.one = खिलाड़ी 1
+player.two = खिलाड़ी 2
+player.you = आप
+player.bot = बॉट ({0})
+player.botSeat = बॉट {0}
+
+loadout.title = {0}: अपने हथियार चुनें
+loadout.hint = शुरुआती सेट: 1 से 5 हथियार चुनें। आपका चयन गोपनीय रहता है।
+loadout.count = 5 में से {0} चुने गए
+loadout.confirm = चयन पक्का करें
+loadout.needOne = कम से कम एक हथियार चुनें।
+
+privacy.passTo = फ़ोन {0} को दें
+privacy.hint = फ़ोन ऐसे पकड़ें कि केवल आप देख सकें। दूसरे खिलाड़ी की बारी का कुछ भी नहीं दिखाया जाता।
+privacy.ready = मैं {0} हूँ - मेरे नियंत्रण दिखाएँ
+privacy.timer = आपका समय चल रहा है: {0} सेकंड
+privacy.handoverTimer = अगली बारी {0} सेकंड में शुरू होगी
+
+announce.round = राउंड {0} / 8
+announce.terrain = भूभाग: {0}
+announce.attacker = इस राउंड में {0} आक्रमण करेगा
+
+terrain.plain = मैदान
+terrain.fort = किला
+terrain.river = नदी
+terrain.forest = वन
+terrain.armoury = शस्त्रागार
+
+hud.round = राउंड {0}/8 - वार {1}/3
+hud.hp = HP {0}
+hud.cells = भूमि {0} खाने
+hud.time = {0} सेकंड
+hud.ready = तैयार
+hud.waiting = चुन रहा है
+hud.pause = रोकें
+hud.resume = जारी रखें
+hud.paused = रुका हुआ
+hud.statusNone = कोई प्रभाव नहीं
+
+status.burn = जलन
+status.shock = झटका
+status.net = जाल
+status.quake = कंपन
+status.ironWall = लौह दीवार
+
+select.title = {0}: गुप्त चयन
+select.weapon = हथियार
+select.aimPad = निशाना लगाने के लिए यहाँ खींचें
+select.pitch = ऊपर/नीचे कोण {0} डिग्री
+select.yaw = बाएँ/दाएँ कोण {0} डिग्री
+select.power = शक्ति {0}%
+select.dodge = बचाव
+select.lock = मेरा चयन लॉक करें
+select.rejected = स्वीकार नहीं हुआ ({0})। अपना चयन बदलकर फिर कोशिश करें।
+select.lastVolley = पिछला वार
+select.hideLastVolley = पिछला वार छिपाएँ
+select.noLastVolley = इस द्वंद्व में अभी कोई वार नहीं हुआ।
+
+dodge.none = खड़े रहें
+dodge.left = बाएँ
+dodge.right = दाएँ
+dodge.jump = कूदें
+
+weapon.1 = अंगार बाण
+weapon.2 = पवन बाण
+weapon.3 = पाषाण बाण
+weapon.4 = चिंगारी बाण
+weapon.5 = ज्वार बाण
+weapon.6 = अग्नि पंखा
+weapon.7 = जुड़वाँ झोंका
+weapon.8 = शिला प्रहार
+weapon.9 = शृंखला वज्र
+weapon.10 = धुंध परदा
+weapon.11 = भस्म ढाल
+weapon.12 = चक्रवात
+weapon.13 = लौह दीवार
+weapon.14 = तूफ़ान जाल
+weapon.15 = बाढ़ बाण
+weapon.16 = सूर्य भाला
+weapon.17 = आकाश गोता
+weapon.18 = भूकंप बाण
+weapon.19 = गर्जन मुकुट
+weapon.20 = सागर पुकार
+weapon.brahmastra = ब्रह्मास्त्र
+weapon.withElement = {0} ({1})
+
+element.neutral = तटस्थ (वलय)
+element.agni = अग्नि (ज्वाला)
+element.vayu = वायु (चक्कर)
+element.prithvi = पृथ्वी (पत्थर)
+element.vidyut = विद्युत (बिजली)
+element.varuna = वरुण (लहर)
+
+contact.core = सीधा वार
+contact.graze = छूता वार
+contact.burst = विस्फोट वार
+contact.burstGraze = विस्फोट की छुअन
+contact.strike = प्रहार
+contact.multiple = {0} x{1}
+
+element.effect.strong = {0}, {1} {2} पर भारी है
+element.effect.weak = {0}, {1} {2} के सामने कमज़ोर है
+element.effect.even = {0}, कोई तत्व लाभ नहीं
+element.effect.hidden = {0}
+
+modifier.dodge = बचाव {0} {1}।
+modifier.cover = आड़ {0}।
+modifier.coverIgnored = आड़ का असर नहीं।
+
+explain.hit = {0}: {1} - {3} पर {2}, {4} HP ({5})।{6}
+explain.miss = {0}: {1} - चूक गया।
+explain.missDodged = {0}: {1} - चूक गया; {2} ने {3} बचाव किया।
+explain.clash = {0}: {1} - हवा में टकराकर नष्ट हुआ।
+explain.blocked = {0}: {1} - {2} की भस्म ढाल ने रोका।
+explain.pass = {0}: समय पर चयन नहीं, इसलिए न वार न बचाव (पास)।
+explain.pass.short = पास
+explain.veiled = छिपा हुआ वार
+explain.hp = {0}: HP {1} -> {2}
+explain.burn = (जलन {0})
+explain.heal = (उपचार {0})
+explain.duelWon = {0} ने द्वंद्व जीता।
+explain.duelDraw = द्वंद्व बराबर रहा। कोई भूमि नहीं बदली।
+
+card.1 = चक्र (गोल)
+card.2 = गरुड़ (पंख)
+card.3 = सूची (भाला)
+card.4 = मकर (हुक)
+card.5 = पद्म (पंखुड़ियाँ)
+card.6 = वज्र (हीरा)
+
+land.title = {0} ने द्वंद्व जीता: भूमि लें
+land.watch = {0} कार्ड चुन रहा है और कटाव बना रहा है।
+land.card = {0}: अधिकतम {1} खाने (बोर्ड का {2}%)
+land.chooseCard = कार्ड चुनें
+land.modeMove = कार्ड खिसकाएँ
+land.modeDraw = कटाव बनाएँ
+land.rotateLeft = बाएँ घुमाएँ
+land.rotateRight = दाएँ घुमाएँ
+land.bigger = बड़ा
+land.smaller = छोटा
+land.auto = स्वचालित कटाव
+land.clear = मिटाएँ
+land.confirm = कटाव पक्का करें
+land.hintMove = कार्ड को सीमा पर खींचें। घुमाने और आकार बदलने के लिए दो उँगलियों का प्रयोग करें।
+land.hintDraw = कार्ड के अंदर, चिह्नित सीमा-खाने के चारों ओर एक बंद घेरा बनाएँ।
+land.preview = यह कटाव आपके {1} अनुमत खानों में से {0} लेता है।
+land.previewDiscarded = {0} खाने जुड़े नहीं हैं और {1} के पास रहेंगे।
+land.noAnchor = कार्ड के अंदर कोई सीमा-खाना नहीं है। कार्ड को सीमा पर ले जाएँ।
+land.vertices = {0} बिंदु (सीमा 128)
+land.applied = {0} ने {1} खाने लिए।
+land.timeout = समय समाप्त। कोई भूमि नहीं बदली।
+land.ownership = {0}: {1} खाने - {2}: {3} खाने
+land.allowance = अनुमति {0} खाने
+
+cut.reject.None = वैध कटाव।
+cut.reject.NoAllowance = इस द्वंद्व के लिए कोई भूमि अनुमति नहीं है।
+cut.reject.InvalidPose = कार्ड की स्थिति मान्य नहीं है।
+cut.reject.EnvelopeTooLarge = इस अनुमति के लिए कार्ड बहुत बड़ा है। इसे छोटा करें।
+cut.reject.AnchorNotOnBoard = चिह्नित खाना बोर्ड से बाहर है।
+cut.reject.AnchorNotOpponentOwned = चिह्नित खाना दूसरे खिलाड़ी का होना चाहिए।
+cut.reject.AnchorNotOnBorder = चिह्नित खाना पूरी भुजा से आपकी भूमि को छूना चाहिए।
+cut.reject.AnchorOutsideEnvelope = चिह्नित सीमा-खाना कार्ड के अंदर होना चाहिए।
+cut.reject.TooManyVertices = कटाव में 128 से अधिक बिंदु हैं।
+cut.reject.VertexOutOfRange = कटाव का कुछ भाग बोर्ड से बाहर है।
+cut.reject.TooFewVertices = कम से कम तीन अलग बिंदुओं वाला घेरा बनाएँ।
+cut.reject.ZeroArea = घेरे में कोई क्षेत्र नहीं है।
+cut.reject.SelfIntersecting = घेरा स्वयं को काटता या छूता है। सरल घेरा बनाएँ।
+cut.reject.OverlappingEdges = घेरा अपने ऊपर ही लौटता है। सरल घेरा बनाएँ।
+cut.reject.AnchorOutsidePolygon = घेरे में चिह्नित सीमा-खाना होना चाहिए।
+cut.reject.ExceedsQuota = जुड़ा हुआ क्षेत्र अनुमति से बड़ा है। छोटा घेरा बनाएँ।
+
+result.title = मैच समाप्त
+result.winner = {0} ने मैच जीता!
+result.draw = बराबरी: दोनों राज्यों के पास बिल्कुल बराबर भूमि है।
+result.void = मैच रद्द: दोनों खिलाड़ियों ने लगातार दो बार चयन नहीं किया।
+result.areas = {0}: {1} खाने - {2}: {3} खाने
+result.rounds = खेले गए राउंड: {0}
+result.rematch = फिर से खेलें
+result.home = होम
+
+reason.Territory90 = बोर्ड का 90% हासिल किया।
+reason.RoundsComplete = आठ राउंड पूरे हुए; अधिक भूमि वाला जीता।
+reason.Forfeit = {0} ने लगातार दो बार चयन नहीं किया और हार मानी गई।
+reason.Void = कोई विजेता नहीं।
+
+settings.title = सेटिंग्स
+settings.firstRun = स्वागत है! अपनी भाषा और सुविधा सेटिंग्स चुनें।
+settings.language = भाषा
+settings.music = संगीत ध्वनि {0}%
+settings.effects = प्रभाव ध्वनि {0}%
+settings.shake = कैमरा कंपन कम: {0}
+settings.haptics = कंपन: {0}
+settings.textScale = अक्षर आकार: {0}%
+settings.on = चालू
+settings.off = बंद
+settings.done = हो गया
+settings.reviewNote = हिंदी और कन्नड़ पाठ की समीक्षा धाराप्रवाह वक्ताओं द्वारा होनी बाकी है।
+
+replay.title = रीप्ले व्यूअर
+replay.loadLatest = नवीनतम रिकॉर्ड खोलें
+replay.none = {0} पर कोई मैच रिकॉर्ड नहीं मिला
+replay.loaded = {0} आदेश लोड हुए। नियम {1}।
+replay.step = आदेश {0} / {1}
+replay.next = अगला
+replay.playAll = अंत तक चलाएँ
+replay.verify = रिकॉर्ड जाँचें
+replay.verified = रिकॉर्ड सत्यापित: वही परिणाम और वही स्थिति हैश।
+replay.failed = रिकॉर्ड सत्यापन विफल: {0}
+
+auto.running = स्वचालित रन: सीड {0} ({2} में से {1})
+auto.done = स्वचालित रन समाप्त: {0}
+error.generic = कुछ गलत हो गया: {0}
+
+# ---- V1 द्वंद्व प्रस्तुति, भूमि, स्क्रीन और उपयोगिता (टिकट 26-48) - needs fluent-speaker review ----
+
+announce.text = राउंड {0} / 8\nभूभाग: {1}\nइस राउंड में {2} आक्रमण करता है
+announce.withLand = {0}\n\n{1}
+
+cue.release = {0} छोड़ा
+cue.dodge = {0} {1}
+cue.shieldRaised = {0} भस्म ढाल उठी
+cue.wallRaised = {0} लौह दीवार की आड़
+cue.clashSurvived = {0} टक्कर में बचा
+cue.clashCancelled = {0} टक्कर में नष्ट
+cue.hit = {0} {1} HP
+cue.hitCovered = {0} {1} HP, आड़ से कम
+cue.graze = {0} छू गया {1} HP
+cue.grazeCovered = {0} छू गया {1} HP, आड़ से कम
+cue.blocked = {0} रोका गया
+cue.miss = {0} चूका
+cue.coverRemoved = {0} आड़ बह गई
+cue.health = {0} HP {1}
+
+hud.hpLand = {0} - {1}
+hud.nameReady = {0} [{1}]
+hud.timeUrgent = ! {0}
+
+home.weapons = हथियार और महारत
+home.catalog = अभ्यास सेट: {0}
+home.arena = अखाड़ा: {0}
+catalog.starter = आरंभिक (5 हथियार)
+catalog.full = पूर्ण (20 हथियार, उधार)
+arena.courtyard = महल का आँगन
+arena.riverside = नदी के घाट
+
+mode.online = ऑनलाइन खेलें
+mode.online.hint = किसी दूसरे खिलाड़ी के साथ मैच। प्रतीक्षा के बाद ही बॉट दिया जाता है, और उसे हमेशा बॉट बताया जाता है।
+mode.friend = मित्र के साथ खेलें
+mode.friend.hint = रूम कोड साझा करें। शुरू करने से पहले दोनों खिलाड़ी एक जैसी सेटिंग्स देखते हैं।
+mode.tutorial = ट्यूटोरियल
+mode.tutorial.hint = मार्गदर्शित आरंभिक द्वंद्व, एक समय में एक विकल्प।
+mode.unavailable.offline = इंटरनेट कनेक्शन चाहिए।
+mode.unavailable.notInThisBuild = इस बिल्ड में अभी उपलब्ध नहीं है।
+
+loadout.countOf = {1} में से {0} चुने गए
+loadout.loanNote = उधार के हथियार केवल इस रूम के लिए दोनों खिलाड़ियों को दिए जाते हैं।
+loadout.owned = अपना
+loadout.loaned = उधार
+loadout.row = {0} - {1}
+loadout.rowReserve = {0} - {1} - आरक्षित (केवल शस्त्रागार की रक्षा में)
+loadout.pickReserve = आरक्षित हथियार चुनें
+loadout.pickReserveActive = आरक्षित रखने वाले हथियार पर टैप करें
+loadout.hintStarter = आरंभिक सेट: 1 से {0} हथियार चुनें। आपका चयन गोपनीय रहता है।
+loadout.hintFull = पूर्ण सेट: 1 से {0} हथियार चुनें; छह होने पर एक आरक्षित जोड़ सकते हैं। आपका चयन गोपनीय रहता है।
+loadout.full = सभी स्थान भरे हैं। पहले कोई हथियार हटाएँ।
+loadout.reserveDistinct = आरक्षित हथियार वह होना चाहिए जो आपने नहीं चुना है।
+loadout.reserveFullOnly = आरक्षित हथियार केवल पूर्ण रूम में होते हैं।
+loadout.reserveNeedsSix = आरक्षित चुनने से पहले छह हथियार चुनें।
+loadout.notInRoom = यह हथियार इस रूम के सेट में नहीं है।
+
+select.dodgeOption = {0} {1}
+select.locked = लॉक हो गया
+select.lockedWaiting = लॉक हो गया। दूसरे विकल्प की प्रतीक्षा है।
+select.pitchLimit = ऊपर/नीचे कोण {0} डिग्री (सीमा)
+select.yawLimit = बाएँ/दाएँ कोण {0} डिग्री (सीमा)
+
+land.totals = {0}: {1,number} सेल ({2}%) - {3}: {4,number} सेल ({5}%)
+land.legend = {0}: धारियाँ - {1}: बिंदु - सफ़ेद रेखा: सीमा - हीरा: विशेष भूभाग
+land.margin = HP अंतर: {0}
+land.withGlyph = {0} {1}
+land.vajraLocked = वज्र केवल 60.00 HP से अधिक अंतर पर मिलता है।
+land.reason.floor = {0}: {2,number} सेल - 3% न्यूनतम, क्योंकि HP अंतर छोटा था।
+land.reason.margin = {0}: {2,number} सेल - इसकी {1}% सीमा गुणा आपका HP अंतर।
+land.reason.loserLand = {0}: {2,number} सेल - दूसरे खिलाड़ी की बची हुई पूरी भूमि।
+land.gesture.TooShort = बनाते रहें: घेरे के लिए कम से कम तीन बिंदु चाहिए।
+land.gesture.ClosedAutomatically = उँगली शुरुआत से दूर उठी, इसलिए घेरा एक सीधी रेखा से बंद किया गया।
+land.gesture.LeftTheBoard = बोर्ड के बाहर के बिंदु छोड़ दिए गए।
+land.gesture.Simplified = घेरे को 128 बिंदुओं तक सरल किया गया।
+
+result.areasPercent = {0}: {1,number} सेल ({2}%) - {3}: {4,number} सेल ({5}%)
+result.detail = {0}\n{1}\n{2}
+
+settings.motion = कम गति (मोशन): {0}
+settings.patterns = पैटर्न और आकार (केवल रंग नहीं): {0}
+settings.tutorialUntimed = बिना समय-सीमा का ट्यूटोरियल: {0}
+settings.dataTitle = इस फ़ोन पर डेटा
+settings.dataHint = यह फ़ोन आपकी सेटिंग्स, ट्यूटोरियल की प्रगति और मैच रिकॉर्ड रखता है।
+settings.deleteData = इस फ़ोन का डेटा हटाएँ
+settings.deleteConfirm = हटाने के लिए फिर से टैप करें
+settings.deleteWarning = इससे सेटिंग्स रीसेट होंगी और इस फ़ोन के सहेजे रिकॉर्ड हट जाएँगे।
+settings.deleted = इस फ़ोन का डेटा हटा दिया गया।
+settings.deleteFailed = कुछ डेटा हटाया नहीं जा सका: {0}
+
+data.settings = सेटिंग्स और ट्यूटोरियल प्रगति
+data.records = मैच रिकॉर्ड
+data.practice = अभ्यास के आँकड़े
+
+session.overlay.None = तैयार
+session.overlay.ResumeCover = फिर से स्वागत है
+session.overlay.PauseMenu = रुका हुआ
+session.overlay.Reconnecting = फिर से जुड़ रहे हैं
+session.overlay.ConnectionLost = कनेक्शन टूट गया
+session.overlay.Recovered = मैच में वापस
+session.resumeTitle = फिर से स्वागत है
+session.resumeHint = ऐप के बाहर रहने तक मैच की घड़ी रुकी रही। ध्यान रखें कि स्क्रीन सही खिलाड़ी ही देखे, फिर आगे बढ़ें।
+session.reconnecting = मैच से फिर जुड़ रहे हैं। मैच की घड़ी सर्वर चलाता है।
+session.lost = कनेक्शन टूट गया। आप प्रतीक्षा कर सकते हैं या मैच छोड़ सकते हैं।
+session.recovered = मैच अब यहाँ है: {0}
+session.keepWaiting = प्रतीक्षा करें
+session.leave = मैच छोड़ें
+session.continue = आगे बढ़ें
+
+phase.setup = हथियार चुने जा रहे हैं
+phase.terrainAnnounce = भूभाग की घोषणा
+phase.selection = निशाना चुना जा रहा है
+phase.resolution = वॉली देखी जा रही है
+phase.cardAndCut = भूमि ली जा रही है
+phase.matchOver = मैच समाप्त
+phase.unknown = मैच की प्रतीक्षा
+
+tutorial.title = ट्यूटोरियल
+tutorial.offerTitle = मार्गदर्शित द्वंद्व से सीखें?
+tutorial.offerHint = बॉट के साथ एक छोटा अभ्यास मैच, जिसे हमेशा बॉट बताया जाता है। एक समय में एक विकल्प, और जब तक आप चालू न करें तब तक कोई टाइमर नहीं।
+tutorial.start = ट्यूटोरियल शुरू करें
+tutorial.skip = अभी नहीं
+tutorial.step.Welcome = दो धनुर्धर एक साथ तीर चलाते हैं। द्वंद्व जीतें, फिर भूमि लें। आगे बढ़ें पर टैप करें।
+tutorial.step.ChooseWeapon = एक हथियार चुनें। हर तत्व दो दूसरों पर भारी है; बटन पर बना आकार उसका तत्व दिखाता है।
+tutorial.step.AimAndPower = कोण बदलने के लिए निशाना पैड पर खींचें, फिर शक्ति तय करें। रेखा आपके तीर की उड़ान की शुरुआत दिखाती है।
+tutorial.step.ChooseDodge = बचाव चुनें: खड़े रहें, बाएँ, दाएँ या कूदें। बचाव से दूसरा तीर चूक सकता है।
+tutorial.step.Lock = अपना विकल्प लॉक करें। लॉक के बाद यह नहीं बदलता, और बॉट इसे कभी नहीं देखता।
+tutorial.step.WatchReveal = दोनों तीर एक साथ उड़ते हैं। देखें हर तीर कहाँ जाता है।
+tutorial.step.ReadOutcome = पढ़ें क्या हुआ, फिर आगे बढ़ें पर टैप करें।
+tutorial.step.FreePlay = जो सीखा उसके साथ खेलते रहें। संकेत चालू रहते हैं।
+tutorial.step.DrawCut = आपने द्वंद्व जीता। एक कार्ड चुनें, फिर चिह्नित सीमा सेल के चारों ओर घेरा बनाएँ, या स्वतः कट पर टैप करें।
+tutorial.step.AdvancedStatuses = कुछ हथियार जलन, झटका या जाल जैसे प्रभाव जोड़ते हैं। HUD इन्हें हर खिलाड़ी के नीचे दिखाता है। आगे बढ़ें पर टैप करें।
+tutorial.step.Complete = ट्यूटोरियल पूरा हुआ।
+tutorial.why.pass = आपने समय पर नहीं चुना, इसलिए यह वॉली पास हो गई।
+tutorial.why.clashed = आपका तीर हवा में टक्कर से नष्ट हो गया।
+tutorial.why.theyDodged = आपका तीर चूका क्योंकि {0} ने बचाव किया: {1}।
+tutorial.why.blocked = आपका तीर {0} की भस्म ढाल से टकराया।
+tutorial.why.missed = आपका तीर चूक गया। दूसरा कोण या शक्ति आज़माएँ।
+tutorial.why.elementBeatYou = उनका {0} आपके {1} पर भारी है, इसलिए उनका वार 1.5 गुना गिना गया।
+tutorial.why.noDodge = आप खड़े रहे, इसलिए उनका तीर आप तक पहुँच सका।
+tutorial.why.hpSummary = आपके {0} HP गए और आपने उनके {1} HP लिए।
+
+weapons.title = हथियार और महारत
+weapons.summary = खाता स्तर {0}। पूर्ण रूम में हर हथियार दोनों खिलाड़ियों को उधार मिलता है।
+weapons.row = {0} - {1} - {2} ({3,plural,one{# तीर} other{# तीर}})
+weapons.unlocksAt = स्तर {0} पर खुलता है (पूर्ण रूम में उधार)
+
+# Online play (V1 tickets 49-56). UNTRANSLATED: English placeholders, need translation and native review.
+home.online = Play online
+online.title = Play online
+online.back = Back
+online.status.connecting = Connecting...
+online.status.connected = Connected
+online.status.reconnecting = Connection lost - reconnecting...
+online.status.failed = Could not connect: {0}
+online.status.disconnected = Offline
+online.signInUnavailable = Online sign-in is not available in this build.
+online.error = {0}
+online.catalog = Catalog: {0}
+online.catalog.starter = Starter (the same 5 weapons for both)
+online.catalog.full = Full (all 20 weapons loaned to both)
+online.terrain.plain = plain
+online.terrain.full = five terrain types
+online.createRoom = Create a friend room
+online.codeHint = Room code
+online.joinRoom = Join
+online.findOpponent = Find an opponent
+online.room.code = Room code: {0}
+online.room.waiting = Waiting for your friend to join.
+online.room.full = Both players are here. Check the rules, then confirm.
+online.room.confirmed = You confirmed. Waiting for the other player.
+online.room.opponentConfirmed = The other player has confirmed.
+online.room.expires = The code expires in {0} s
+online.room.rules = Catalog: {0}\nTerrain: {1}\nOnline, unranked\n{2} s to choose each volley, {3} s for the card and cut\nRules {4}
+online.room.confirm = Confirm and start
+online.room.leave = Leave the room
+online.room.closed = Room closed: {0}
+online.closed.expired = the code expired
+online.closed.hostLeft = the host left
+online.closed.hostDisconnected = the host lost connection
+online.closed.left = you left
+online.closed.serverShutdown = the service is restarting
+online.queue.waiting = Looking for an opponent... {0} s
+online.queue.botOffer = No one found yet. Play against {0} instead? It is a bot and the match is unranked.
+online.queue.playBot = Play the bot (unranked)
+online.queue.keepWaiting = Keep waiting
+online.queue.cancel = Cancel
+online.opponentDefault = Opponent
+online.opponent = Opponent: {0}
+online.opponent.bot = Opponent: {0} - a bot
+online.opponent.offline = offline, their clock keeps running
+online.wait.loadout = Waiting for your opponent to choose weapons...
+online.wait.locked = Locked in. Waiting for your opponent...
+online.wait.cut = Your opponent is choosing a card and cutting.
+online.wait.result = Waiting for the result...
+online.loadout.title = Choose your weapons - {0}
+online.loadout.hint = Equip 1 to {0} weapons. Your loadout stays private.
+online.cut.title = You won the duel: claim land
+online.cut.card = {0}: up to {1} cells
+online.cut.auto = Auto cut
+online.cut.none = No legal cut was found. The window will close with no land moved.
+online.cut.skipHint = If you do nothing, the window closes and no land moves.
+online.volley.line = Volley {0}: you {1} to {2} HP, opponent {3} to {4} HP
+online.volley.veiled = The opponent's choice is veiled until the match ends.
+online.volley.timeout = {0} did not lock in time and passed.
+online.end.technicalVoid = The service could not finish this match. It is void: no reward and no loss.
+online.end.reward = +{0} XP, +{1} coins

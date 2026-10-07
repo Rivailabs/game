@@ -1,0 +1,23 @@
+{
+    "name": "AstraKingdoms.Tests.PlayMode",
+    "rootNamespace": "AstraKingdoms.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "AstraKingdoms.Rules",
+        "AstraKingdoms.Client.Core",
+        "AstraKingdoms.Client"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

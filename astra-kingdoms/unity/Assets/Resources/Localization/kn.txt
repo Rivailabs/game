@@ -1,0 +1,444 @@
+# Astra Kingdoms player-facing strings - Kannada (kn)
+# STATUS: needs fluent-speaker review. Draft translation; not yet checked by a native speaker,
+# not yet checked for font coverage, line wrapping or button widths on the reference phone.
+# Proper names (elements, weapons, cards) follow the glossary decision still to be made.
+# Same keys and the same {n} parameters as en.txt (tests enforce it); missing keys fall back to English.
+
+app.title = ಅಸ್ತ್ರ ಕಿಂಗ್‌ಡಮ್ಸ್
+app.footer = ನಿಯಮಗಳು {0} - ಪೈಲಟ್ ಬಿಲ್ಡ್ {1}
+common.back = ಹಿಂದೆ
+common.continue = ಮುಂದುವರಿಸಿ
+common.seconds = {0} ಸೆಕೆಂಡ್
+
+home.play = ಒಂದೇ ಫೋನ್‌ನಲ್ಲಿ ಆಡಿ
+home.playHint = ಇಬ್ಬರು ಆಟಗಾರರು ಈ ಫೋನ್ ಹಂಚಿಕೊಳ್ಳುತ್ತಾರೆ. ಪ್ರತಿಯೊಂದು ಆಯ್ಕೆಯನ್ನು ಗೌಪ್ಯವಾಗಿ ಮಾಡಲಾಗುತ್ತದೆ.
+home.practice = ಬಾಟ್ ಜೊತೆ ಅಭ್ಯಾಸ
+home.practiceHint = ಬಾಟ್ ಅನ್ನು ಯಾವಾಗಲೂ ಬಾಟ್ ಎಂದೇ ತೋರಿಸಲಾಗುತ್ತದೆ. ನೀವು ನೋಡಬಹುದಾದುದನ್ನು ಮಾತ್ರ ಅದು ನೋಡುತ್ತದೆ.
+home.difficulty = ಬಾಟ್ ಮಟ್ಟ: {0}
+home.settings = ಸೆಟ್ಟಿಂಗ್‌ಗಳು
+home.replay = ರೀಪ್ಲೇ ವೀಕ್ಷಕ (ಡೆವಲಪ್‌ಮೆಂಟ್)
+
+difficulty.easy = ಸುಲಭ
+difficulty.normal = ಸಾಮಾನ್ಯ
+difficulty.hard = ಕಠಿಣ
+
+player.one = ಆಟಗಾರ 1
+player.two = ಆಟಗಾರ 2
+player.you = ನೀವು
+player.bot = ಬಾಟ್ ({0})
+player.botSeat = ಬಾಟ್ {0}
+
+loadout.title = {0}: ನಿಮ್ಮ ಆಯುಧಗಳನ್ನು ಆರಿಸಿ
+loadout.hint = ಆರಂಭಿಕ ಸೆಟ್: 1 ರಿಂದ 5 ಆಯುಧಗಳನ್ನು ಆರಿಸಿ. ನಿಮ್ಮ ಆಯ್ಕೆ ಗೌಪ್ಯವಾಗಿರುತ್ತದೆ.
+loadout.count = 5 ರಲ್ಲಿ {0} ಆರಿಸಲಾಗಿದೆ
+loadout.confirm = ಆಯ್ಕೆ ಖಚಿತಪಡಿಸಿ
+loadout.needOne = ಕನಿಷ್ಠ ಒಂದು ಆಯುಧ ಆರಿಸಿ.
+
+privacy.passTo = ಫೋನ್ ಅನ್ನು {0} ಅವರಿಗೆ ಕೊಡಿ
+privacy.hint = ನೀವು ಮಾತ್ರ ನೋಡುವಂತೆ ಫೋನ್ ಹಿಡಿಯಿರಿ. ಇನ್ನೊಬ್ಬ ಆಟಗಾರನ ಸರದಿಯ ಯಾವುದನ್ನೂ ತೋರಿಸುವುದಿಲ್ಲ.
+privacy.ready = ನಾನು {0} - ನನ್ನ ನಿಯಂತ್ರಣಗಳನ್ನು ತೋರಿಸಿ
+privacy.timer = ನಿಮ್ಮ ಸಮಯ ನಡೆಯುತ್ತಿದೆ: {0} ಸೆಕೆಂಡ್
+privacy.handoverTimer = ಮುಂದಿನ ಸರದಿ {0} ಸೆಕೆಂಡ್‌ನಲ್ಲಿ ಆರಂಭ
+
+announce.round = ಸುತ್ತು {0} / 8
+announce.terrain = ಭೂಪ್ರದೇಶ: {0}
+announce.attacker = ಈ ಸುತ್ತಿನಲ್ಲಿ {0} ದಾಳಿ ಮಾಡುತ್ತಾರೆ
+
+terrain.plain = ಬಯಲು
+terrain.fort = ಕೋಟೆ
+terrain.river = ನದಿ
+terrain.forest = ಕಾಡು
+terrain.armoury = ಶಸ್ತ್ರಾಗಾರ
+
+hud.round = ಸುತ್ತು {0}/8 - ಬಾಣ ಸರದಿ {1}/3
+hud.hp = HP {0}
+hud.cells = ಭೂಮಿ {0} ಕೋಶಗಳು
+hud.time = {0} ಸೆಕೆಂಡ್
+hud.ready = ಸಿದ್ಧ
+hud.waiting = ಆರಿಸುತ್ತಿದ್ದಾರೆ
+hud.pause = ವಿರಾಮ
+hud.resume = ಮುಂದುವರಿಸಿ
+hud.paused = ವಿರಾಮದಲ್ಲಿದೆ
+hud.statusNone = ಯಾವುದೇ ಪರಿಣಾಮವಿಲ್ಲ
+
+status.burn = ಸುಡುವಿಕೆ
+status.shock = ಆಘಾತ
+status.net = ಬಲೆ
+status.quake = ಕಂಪನ
+status.ironWall = ಕಬ್ಬಿಣದ ಗೋಡೆ
+
+select.title = {0}: ರಹಸ್ಯ ಆಯ್ಕೆ
+select.weapon = ಆಯುಧ
+select.aimPad = ಗುರಿ ಇಡಲು ಇಲ್ಲಿ ಎಳೆಯಿರಿ
+select.pitch = ಮೇಲೆ/ಕೆಳಗೆ ಕೋನ {0} ಡಿಗ್ರಿ
+select.yaw = ಎಡ/ಬಲ ಕೋನ {0} ಡಿಗ್ರಿ
+select.power = ಶಕ್ತಿ {0}%
+select.dodge = ತಪ್ಪಿಸಿಕೊಳ್ಳುವಿಕೆ
+select.lock = ನನ್ನ ಆಯ್ಕೆ ಲಾಕ್ ಮಾಡಿ
+select.rejected = ಸ್ವೀಕರಿಸಲಿಲ್ಲ ({0}). ಆಯ್ಕೆ ಬದಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
+select.lastVolley = ಹಿಂದಿನ ಬಾಣ ಸರದಿ
+select.hideLastVolley = ಹಿಂದಿನ ಸರದಿ ಮರೆಮಾಡಿ
+select.noLastVolley = ಈ ದ್ವಂದ್ವದಲ್ಲಿ ಇನ್ನೂ ಯಾವುದೇ ಸರದಿ ಆಗಿಲ್ಲ.
+
+dodge.none = ನಿಲ್ಲಿ
+dodge.left = ಎಡಕ್ಕೆ
+dodge.right = ಬಲಕ್ಕೆ
+dodge.jump = ಜಿಗಿಯಿರಿ
+
+weapon.1 = ಕೆಂಡ ಬಾಣ
+weapon.2 = ಗಾಳಿ ಬಾಣ
+weapon.3 = ಕಲ್ಲಿನ ಬಾಣ
+weapon.4 = ಕಿಡಿ ಬಾಣ
+weapon.5 = ಅಲೆ ಬಾಣ
+weapon.6 = ಅಗ್ನಿ ಬೀಸಣಿಗೆ
+weapon.7 = ಅವಳಿ ಗಾಳಿ
+weapon.8 = ಬಂಡೆ ಹೊಡೆತ
+weapon.9 = ಸರಪಳಿ ಸಿಡಿಲು
+weapon.10 = ಮಂಜಿನ ಮುಸುಕು
+weapon.11 = ಬೂದಿ ಗುರಾಣಿ
+weapon.12 = ಚಂಡಮಾರುತ
+weapon.13 = ಕಬ್ಬಿಣದ ಗೋಡೆ
+weapon.14 = ಬಿರುಗಾಳಿ ಬಲೆ
+weapon.15 = ಪ್ರವಾಹ ಬಾಣ
+weapon.16 = ಸೂರ್ಯ ಭರ್ಜಿ
+weapon.17 = ಆಕಾಶ ಧುಮುಕು
+weapon.18 = ಭೂಕಂಪ ಬಾಣ
+weapon.19 = ಗುಡುಗು ಕಿರೀಟ
+weapon.20 = ಸಾಗರ ಕರೆ
+weapon.brahmastra = ಬ್ರಹ್ಮಾಸ್ತ್ರ
+weapon.withElement = {0} ({1})
+
+element.neutral = ತಟಸ್ಥ (ಉಂಗುರ)
+element.agni = ಅಗ್ನಿ (ಜ್ವಾಲೆ)
+element.vayu = ವಾಯು (ಸುರುಳಿ)
+element.prithvi = ಪೃಥ್ವಿ (ಕಲ್ಲು)
+element.vidyut = ವಿದ್ಯುತ್ (ಸಿಡಿಲು)
+element.varuna = ವರುಣ (ಅಲೆ)
+
+contact.core = ನೇರ ಹೊಡೆತ
+contact.graze = ಸವರಿದ ಹೊಡೆತ
+contact.burst = ಸ್ಫೋಟದ ಹೊಡೆತ
+contact.burstGraze = ಸ್ಫೋಟದ ಸವರು
+contact.strike = ಆಘಾತ
+contact.multiple = {0} x{1}
+
+element.effect.strong = {0}, {1} {2} ಅನ್ನು ಮೀರಿಸುತ್ತದೆ
+element.effect.weak = {0}, {1} {2} ಎದುರು ದುರ್ಬಲ
+element.effect.even = {0}, ಯಾವುದೇ ತತ್ವ ಲಾಭವಿಲ್ಲ
+element.effect.hidden = {0}
+
+modifier.dodge = ತಪ್ಪಿಸಿಕೊಳ್ಳುವಿಕೆ {0} {1}.
+modifier.cover = ಆಶ್ರಯ {0}.
+modifier.coverIgnored = ಆಶ್ರಯ ಪರಿಗಣಿಸಲಿಲ್ಲ.
+
+explain.hit = {0}: {1} - {3} ಮೇಲೆ {2}, {4} HP ({5}).{6}
+explain.miss = {0}: {1} - ಗುರಿ ತಪ್ಪಿತು.
+explain.missDodged = {0}: {1} - ಗುರಿ ತಪ್ಪಿತು; {2} {3} ತಪ್ಪಿಸಿಕೊಂಡರು.
+explain.clash = {0}: {1} - ಆಕಾಶದಲ್ಲಿ ಡಿಕ್ಕಿಯಾಗಿ ನಾಶವಾಯಿತು.
+explain.blocked = {0}: {1} - {2} ಅವರ ಬೂದಿ ಗುರಾಣಿ ತಡೆಯಿತು.
+explain.pass = {0}: ಸಮಯಕ್ಕೆ ಆಯ್ಕೆ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಬಾಣವೂ ಇಲ್ಲ ತಪ್ಪಿಸಿಕೊಳ್ಳುವಿಕೆಯೂ ಇಲ್ಲ (ಪಾಸ್).
+explain.pass.short = ಪಾಸ್
+explain.veiled = ಮರೆಮಾಡಿದ ಹೊಡೆತ
+explain.hp = {0}: HP {1} -> {2}
+explain.burn = (ಸುಡುವಿಕೆ {0})
+explain.heal = (ಗುಣಮುಖ {0})
+explain.duelWon = {0} ದ್ವಂದ್ವ ಗೆದ್ದರು.
+explain.duelDraw = ದ್ವಂದ್ವ ಸಮವಾಯಿತು. ಯಾವುದೇ ಭೂಮಿ ಬದಲಾಗುವುದಿಲ್ಲ.
+
+card.1 = ಚಕ್ರ (ವೃತ್ತ)
+card.2 = ಗರುಡ (ರೆಕ್ಕೆಗಳು)
+card.3 = ಸೂಚಿ (ಈಟಿ)
+card.4 = ಮಕರ (ಕೊಕ್ಕೆ)
+card.5 = ಪದ್ಮ (ದಳಗಳು)
+card.6 = ವಜ್ರ (ವಜ್ರಾಕಾರ)
+
+land.title = {0} ದ್ವಂದ್ವ ಗೆದ್ದರು: ಭೂಮಿ ಪಡೆಯಿರಿ
+land.watch = {0} ಕಾರ್ಡ್ ಆರಿಸಿ ಕಡಿತ ಬರೆಯುತ್ತಿದ್ದಾರೆ.
+land.card = {0}: ಗರಿಷ್ಠ {1} ಕೋಶಗಳು (ಬೋರ್ಡ್‌ನ {2}%)
+land.chooseCard = ಕಾರ್ಡ್ ಆರಿಸಿ
+land.modeMove = ಕಾರ್ಡ್ ಸರಿಸಿ
+land.modeDraw = ಕಡಿತ ಬರೆಯಿರಿ
+land.rotateLeft = ಎಡಕ್ಕೆ ತಿರುಗಿಸಿ
+land.rotateRight = ಬಲಕ್ಕೆ ತಿರುಗಿಸಿ
+land.bigger = ದೊಡ್ಡದು
+land.smaller = ಚಿಕ್ಕದು
+land.auto = ಸ್ವಯಂ ಕಡಿತ
+land.clear = ಅಳಿಸಿ
+land.confirm = ಕಡಿತ ಖಚಿತಪಡಿಸಿ
+land.hintMove = ಕಾರ್ಡ್ ಅನ್ನು ಗಡಿಯ ಮೇಲೆ ಎಳೆಯಿರಿ. ತಿರುಗಿಸಲು ಮತ್ತು ಗಾತ್ರ ಬದಲಿಸಲು ಎರಡು ಬೆರಳು ಬಳಸಿ.
+land.hintDraw = ಕಾರ್ಡ್ ಒಳಗೆ, ಗುರುತಿಸಿದ ಗಡಿ ಕೋಶದ ಸುತ್ತ ಒಂದು ಮುಚ್ಚಿದ ವೃತ್ತ ಬರೆಯಿರಿ.
+land.preview = ಈ ಕಡಿತವು ನಿಮಗೆ ಅನುಮತಿಸಿದ {1} ಕೋಶಗಳಲ್ಲಿ {0} ಪಡೆಯುತ್ತದೆ.
+land.previewDiscarded = {0} ಕೋಶಗಳು ಸಂಪರ್ಕದಲ್ಲಿಲ್ಲ, ಅವು {1} ಬಳಿಯೇ ಉಳಿಯುತ್ತವೆ.
+land.noAnchor = ಕಾರ್ಡ್ ಒಳಗೆ ಯಾವುದೇ ಗಡಿ ಕೋಶವಿಲ್ಲ. ಕಾರ್ಡ್ ಅನ್ನು ಗಡಿಗೆ ಸರಿಸಿ.
+land.vertices = {0} ಬಿಂದುಗಳು (ಮಿತಿ 128)
+land.applied = {0} {1} ಕೋಶಗಳನ್ನು ಪಡೆದರು.
+land.timeout = ಸಮಯ ಮುಗಿಯಿತು. ಯಾವುದೇ ಭೂಮಿ ಬದಲಾಗಲಿಲ್ಲ.
+land.ownership = {0}: {1} ಕೋಶಗಳು - {2}: {3} ಕೋಶಗಳು
+land.allowance = ಅನುಮತಿ {0} ಕೋಶಗಳು
+
+cut.reject.None = ಮಾನ್ಯ ಕಡಿತ.
+cut.reject.NoAllowance = ಈ ದ್ವಂದ್ವಕ್ಕೆ ಯಾವುದೇ ಭೂಮಿ ಅನುಮತಿ ಇಲ್ಲ.
+cut.reject.InvalidPose = ಕಾರ್ಡ್‌ನ ಸ್ಥಾನ ಮಾನ್ಯವಲ್ಲ.
+cut.reject.EnvelopeTooLarge = ಈ ಅನುಮತಿಗೆ ಕಾರ್ಡ್ ತುಂಬಾ ದೊಡ್ಡದು. ಅದನ್ನು ಚಿಕ್ಕದು ಮಾಡಿ.
+cut.reject.AnchorNotOnBoard = ಗುರುತಿಸಿದ ಕೋಶ ಬೋರ್ಡ್‌ನ ಹೊರಗಿದೆ.
+cut.reject.AnchorNotOpponentOwned = ಗುರುತಿಸಿದ ಕೋಶ ಇನ್ನೊಬ್ಬ ಆಟಗಾರನದಾಗಿರಬೇಕು.
+cut.reject.AnchorNotOnBorder = ಗುರುತಿಸಿದ ಕೋಶ ಪೂರ್ಣ ಅಂಚಿನ ಮೂಲಕ ನಿಮ್ಮ ಭೂಮಿಯನ್ನು ಮುಟ್ಟಬೇಕು.
+cut.reject.AnchorOutsideEnvelope = ಗುರುತಿಸಿದ ಗಡಿ ಕೋಶ ಕಾರ್ಡ್ ಒಳಗಿರಬೇಕು.
+cut.reject.TooManyVertices = ಕಡಿತದಲ್ಲಿ 128 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಬಿಂದುಗಳಿವೆ.
+cut.reject.VertexOutOfRange = ಕಡಿತದ ಒಂದು ಭಾಗ ಬೋರ್ಡ್‌ನ ಹೊರಗಿದೆ.
+cut.reject.TooFewVertices = ಕನಿಷ್ಠ ಮೂರು ಬೇರೆ ಬಿಂದುಗಳಿರುವ ವೃತ್ತ ಬರೆಯಿರಿ.
+cut.reject.ZeroArea = ವೃತ್ತದೊಳಗೆ ಯಾವುದೇ ಪ್ರದೇಶವಿಲ್ಲ.
+cut.reject.SelfIntersecting = ವೃತ್ತ ತನ್ನನ್ನೇ ಕತ್ತರಿಸುತ್ತದೆ ಅಥವಾ ಮುಟ್ಟುತ್ತದೆ. ಸರಳ ವೃತ್ತ ಬರೆಯಿರಿ.
+cut.reject.OverlappingEdges = ವೃತ್ತ ತನ್ನ ಮೇಲೆಯೇ ಹಿಂತಿರುಗುತ್ತದೆ. ಸರಳ ವೃತ್ತ ಬರೆಯಿರಿ.
+cut.reject.AnchorOutsidePolygon = ವೃತ್ತವು ಗುರುತಿಸಿದ ಗಡಿ ಕೋಶವನ್ನು ಒಳಗೊಳ್ಳಬೇಕು.
+cut.reject.ExceedsQuota = ಸಂಪರ್ಕಿತ ಪ್ರದೇಶ ಅನುಮತಿಗಿಂತ ದೊಡ್ಡದು. ಚಿಕ್ಕ ವೃತ್ತ ಬರೆಯಿರಿ.
+
+result.title = ಪಂದ್ಯ ಮುಗಿಯಿತು
+result.winner = {0} ಪಂದ್ಯ ಗೆದ್ದರು!
+result.draw = ಸಮ: ಎರಡೂ ರಾಜ್ಯಗಳ ಬಳಿ ಸರಿಸಮಾನ ಭೂಮಿ ಇದೆ.
+result.void = ಪಂದ್ಯ ರದ್ದು: ಇಬ್ಬರೂ ಆಟಗಾರರು ಸತತ ಎರಡು ಬಾರಿ ಆಯ್ಕೆ ಮಾಡಲಿಲ್ಲ.
+result.areas = {0}: {1} ಕೋಶಗಳು - {2}: {3} ಕೋಶಗಳು
+result.rounds = ಆಡಿದ ಸುತ್ತುಗಳು: {0}
+result.rematch = ಮತ್ತೆ ಆಡಿ
+result.home = ಮುಖಪುಟ
+
+reason.Territory90 = ಬೋರ್ಡ್‌ನ 90% ತಲುಪಿದರು.
+reason.RoundsComplete = ಎಂಟು ಸುತ್ತುಗಳು ಮುಗಿದವು; ಹೆಚ್ಚು ಭೂಮಿ ಇರುವವರು ಗೆಲ್ಲುತ್ತಾರೆ.
+reason.Forfeit = {0} ಸತತ ಎರಡು ಬಾರಿ ಆಯ್ಕೆ ಮಾಡಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಸೋಲು ಒಪ್ಪಿಕೊಂಡಂತಾಯಿತು.
+reason.Void = ಯಾರೂ ವಿಜೇತರಿಲ್ಲ.
+
+settings.title = ಸೆಟ್ಟಿಂಗ್‌ಗಳು
+settings.firstRun = ಸ್ವಾಗತ! ನಿಮ್ಮ ಭಾಷೆ ಮತ್ತು ಅನುಕೂಲ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಆರಿಸಿ.
+settings.language = ಭಾಷೆ
+settings.music = ಸಂಗೀತ ಧ್ವನಿ {0}%
+settings.effects = ಪರಿಣಾಮ ಧ್ವನಿ {0}%
+settings.shake = ಕ್ಯಾಮೆರಾ ಅಲುಗಾಟ ಕಡಿಮೆ: {0}
+settings.haptics = ಕಂಪನ: {0}
+settings.textScale = ಅಕ್ಷರ ಗಾತ್ರ: {0}%
+settings.on = ಆನ್
+settings.off = ಆಫ್
+settings.done = ಮುಗಿದಿದೆ
+settings.reviewNote = ಹಿಂದಿ ಮತ್ತು ಕನ್ನಡ ಪಠ್ಯವನ್ನು ನಿರರ್ಗಳ ಭಾಷಿಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಬೇಕಿದೆ.
+
+replay.title = ರೀಪ್ಲೇ ವೀಕ್ಷಕ
+replay.loadLatest = ಇತ್ತೀಚಿನ ದಾಖಲೆ ತೆರೆಯಿರಿ
+replay.none = {0} ನಲ್ಲಿ ಯಾವುದೇ ಪಂದ್ಯ ದಾಖಲೆ ಸಿಗಲಿಲ್ಲ
+replay.loaded = {0} ಆದೇಶಗಳನ್ನು ತೆರೆಯಲಾಗಿದೆ. ನಿಯಮಗಳು {1}.
+replay.step = ಆದೇಶ {0} / {1}
+replay.next = ಮುಂದಿನದು
+replay.playAll = ಕೊನೆಯವರೆಗೆ ಆಡಿಸಿ
+replay.verify = ದಾಖಲೆ ಪರಿಶೀಲಿಸಿ
+replay.verified = ದಾಖಲೆ ಪರಿಶೀಲಿತ: ಅದೇ ಫಲಿತಾಂಶ ಮತ್ತು ಅದೇ ಸ್ಥಿತಿ ಹ್ಯಾಶ್.
+replay.failed = ದಾಖಲೆ ಪರಿಶೀಲನೆ ವಿಫಲ: {0}
+
+auto.running = ಸ್ವಯಂಚಾಲಿತ ಓಟ: ಸೀಡ್ {0} ({2} ರಲ್ಲಿ {1})
+auto.done = ಸ್ವಯಂಚಾಲಿತ ಓಟ ಮುಗಿಯಿತು: {0}
+error.generic = ಏನೋ ತಪ್ಪಾಗಿದೆ: {0}
+
+# ---- V1 ದ್ವಂದ್ವ ಪ್ರಸ್ತುತಿ, ಭೂಮಿ, ಪರದೆಗಳು ಮತ್ತು ಬಳಕೆ (ಟಿಕೆಟ್ 26-48) - needs fluent-speaker review ----
+
+announce.text = ಸುತ್ತು {0} / 8\nಭೂಪ್ರದೇಶ: {1}\nಈ ಸುತ್ತಿನಲ್ಲಿ {2} ದಾಳಿ ಮಾಡುತ್ತಾರೆ
+announce.withLand = {0}\n\n{1}
+
+cue.release = {0} ಬಿಡಲಾಯಿತು
+cue.dodge = {0} {1}
+cue.shieldRaised = {0} ಬೂದಿ ಗುರಾಣಿ ಎತ್ತಲಾಗಿದೆ
+cue.wallRaised = {0} ಕಬ್ಬಿಣದ ಗೋಡೆಯ ಮರೆ
+cue.clashSurvived = {0} ಢಿಕ್ಕಿಯಲ್ಲಿ ಉಳಿಯಿತು
+cue.clashCancelled = {0} ಢಿಕ್ಕಿಯಲ್ಲಿ ನಾಶವಾಯಿತು
+cue.hit = {0} {1} HP
+cue.hitCovered = {0} {1} HP, ಮರೆಯಿಂದ ಕಡಿಮೆ
+cue.graze = {0} ತಾಗಿತು {1} HP
+cue.grazeCovered = {0} ತಾಗಿತು {1} HP, ಮರೆಯಿಂದ ಕಡಿಮೆ
+cue.blocked = {0} ತಡೆಯಲಾಯಿತು
+cue.miss = {0} ತಪ್ಪಿತು
+cue.coverRemoved = {0} ಮರೆ ಕೊಚ್ಚಿಹೋಯಿತು
+cue.health = {0} HP {1}
+
+hud.hpLand = {0} - {1}
+hud.nameReady = {0} [{1}]
+hud.timeUrgent = ! {0}
+
+home.weapons = ಆಯುಧಗಳು ಮತ್ತು ಪರಿಣತಿ
+home.catalog = ಅಭ್ಯಾಸ ಸೆಟ್: {0}
+home.arena = ಅಖಾಡ: {0}
+catalog.starter = ಆರಂಭಿಕ (5 ಆಯುಧಗಳು)
+catalog.full = ಪೂರ್ಣ (20 ಆಯುಧಗಳು, ಎರವಲು)
+arena.courtyard = ಅರಮನೆಯ ಅಂಗಳ
+arena.riverside = ನದಿಯ ಮೆಟ್ಟಿಲುಗಳು
+
+mode.online = ಆನ್‌ಲೈನ್ ಆಡಿ
+mode.online.hint = ಮತ್ತೊಬ್ಬ ಆಟಗಾರನ ವಿರುದ್ಧ ಪಂದ್ಯ. ಕಾಯುವಿಕೆಯ ನಂತರವೇ ಬಾಟ್ ನೀಡಲಾಗುತ್ತದೆ, ಮತ್ತು ಅದನ್ನು ಯಾವಾಗಲೂ ಬಾಟ್ ಎಂದು ತೋರಿಸಲಾಗುತ್ತದೆ.
+mode.friend = ಸ್ನೇಹಿತನೊಂದಿಗೆ ಆಡಿ
+mode.friend.hint = ರೂಮ್ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ. ಆರಂಭಿಸುವ ಮೊದಲು ಇಬ್ಬರೂ ಒಂದೇ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ನೋಡುತ್ತಾರೆ.
+mode.tutorial = ಟ್ಯುಟೋರಿಯಲ್
+mode.tutorial.hint = ಮಾರ್ಗದರ್ಶಿತ ಆರಂಭಿಕ ದ್ವಂದ್ವ, ಒಮ್ಮೆಗೆ ಒಂದು ಆಯ್ಕೆ.
+mode.unavailable.offline = ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಬೇಕು.
+mode.unavailable.notInThisBuild = ಈ ಬಿಲ್ಡ್‌ನಲ್ಲಿ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.
+
+loadout.countOf = {1} ರಲ್ಲಿ {0} ಆಯ್ಕೆಯಾಗಿವೆ
+loadout.loanNote = ಎರವಲು ಆಯುಧಗಳನ್ನು ಈ ರೂಮ್‌ಗೆ ಮಾತ್ರ ಇಬ್ಬರೂ ಆಟಗಾರರಿಗೆ ನೀಡಲಾಗುತ್ತದೆ.
+loadout.owned = ಸ್ವಂತ
+loadout.loaned = ಎರವಲು
+loadout.row = {0} - {1}
+loadout.rowReserve = {0} - {1} - ಮೀಸಲು (ಶಸ್ತ್ರಾಗಾರದ ರಕ್ಷಣೆಯಲ್ಲಿ ಮಾತ್ರ)
+loadout.pickReserve = ಮೀಸಲು ಆಯುಧ ಆರಿಸಿ
+loadout.pickReserveActive = ಮೀಸಲಾಗಿ ಇಡಬೇಕಾದ ಆಯುಧದ ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ
+loadout.hintStarter = ಆರಂಭಿಕ ಸೆಟ್: 1 ರಿಂದ {0} ಆಯುಧಗಳನ್ನು ಆರಿಸಿ. ನಿಮ್ಮ ಆಯ್ಕೆ ಗೌಪ್ಯವಾಗಿರುತ್ತದೆ.
+loadout.hintFull = ಪೂರ್ಣ ಸೆಟ್: 1 ರಿಂದ {0} ಆಯುಧಗಳನ್ನು ಆರಿಸಿ; ಆರು ಆದಾಗ ಒಂದು ಮೀಸಲು ಸೇರಿಸಬಹುದು. ನಿಮ್ಮ ಆಯ್ಕೆ ಗೌಪ್ಯವಾಗಿರುತ್ತದೆ.
+loadout.full = ಎಲ್ಲಾ ಸ್ಥಾನಗಳು ತುಂಬಿವೆ. ಮೊದಲು ಒಂದು ಆಯುಧ ತೆಗೆಯಿರಿ.
+loadout.reserveDistinct = ಮೀಸಲು ಆಯುಧವು ನೀವು ಆರಿಸದ ಆಯುಧವಾಗಿರಬೇಕು.
+loadout.reserveFullOnly = ಮೀಸಲು ಆಯುಧಗಳು ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.
+loadout.reserveNeedsSix = ಮೀಸಲು ಆರಿಸುವ ಮೊದಲು ಆರು ಆಯುಧಗಳನ್ನು ಆರಿಸಿ.
+loadout.notInRoom = ಆ ಆಯುಧ ಈ ರೂಮ್‌ನ ಸೆಟ್‌ನಲ್ಲಿ ಇಲ್ಲ.
+
+select.dodgeOption = {0} {1}
+select.locked = ಲಾಕ್ ಆಗಿದೆ
+select.lockedWaiting = ಲಾಕ್ ಆಗಿದೆ. ಇನ್ನೊಂದು ಆಯ್ಕೆಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ.
+select.pitchLimit = ಮೇಲೆ/ಕೆಳಗೆ ಕೋನ {0} ಡಿಗ್ರಿ (ಮಿತಿ)
+select.yawLimit = ಎಡ/ಬಲ ಕೋನ {0} ಡಿಗ್ರಿ (ಮಿತಿ)
+
+land.totals = {0}: {1,number} ಕೋಶಗಳು ({2}%) - {3}: {4,number} ಕೋಶಗಳು ({5}%)
+land.legend = {0}: ಪಟ್ಟೆಗಳು - {1}: ಚುಕ್ಕೆಗಳು - ಬಿಳಿ ಗೆರೆ: ಗಡಿ - ವಜ್ರಾಕಾರ: ವಿಶೇಷ ಭೂಪ್ರದೇಶ
+land.margin = HP ಅಂತರ: {0}
+land.withGlyph = {0} {1}
+land.vajraLocked = ವಜ್ರ 60.00 HP ಗಿಂತ ಹೆಚ್ಚಿನ ಅಂತರದ ನಂತರ ಮಾತ್ರ ಸಿಗುತ್ತದೆ.
+land.reason.floor = {0}: {2,number} ಕೋಶಗಳು - 3% ಕನಿಷ್ಠ, ಏಕೆಂದರೆ HP ಅಂತರ ಚಿಕ್ಕದಾಗಿತ್ತು.
+land.reason.margin = {0}: {2,number} ಕೋಶಗಳು - ಅದರ {1}% ಮಿತಿ ಗುಣಿಸು ನಿಮ್ಮ HP ಅಂತರ.
+land.reason.loserLand = {0}: {2,number} ಕೋಶಗಳು - ಇನ್ನೊಬ್ಬ ಆಟಗಾರನ ಉಳಿದ ಎಲ್ಲಾ ಭೂಮಿ.
+land.gesture.TooShort = ಬರೆಯುತ್ತಲೇ ಇರಿ: ಸುತ್ತಿಗೆ ಕನಿಷ್ಠ ಮೂರು ಬಿಂದುಗಳು ಬೇಕು.
+land.gesture.ClosedAutomatically = ಬೆರಳು ಆರಂಭದಿಂದ ದೂರದಲ್ಲಿ ಎತ್ತಲಾಯಿತು, ಹಾಗಾಗಿ ಸುತ್ತನ್ನು ನೇರ ಗೆರೆಯಿಂದ ಮುಚ್ಚಲಾಯಿತು.
+land.gesture.LeftTheBoard = ಬೋರ್ಡ್‌ನ ಹೊರಗಿನ ಬಿಂದುಗಳನ್ನು ಬಿಡಲಾಯಿತು.
+land.gesture.Simplified = ಸುತ್ತನ್ನು 128 ಬಿಂದುಗಳಿಗೆ ಸರಳಗೊಳಿಸಲಾಯಿತು.
+
+result.areasPercent = {0}: {1,number} ಕೋಶಗಳು ({2}%) - {3}: {4,number} ಕೋಶಗಳು ({5}%)
+result.detail = {0}\n{1}\n{2}
+
+settings.motion = ಕಡಿಮೆ ಚಲನೆ: {0}
+settings.patterns = ಮಾದರಿಗಳು ಮತ್ತು ಆಕಾರಗಳು (ಕೇವಲ ಬಣ್ಣವಲ್ಲ): {0}
+settings.tutorialUntimed = ಸಮಯ ಮಿತಿ ಇಲ್ಲದ ಟ್ಯುಟೋರಿಯಲ್: {0}
+settings.dataTitle = ಈ ಫೋನ್‌ನಲ್ಲಿರುವ ಡೇಟಾ
+settings.dataHint = ಈ ಫೋನ್ ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್‌ಗಳು, ಟ್ಯುಟೋರಿಯಲ್ ಪ್ರಗತಿ ಮತ್ತು ಪಂದ್ಯದ ದಾಖಲೆಗಳನ್ನು ಇಡುತ್ತದೆ.
+settings.deleteData = ಈ ಫೋನ್‌ನ ಡೇಟಾ ಅಳಿಸಿ
+settings.deleteConfirm = ಅಳಿಸಲು ಮತ್ತೆ ಟ್ಯಾಪ್ ಮಾಡಿ
+settings.deleteWarning = ಇದು ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಮರುಹೊಂದಿಸುತ್ತದೆ ಮತ್ತು ಈ ಫೋನ್‌ನ ಉಳಿಸಿದ ದಾಖಲೆಗಳನ್ನು ತೆಗೆಯುತ್ತದೆ.
+settings.deleted = ಈ ಫೋನ್‌ನ ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗಿದೆ.
+settings.deleteFailed = ಕೆಲವು ಡೇಟಾವನ್ನು ಅಳಿಸಲು ಆಗಲಿಲ್ಲ: {0}
+
+data.settings = ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಟ್ಯುಟೋರಿಯಲ್ ಪ್ರಗತಿ
+data.records = ಪಂದ್ಯದ ದಾಖಲೆಗಳು
+data.practice = ಅಭ್ಯಾಸದ ಅಂಕಿಅಂಶಗಳು
+
+session.overlay.None = ಸಿದ್ಧ
+session.overlay.ResumeCover = ಮರಳಿ ಸ್ವಾಗತ
+session.overlay.PauseMenu = ವಿರಾಮ
+session.overlay.Reconnecting = ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತಿದೆ
+session.overlay.ConnectionLost = ಸಂಪರ್ಕ ಕಡಿದಿದೆ
+session.overlay.Recovered = ಪಂದ್ಯಕ್ಕೆ ಮರಳಿದ್ದೀರಿ
+session.resumeTitle = ಮರಳಿ ಸ್ವಾಗತ
+session.resumeHint = ಆ್ಯಪ್ ಹೊರಗಿದ್ದಾಗ ಪಂದ್ಯದ ಗಡಿಯಾರ ನಿಂತಿತ್ತು. ಸರಿಯಾದ ಆಟಗಾರ ಮಾತ್ರ ಪರದೆ ನೋಡುತ್ತಿದ್ದಾರೆ ಎಂದು ಖಚಿತಪಡಿಸಿ, ನಂತರ ಮುಂದುವರಿಸಿ.
+session.reconnecting = ಪಂದ್ಯಕ್ಕೆ ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತಿದೆ. ಪಂದ್ಯದ ಗಡಿಯಾರವನ್ನು ಸರ್ವರ್ ನಡೆಸುತ್ತದೆ.
+session.lost = ಸಂಪರ್ಕ ಕಡಿದಿದೆ. ನೀವು ಕಾಯಬಹುದು ಅಥವಾ ಪಂದ್ಯ ಬಿಡಬಹುದು.
+session.recovered = ಪಂದ್ಯ ಈಗ ಇಲ್ಲಿದೆ: {0}
+session.keepWaiting = ಕಾಯುತ್ತಿರಿ
+session.leave = ಪಂದ್ಯ ಬಿಡಿ
+session.continue = ಮುಂದುವರಿಸಿ
+
+phase.setup = ಆಯುಧಗಳನ್ನು ಆರಿಸಲಾಗುತ್ತಿದೆ
+phase.terrainAnnounce = ಭೂಪ್ರದೇಶದ ಘೋಷಣೆ
+phase.selection = ಗುರಿ ಆರಿಸಲಾಗುತ್ತಿದೆ
+phase.resolution = ಬಾಣಗಳ ಸುತ್ತು ನೋಡಲಾಗುತ್ತಿದೆ
+phase.cardAndCut = ಭೂಮಿ ತೆಗೆದುಕೊಳ್ಳಲಾಗುತ್ತಿದೆ
+phase.matchOver = ಪಂದ್ಯ ಮುಗಿದಿದೆ
+phase.unknown = ಪಂದ್ಯಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ
+
+tutorial.title = ಟ್ಯುಟೋರಿಯಲ್
+tutorial.offerTitle = ಮಾರ್ಗದರ್ಶಿತ ದ್ವಂದ್ವದಿಂದ ಕಲಿಯುವಿರಾ?
+tutorial.offerHint = ಯಾವಾಗಲೂ ಬಾಟ್ ಎಂದು ತೋರಿಸಲಾದ ಬಾಟ್ ವಿರುದ್ಧ ಒಂದು ಚಿಕ್ಕ ಅಭ್ಯಾಸ ಪಂದ್ಯ. ಒಮ್ಮೆಗೆ ಒಂದು ಆಯ್ಕೆ, ಮತ್ತು ನೀವು ಆನ್ ಮಾಡುವವರೆಗೆ ಟೈಮರ್ ಇಲ್ಲ.
+tutorial.start = ಟ್ಯುಟೋರಿಯಲ್ ಆರಂಭಿಸಿ
+tutorial.skip = ಈಗ ಬೇಡ
+tutorial.step.Welcome = ಇಬ್ಬರು ಬಿಲ್ಲುಗಾರರು ಒಂದೇ ಸಮಯದಲ್ಲಿ ಬಾಣ ಬಿಡುತ್ತಾರೆ. ದ್ವಂದ್ವ ಗೆಲ್ಲಿ, ನಂತರ ಭೂಮಿ ತೆಗೆದುಕೊಳ್ಳಿ. ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.ChooseWeapon = ಒಂದು ಆಯುಧ ಆರಿಸಿ. ಪ್ರತಿ ತತ್ವ ಇತರ ಎರಡನ್ನು ಮೀರಿಸುತ್ತದೆ; ಬಟನ್ ಮೇಲಿನ ಆಕಾರ ಅದರ ತತ್ವವನ್ನು ತೋರಿಸುತ್ತದೆ.
+tutorial.step.AimAndPower = ಕೋನ ಬದಲಿಸಲು ಗುರಿ ಪ್ಯಾಡ್ ಮೇಲೆ ಎಳೆಯಿರಿ, ನಂತರ ಶಕ್ತಿಯನ್ನು ಹೊಂದಿಸಿ. ಗೆರೆ ನಿಮ್ಮ ಬಾಣದ ಹಾರಾಟದ ಆರಂಭವನ್ನು ತೋರಿಸುತ್ತದೆ.
+tutorial.step.ChooseDodge = ತಪ್ಪಿಸಿಕೊಳ್ಳುವಿಕೆ ಆರಿಸಿ: ನಿಲ್ಲಿ, ಎಡ, ಬಲ ಅಥವಾ ಜಿಗಿತ. ಇದರಿಂದ ಇನ್ನೊಂದು ಬಾಣ ತಪ್ಪಬಹುದು.
+tutorial.step.Lock = ನಿಮ್ಮ ಆಯ್ಕೆಯನ್ನು ಲಾಕ್ ಮಾಡಿ. ಲಾಕ್ ನಂತರ ಅದು ಬದಲಾಗುವುದಿಲ್ಲ, ಮತ್ತು ಬಾಟ್ ಅದನ್ನು ಎಂದಿಗೂ ನೋಡುವುದಿಲ್ಲ.
+tutorial.step.WatchReveal = ಎರಡೂ ಬಾಣಗಳು ಒಂದೇ ಸಮಯದಲ್ಲಿ ಹಾರುತ್ತವೆ. ಪ್ರತಿ ಬಾಣ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತದೆ ನೋಡಿ.
+tutorial.step.ReadOutcome = ಏನಾಯಿತು ಓದಿ, ನಂತರ ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.FreePlay = ಕಲಿತದ್ದರೊಂದಿಗೆ ಆಡುತ್ತಲೇ ಇರಿ. ಸುಳಿವುಗಳು ಆನ್ ಆಗಿರುತ್ತವೆ.
+tutorial.step.DrawCut = ನೀವು ದ್ವಂದ್ವ ಗೆದ್ದಿದ್ದೀರಿ. ಒಂದು ಕಾರ್ಡ್ ಆರಿಸಿ, ನಂತರ ಗುರುತಿಸಿದ ಗಡಿ ಕೋಶದ ಸುತ್ತ ಸುತ್ತು ಬರೆಯಿರಿ, ಅಥವಾ ಸ್ವಯಂ ಕತ್ತರಿಸು ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.AdvancedStatuses = ಕೆಲವು ಆಯುಧಗಳು ಸುಡುವಿಕೆ, ಆಘಾತ ಅಥವಾ ಬಲೆಯಂತಹ ಪರಿಣಾಮಗಳನ್ನು ಸೇರಿಸುತ್ತವೆ. HUD ಅವನ್ನು ಪ್ರತಿ ಆಟಗಾರನ ಕೆಳಗೆ ತೋರಿಸುತ್ತದೆ. ಮುಂದುವರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ.
+tutorial.step.Complete = ಟ್ಯುಟೋರಿಯಲ್ ಪೂರ್ಣಗೊಂಡಿದೆ.
+tutorial.why.pass = ನೀವು ಸಮಯಕ್ಕೆ ಆರಿಸಲಿಲ್ಲ, ಹಾಗಾಗಿ ಈ ಸುತ್ತನ್ನು ಬಿಟ್ಟಿರಿ.
+tutorial.why.clashed = ನಿಮ್ಮ ಬಾಣ ಗಾಳಿಯಲ್ಲಿನ ಢಿಕ್ಕಿಯಲ್ಲಿ ನಾಶವಾಯಿತು.
+tutorial.why.theyDodged = {0} ತಪ್ಪಿಸಿಕೊಂಡಿದ್ದರಿಂದ ನಿಮ್ಮ ಬಾಣ ತಪ್ಪಿತು: {1}.
+tutorial.why.blocked = ನಿಮ್ಮ ಬಾಣ {0} ಅವರ ಬೂದಿ ಗುರಾಣಿಗೆ ತಾಗಿತು.
+tutorial.why.missed = ನಿಮ್ಮ ಬಾಣ ತಪ್ಪಿತು. ಬೇರೆ ಕೋನ ಅಥವಾ ಶಕ್ತಿ ಪ್ರಯತ್ನಿಸಿ.
+tutorial.why.elementBeatYou = ಅವರ {0} ನಿಮ್ಮ {1} ಅನ್ನು ಮೀರಿಸುತ್ತದೆ, ಹಾಗಾಗಿ ಅವರ ಹೊಡೆತ 1.5 ಪಟ್ಟು ಎಣಿಕೆಯಾಯಿತು.
+tutorial.why.noDodge = ನೀವು ನಿಂತೇ ಇದ್ದಿರಿ, ಹಾಗಾಗಿ ಅವರ ಬಾಣ ನಿಮ್ಮನ್ನು ತಲುಪಿತು.
+tutorial.why.hpSummary = ನೀವು {0} HP ಕಳೆದುಕೊಂಡಿರಿ ಮತ್ತು ಅವರಿಂದ {1} HP ತೆಗೆದುಕೊಂಡಿರಿ.
+
+weapons.title = ಆಯುಧಗಳು ಮತ್ತು ಪರಿಣತಿ
+weapons.summary = ಖಾತೆ ಮಟ್ಟ {0}. ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಪ್ರತಿ ಆಯುಧವನ್ನು ಇಬ್ಬರೂ ಆಟಗಾರರಿಗೆ ಎರವಲು ನೀಡಲಾಗುತ್ತದೆ.
+weapons.row = {0} - {1} - {2} ({3,plural,one{# ಬಾಣ} other{# ಬಾಣಗಳು}})
+weapons.unlocksAt = ಮಟ್ಟ {0} ರಲ್ಲಿ ತೆರೆಯುತ್ತದೆ (ಪೂರ್ಣ ರೂಮ್‌ಗಳಲ್ಲಿ ಎರವಲು)
+
+# Online play (V1 tickets 49-56). UNTRANSLATED: English placeholders, need translation and native review.
+home.online = Play online
+online.title = Play online
+online.back = Back
+online.status.connecting = Connecting...
+online.status.connected = Connected
+online.status.reconnecting = Connection lost - reconnecting...
+online.status.failed = Could not connect: {0}
+online.status.disconnected = Offline
+online.signInUnavailable = Online sign-in is not available in this build.
+online.error = {0}
+online.catalog = Catalog: {0}
+online.catalog.starter = Starter (the same 5 weapons for both)
+online.catalog.full = Full (all 20 weapons loaned to both)
+online.terrain.plain = plain
+online.terrain.full = five terrain types
+online.createRoom = Create a friend room
+online.codeHint = Room code
+online.joinRoom = Join
+online.findOpponent = Find an opponent
+online.room.code = Room code: {0}
+online.room.waiting = Waiting for your friend to join.
+online.room.full = Both players are here. Check the rules, then confirm.
+online.room.confirmed = You confirmed. Waiting for the other player.
+online.room.opponentConfirmed = The other player has confirmed.
+online.room.expires = The code expires in {0} s
+online.room.rules = Catalog: {0}\nTerrain: {1}\nOnline, unranked\n{2} s to choose each volley, {3} s for the card and cut\nRules {4}
+online.room.confirm = Confirm and start
+online.room.leave = Leave the room
+online.room.closed = Room closed: {0}
+online.closed.expired = the code expired
+online.closed.hostLeft = the host left
+online.closed.hostDisconnected = the host lost connection
+online.closed.left = you left
+online.closed.serverShutdown = the service is restarting
+online.queue.waiting = Looking for an opponent... {0} s
+online.queue.botOffer = No one found yet. Play against {0} instead? It is a bot and the match is unranked.
+online.queue.playBot = Play the bot (unranked)
+online.queue.keepWaiting = Keep waiting
+online.queue.cancel = Cancel
+online.opponentDefault = Opponent
+online.opponent = Opponent: {0}
+online.opponent.bot = Opponent: {0} - a bot
+online.opponent.offline = offline, their clock keeps running
+online.wait.loadout = Waiting for your opponent to choose weapons...
+online.wait.locked = Locked in. Waiting for your opponent...
+online.wait.cut = Your opponent is choosing a card and cutting.
+online.wait.result = Waiting for the result...
+online.loadout.title = Choose your weapons - {0}
+online.loadout.hint = Equip 1 to {0} weapons. Your loadout stays private.
+online.cut.title = You won the duel: claim land
+online.cut.card = {0}: up to {1} cells
+online.cut.auto = Auto cut
+online.cut.none = No legal cut was found. The window will close with no land moved.
+online.cut.skipHint = If you do nothing, the window closes and no land moves.
+online.volley.line = Volley {0}: you {1} to {2} HP, opponent {3} to {4} HP
+online.volley.veiled = The opponent's choice is veiled until the match ends.
+online.volley.timeout = {0} did not lock in time and passed.
+online.end.technicalVoid = The service could not finish this match. It is void: no reward and no loss.
+online.end.reward = +{0} XP, +{1} coins

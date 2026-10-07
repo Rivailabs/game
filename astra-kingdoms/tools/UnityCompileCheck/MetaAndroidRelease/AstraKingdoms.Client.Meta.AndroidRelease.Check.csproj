@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Scripts/Meta against tools/UnityStubs.
+    Variant: Android release build (no development tools; the IAP adapter is a separate assembly).
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Meta</AssemblyName>
+    <AkMeta>$(MSBuildThisFileDirectory)../../../src/AstraKingdoms.Meta/AstraKingdoms.Meta.csproj</AkMeta>
+    <RootNamespace>AstraKingdoms.Client.Meta</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_ANDROID;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER;AK_UNITY_IAP</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Meta/**/*.cs" Exclude="$(AkUnityAssets)Scripts/Meta/Store/Iap/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="$(AkMeta)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+    <ProjectReference Include="../RuntimeAndroidRelease/AstraKingdoms.Client.RuntimeAndroidRelease.Check.csproj" />
+  </ItemGroup>
+
+</Project>

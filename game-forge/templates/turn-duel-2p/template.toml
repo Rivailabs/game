@@ -1,0 +1,349 @@
+# Game Forge supported template: turn-resolved two-player duel.
+#
+# Plan ("Product scope and operating assumptions"): the initial supported template is a small,
+# turn-resolved, two-player or player-versus-bot game with a menu, shared rules library, match
+# state, replay, results and rematch. Real-time networking, arbitrary engines, iOS, open-world
+# generation and general enterprise simulations are separate expansions.
+#
+# This file is data: intake (forge/intake) reads `required_topics` and `unsupported`, the planner
+# (forge/planning) reads `modules`, `milestones` and `checkpoints`, and the scaffolding generator
+# (forge/planning/scaffold.py) reads `modules[*].scaffold`.
+
+[template]
+id = "turn-duel-2p"
+version = "1.0.0"
+name = "Turn-resolved two-player duel"
+description = "Two players (or one player and a bot) take turns; a shared deterministic rules library resolves every turn; matches can be replayed from seed + ordered commands; results and rematch close the loop."
+engine = "Unity 6 LTS, URP mobile quality profile"
+platforms = ["android"]
+supported_profile = "linux-x86_64-ubuntu-lts"
+players_min = 2
+players_max = 2
+bot_opponent = true
+rules_language = "C# 9, netstandard2.1, integer arithmetic only (no floats or System.Random in authoritative code)"
+core_modules = ["rules", "match_state", "replay", "bot", "menu", "results", "rematch", "release"]
+
+# --------------------------------------------------------------------------- modules
+# kinds: requirement kinds routed here by default. keywords: requirement words that route here
+# (whole words; plural/-ed/-ing forms match too; a trailing * matches any word with that prefix).
+# estimate_hours / cost_usd: [low, high] for the module skeleton; per_requirement_* adds to both.
+# evidence: evidence classes the module's acceptance cases need.
+
+[[modules]]
+id = "rules"
+name = "Shared rules library"
+milestone = "M1"
+depends_on = []
+kinds = ["rule"]
+keywords = ["rule", "damage", "health", "score", "resolve", "effect", "win", "draw"]
+paths = ["src/Rules/**", "tests/Rules.Tests/**"]
+evidence = ["rules", "replay"]
+checks = ["rules-tests"]
+estimate_hours = [6, 16]
+cost_usd = [4, 14]
+per_requirement_hours = [0.5, 1.5]
+per_requirement_cost_usd = [0.3, 1.0]
+visual_review = false
+needs_unity = false
+scaffold = ["src/Rules/Rules.csproj", "src/Rules/RulesLibrary.cs", "src/Rules/MatchState.cs", "src/Rules/Command.cs"]
+
+[[modules]]
+id = "match_state"
+name = "Match state and turn sequencing"
+milestone = "M1"
+depends_on = ["rules"]
+kinds = []
+keywords = ["timer", "clock", "timeout", "sequence", "commit", "hidden", "simultaneous", "invalid", "illegal", "forfeit", "seconds"]
+paths = ["src/Match/**", "tests/Rules.Tests/Match*"]
+evidence = ["rules"]
+checks = ["rules-tests"]
+estimate_hours = [4, 10]
+cost_usd = [3, 9]
+per_requirement_hours = [0.5, 1.5]
+per_requirement_cost_usd = [0.3, 1.0]
+visual_review = false
+needs_unity = false
+scaffold = ["src/Rules/MatchHost.cs"]
+
+[[modules]]
+id = "replay"
+name = "Replay (seed + ordered commands -> final state hash)"
+milestone = "M1"
+depends_on = ["match_state"]
+kinds = []
+keywords = ["replay", "record", "playback", "history"]
+paths = ["src/Replay/**", "tests/Rules.Tests/Replay*"]
+evidence = ["replay"]
+checks = ["rules-tests"]
+estimate_hours = [3, 8]
+cost_usd = [2, 6]
+per_requirement_hours = [0.5, 1.0]
+per_requirement_cost_usd = [0.3, 0.8]
+visual_review = false
+needs_unity = false
+scaffold = ["src/Rules/Replay.cs"]
+
+[[modules]]
+id = "bot"
+name = "Bot opponent (uses only the bot's private view)"
+milestone = "M1"
+depends_on = ["rules", "match_state"]
+kinds = []
+keywords = ["bot", "ai opponent", "computer opponent", "difficulty", "practice"]
+paths = ["src/Bots/**", "tests/Rules.Tests/Bot*"]
+evidence = ["rules"]
+checks = ["rules-tests"]
+estimate_hours = [4, 12]
+cost_usd = [3, 10]
+per_requirement_hours = [0.5, 1.5]
+per_requirement_cost_usd = [0.3, 1.0]
+visual_review = false
+needs_unity = false
+scaffold = ["src/Rules/Bot.cs"]
+
+[[modules]]
+id = "menu"
+name = "Menu"
+milestone = "M2"
+depends_on = []
+kinds = []
+keywords = ["menu", "home", "title screen", "settings", "start screen"]
+paths = ["unity/Assets/Scripts/UI/Menu/**", "unity/Assets/Scenes/Menu.unity"]
+evidence = ["device", "human"]
+checks = ["unity-build"]
+estimate_hours = [3, 8]
+cost_usd = [2, 6]
+per_requirement_hours = [0.5, 1.0]
+per_requirement_cost_usd = [0.2, 0.8]
+visual_review = true
+needs_unity = true
+scaffold = ["unity/Assets/Scripts/UI/MenuScreen.cs"]
+
+[[modules]]
+id = "results"
+name = "Results screen"
+milestone = "M2"
+depends_on = ["match_state"]
+kinds = []
+keywords = ["result", "victory screen", "defeat screen", "summary"]
+paths = ["unity/Assets/Scripts/UI/Results/**"]
+evidence = ["device", "human"]
+checks = ["unity-build"]
+estimate_hours = [2, 6]
+cost_usd = [1, 5]
+per_requirement_hours = [0.5, 1.0]
+per_requirement_cost_usd = [0.2, 0.8]
+visual_review = true
+needs_unity = true
+scaffold = ["unity/Assets/Scripts/UI/ResultsScreen.cs"]
+
+[[modules]]
+id = "rematch"
+name = "Rematch"
+milestone = "M2"
+depends_on = ["results", "match_state"]
+kinds = []
+keywords = ["rematch", "play again", "swap seats"]
+paths = ["src/Match/Rematch*", "unity/Assets/Scripts/UI/Rematch*"]
+evidence = ["rules", "device"]
+checks = ["rules-tests", "unity-build"]
+estimate_hours = [2, 5]
+cost_usd = [1, 4]
+per_requirement_hours = [0.5, 1.0]
+per_requirement_cost_usd = [0.2, 0.8]
+visual_review = false
+needs_unity = true
+scaffold = ["src/Rules/Rematch.cs"]
+
+# Lanes (forge/production): UI, audio, localization, balance. Release packaging closes the loop.
+[[modules]]
+id = "ui"
+name = "UI lane: screens, touch targets, navigation"
+milestone = "M2"
+depends_on = ["menu", "results"]
+kinds = ["ui"]
+keywords = ["screen", "button", "touch", "layout", "hud", "accessib*"]
+paths = ["unity/Assets/Scripts/UI/Screens/**", "design/ui/**"]
+evidence = ["device", "human"]
+checks = ["ui-lane"]
+estimate_hours = [3, 10]
+cost_usd = [2, 8]
+per_requirement_hours = [0.5, 1.5]
+per_requirement_cost_usd = [0.2, 1.0]
+visual_review = true
+needs_unity = true
+scaffold = ["design/ui/screens.json"]
+
+[[modules]]
+id = "audio"
+name = "Audio lane: licensed-library selection with rights record"
+milestone = "M2"
+depends_on = []
+kinds = ["audio"]
+keywords = ["sound", "audio", "music", "sfx", "volume"]
+paths = ["unity/Assets/Audio/**", "design/audio/**"]
+evidence = ["human"]
+checks = ["audio-lane"]
+estimate_hours = [1, 4]
+cost_usd = [0, 2]
+per_requirement_hours = [0.25, 0.75]
+per_requirement_cost_usd = [0, 0.3]
+visual_review = false
+needs_unity = false
+scaffold = ["design/audio/briefs.json"]
+
+[[modules]]
+id = "localization"
+name = "Localization lane: extraction, key checks, translation review"
+milestone = "M2"
+depends_on = ["ui"]
+kinds = ["localization"]
+keywords = ["language", "translation", "locali*", "string", "hindi", "english"]
+paths = ["unity/Assets/Resources/Localization/**"]
+evidence = ["static", "human"]
+checks = ["localization-lane"]
+estimate_hours = [2, 6]
+cost_usd = [1, 4]
+per_requirement_hours = [0.25, 1.0]
+per_requirement_cost_usd = [0.1, 0.5]
+visual_review = false
+needs_unity = false
+scaffold = ["unity/Assets/Resources/Localization/en.txt"]
+
+[[modules]]
+id = "balance"
+name = "Balance and replay report (simulator)"
+milestone = "M3"
+depends_on = ["rules", "bot", "replay"]
+kinds = ["balance"]
+keywords = ["balance", "fair", "advantage", "win rate", "simulat*"]
+paths = ["reports/**", "tools/Sim/**"]
+evidence = ["replay", "rules"]
+checks = ["balance-lane"]
+estimate_hours = [2, 6]
+cost_usd = [1, 4]
+per_requirement_hours = [0.5, 1.0]
+per_requirement_cost_usd = [0.2, 0.6]
+visual_review = false
+needs_unity = false
+scaffold = []
+
+[[modules]]
+id = "release"
+name = "Release packaging (unsigned) and signing request"
+milestone = "M3"
+depends_on = ["rules", "match_state", "replay", "bot", "menu", "results", "rematch", "ui", "audio", "localization", "balance"]
+kinds = ["release"]
+keywords = ["release", "store", "package", "country", "countries", "signing", "version"]
+paths = ["release/**"]
+evidence = ["integration", "device", "human"]
+checks = ["release-package"]
+estimate_hours = [3, 8]
+cost_usd = [1, 4]
+per_requirement_hours = [0.25, 0.75]
+per_requirement_cost_usd = [0.1, 0.4]
+visual_review = false
+needs_unity = true
+scaffold = []
+
+[milestones.M1]
+name = "Rules core: rules, match state, replay, bot"
+checkpoints = ["milestone_approval"]
+
+[milestones.M2]
+name = "Playable loop: menu, results, rematch, UI, audio, localization"
+checkpoints = ["milestone_approval", "visual_approval", "device_play"]
+
+[milestones.M3]
+name = "Release candidate: balance report, package, signing request"
+checkpoints = ["milestone_approval", "device_play", "release_approval", "store_submission"]
+
+# Human checkpoints. A checkpoint is an owner decision Forge never makes on its own.
+[checkpoints]
+spec_approval = "Owner confirms rules, supported features, art references, release countries and spend limits"
+milestone_approval = "Owner approves the milestone backlog: tasks, dependencies, estimate range and checkpoints"
+visual_approval = "Owner approves the exact candidate hash of each new screen, look or motion"
+device_play = "Owner plays the milestone build on the physical Android phone"
+release_approval = "Owner approves the exact release candidate for signing and its destination"
+store_submission = "Release authority separately authorises the store track and rollout"
+
+# --------------------------------------------------------------------------- intake rules
+# A missing topic becomes a NEEDS_INPUT question. Forge never fills a missing rule itself.
+# `any` lists words (whole-word, case-insensitive) of which at least one must appear in some
+# rule-kind requirement of the brief.
+
+[[required_topics]]
+id = "players"
+question = "How many players take part, and can one of them be a bot?"
+any = ["player", "players", "opponent"]
+
+[[required_topics]]
+id = "turn_structure"
+question = "What is one turn (or round), and in what order do the players act?"
+any = ["turn", "turns", "round", "rounds"]
+
+[[required_topics]]
+id = "starting_state"
+question = "What does each player start the match with?"
+any = ["start", "starts", "starting", "begin", "begins", "initial"]
+
+[[required_topics]]
+id = "actions"
+question = "Which actions can a player choose on a turn, and what does each one do?"
+any = ["action", "actions", "choose", "chooses", "play", "plays", "cast", "casts", "move"]
+
+[[required_topics]]
+id = "win_condition"
+question = "How does a player win the match?"
+any = ["win", "wins", "winner", "victory", "loses"]
+
+[[required_topics]]
+id = "draw_rule"
+question = "What happens when both players reach the end condition together (a draw or tie)?"
+any = ["draw", "draws", "tie", "tied"]
+
+[[required_topics]]
+id = "invalid_action"
+question = "What happens when a player submits an invalid or illegal action?"
+any = ["invalid", "illegal", "rejected", "cannot"]
+
+[[required_topics]]
+id = "turn_timer"
+question = "Is there a turn time limit, and what happens when it expires?"
+any = ["timer", "clock", "timeout", "time limit", "seconds"]
+
+[[required_topics]]
+id = "randomness"
+question = "Does the game use randomness? If so, what is random and how is it seeded so a replay is exact?"
+any = ["random", "randomness", "seed", "seeded", "shuffle", "shuffled", "deterministic"]
+
+[[required_topics]]
+id = "rematch"
+question = "How does a rematch work (same settings, swapped first player, ...)?"
+any = ["rematch", "play again"]
+
+# Features outside the template are routed to the owner, never silently dropped or built.
+[[unsupported]]
+id = "realtime"
+pattern = "\\breal[- ]?time\\b"
+reason = "Real-time play is a separate expansion; the template is turn-resolved."
+
+[[unsupported]]
+id = "player_count"
+pattern = "\\b(three|four|five|six|eight|[3-9]|1[0-9])\\s+(?:human\\s+)?players\\b"
+reason = "The template supports exactly two players (or one player and a bot)."
+
+[[unsupported]]
+id = "ios"
+pattern = "\\b(ios|iphone|ipad|app store)\\b"
+reason = "iOS is a separate expansion; the supported platform is Android."
+
+[[unsupported]]
+id = "online"
+pattern = "\\b(online multiplayer|matchmaking|ranked online|internet play)\\b"
+reason = "Online play needs an explicit module (as Astra adds); the base template is local or versus bot."
+
+[[unsupported]]
+id = "open_world"
+pattern = "\\b(open[- ]world|procedural world|mmo)\\b"
+reason = "Open-world generation is a separate expansion."

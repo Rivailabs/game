@@ -1,0 +1,8 @@
+# BuildKit reads this file for server/Dockerfile (context: astra-kingdoms/).
+**/.build/
+**/bin/
+**/obj/
+unity/Library/
+unity/Temp/
+**/data/
+**/*.db

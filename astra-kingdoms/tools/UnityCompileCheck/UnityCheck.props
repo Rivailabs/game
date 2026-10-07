@@ -1,0 +1,21 @@
+<Project>
+  <!--
+    Shared settings for the Unity compile-check projects. These are NOT Unity builds: they compile
+    the Unity client's C# sources with the .NET SDK against small hand-written stubs of the Unity
+    APIs the client uses (tools/UnityStubs), to catch C# errors without a Unity editor.
+    Real verification still requires the pinned Unity editor and the reference Android phone.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+    <AkUnityAssets>$(MSBuildThisFileDirectory)../../unity/Assets/</AkUnityAssets>
+    <AkRules>$(MSBuildThisFileDirectory)../../src/AstraKingdoms.Rules/AstraKingdoms.Rules.csproj</AkRules>
+    <AkStubs>$(MSBuildThisFileDirectory)../UnityStubs/UnityStubs.csproj</AkStubs>
+  </PropertyGroup>
+</Project>

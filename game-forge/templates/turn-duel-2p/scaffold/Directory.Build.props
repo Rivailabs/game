@@ -1,0 +1,8 @@
+<Project>
+  <!-- Build outputs go to .build/ so source folders stay clean for a direct Unity import. -->
+  <PropertyGroup>
+    <TplBuildRoot>$(MSBuildThisFileDirectory).build/</TplBuildRoot>
+    <BaseIntermediateOutputPath>$(TplBuildRoot)$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(TplBuildRoot)$(MSBuildProjectName)/bin/</BaseOutputPath>
+  </PropertyGroup>
+</Project>

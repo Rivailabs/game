@@ -1,0 +1,14 @@
+{
+  "name": "com.astrakingdoms.meta",
+  "version": "0.1.0",
+  "displayName": "Astra Kingdoms Meta (V1 progression and monetization)",
+  "description": "Engine-independent account meta-game: XP and unlocks, daily cosmetic tasks, cosmetics, shop eligibility, entitlement ledger, ad policy, analytics schema and consent, decision metrics, retention and deletion. No UnityEngine references. Server/ is excluded from the client by a define constraint: it holds the Google Play and AdMob verification code that runs only on the server.",
+  "unity": "6000.0",
+  "keywords": ["astra-kingdoms", "progression", "monetization", "analytics"],
+  "author": {
+    "name": "Astra Kingdoms"
+  },
+  "dependencies": {
+    "com.astrakingdoms.rules": "0.1.0"
+  }
+}

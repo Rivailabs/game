@@ -1,0 +1,146 @@
+# Game Forge project configuration for Astra Kingdoms (Forge's first proving project).
+#
+# This file is OWNER-controlled. It is listed under protected_paths so no worker
+# candidate can change providers, checks, thresholds or budgets by editing it.
+# Paths are relative to this file.
+
+[project]
+id = "astra-kingdoms"
+name = "Astra Kingdoms"
+repo_path = "../../.."                 # the monorepo root (contains astra-kingdoms/ and game-forge/)
+workdir = "astra-kingdoms"
+accepted_branch = "forge/accepted"     # only the integration writer advances this branch
+spec_version = "1"
+toolchain_profile = "linux-x86_64-ubuntu-lts"
+protected_paths = [
+  "astra-kingdoms/tests/AstraKingdoms.Rules.Acceptance/**",   # owner-maintained acceptance cases
+  "game-forge/**",                                            # Forge itself, incl. this file
+  "docs/**",                                                  # approved specification
+  ".github/**",
+]
+
+[policy]
+allowed_vendors = ["anthropic"]
+allowed_regions = ["global"]
+allowed_data_classes = ["prompt", "code", "test_excerpt"]     # no screenshots/video leave the machine in R1
+hosted_review_allowed = false
+retention_days_failed_candidates = 14
+retention_days_raw_diagnostics = 30
+intended_release_countries = ["IN"]                            # owner to confirm before first release
+unattended_mode = true
+
+[budget]
+# Model/API spend caps in USD (provider prices are USD). PROPOSED starting values for the
+# pilot - the owner confirms or changes them; Forge never raises a limit by itself.
+# Changing later: `forge budget set project 150` / `forge budget set pilot 100`.
+project_cap_usd = 150
+default_root_ceiling_usd = 45
+
+[milestones.pilot]
+name = "Astra pilot (10 tickets)"
+description = "Duel, land cut and rematch on one arena with placeholder art."
+cap_usd = 100
+founder_hours_allowance = 80
+minimum_deliverable = "Integrated playable Android milestone on the named physical phone"
+
+[milestones.v1]
+name = "Astra V1 (tickets 11-82)"
+description = "Not funded yet: released only after the pilot gate."
+cap_usd = 0
+
+# ---------------------------------------------------------------- protected checks
+# Commands run with a scrubbed environment (no API keys), outside the worker's control.
+
+[checks.rules]
+type = "dotnet_test"
+project_dir = "astra-kingdoms"
+configuration = "Debug"
+timeout_s = 900
+
+[checks.android-build]
+type = "unity_build"
+project_dir = "astra-kingdoms/unity"
+build_method = "Forge.Build.BuildAndroid"
+output = "Builds/Android/astra.apk"
+timeout_s = 3600
+
+[checks.device-smoke]
+type = "device"
+# serial = "R58N..."                 # set the dedicated test phone's serial after preflight
+apk = "astra-kingdoms/unity/Builds/Android/astra.apk"
+package = "com.astrakingdoms.game"
+activity = "com.unity3d.player.UnityPlayerActivity"
+scenario = "pilot-smoke"
+wait_s = 45
+
+# ---------------------------------------------------------------- provider routes
+
+[providers.claude-api]
+type = "claude_api"
+builder_model = "claude-opus-5-5"
+reviewer_model = "claude-opus-5-5"
+visual_judge_model = "claude-opus-5-5"
+effort_builder = "high"
+effort_reviewer = "high"
+max_turns = 12
+max_tokens = 16000
+max_context_bytes = 200000
+transport_retries = 1
+refusal_fallback = false              # a fallback can route to a pricier model: owner decision only
+key_file = "~/.config/game-forge/anthropic.key"   # or set ANTHROPIC_API_KEY; never inside the repo
+
+[providers.claude-cli]
+type = "official_cli"                 # user-owned subscription; SUPERVISED ONLY, never unattended
+binary = "claude"
+
+[reviewer]
+route = "claude-api"                  # independent reviewer (opinion; tests remain the authority)
+
+# [pricing."claude-opus-5-5"]         # override list prices when they change
+# input_per_mtok = 4.0
+# output_per_mtok = 20.0
+# cache_read_per_mtok = 0.20
+
+[catalogue]
+# Catalogue asset lane (forge/lanes/). Asset tasks run it first; the generation lane runs only on NONE.
+# The visual judge sends four PNG renders per candidate to the judge route. The [policy] above does NOT
+# allow the "render_image" data class, so asset tasks stay BLOCKED with that reason until the owner adds
+# "render_image" to allowed_data_classes. That is an owner decision, so it is not changed here.
+judge_route = "claude-api"
+# index = "../../.forge/catalogue/index.sqlite"   # default: <data_dir>/catalogue/index.sqlite
+# blender = "/opt/blender/blender"                # default: FORGE_BLENDER, toolchain manifest, PATH
+# reject_list = "../../forge/lanes/reject_list.json"
+# max_download_mb = 500                           # can be lowered; never raised above 500
+
+[assets]
+# R2 generation lane (forge/assets/): brief -> concept approval -> generation -> Blender normalization ->
+# technical report + turntable -> visual approval -> rig -> deformation review -> motion/retarget ->
+# contact/transition review -> Unity prefab -> device evidence. Route order is the owner's preference;
+# selection still refuses routes the policy, distribution countries, hardware, first-use licence gate or
+# certification do not allow. No route is configured yet: adding one (and its vendor to allowed_vendors)
+# is an owner decision. Until then asset tasks stop with NEEDS_INPUT "no permitted ... route".
+briefs_dir = "../../briefs/astra_v1/production"   # <id>.asset.json production briefs (catalogue briefs stay apart)
+unity_project_dir = "unity"
+device_checks = ["android-build", "device-smoke"]
+public_demo = false
+preferences.concept_image = ["flux-schnell-local", "api-image-service"]
+preferences.mesh = ["trellis2", "trellis", "meshy", "tripo"]
+preferences.rig = ["unirig", "meshy", "tripo", "mixamo"]
+preferences.motion = ["stock-animation", "mixamo", "hy-motion-1.0"]
+preferences.audio = ["licensed-sound-library"]
+# [assets.routes.trellis2]                          # local GPU route: pinned command, run in the sandbox
+# argv = ["python", "/opt/TRELLIS.2/forge_entry.py", "--image", "{image}", "--out", "{out_dir}"]
+# install_dir = "/opt/TRELLIS.2"
+# model_version = "TRELLIS.2@<commit>"
+# [assets.routes.meshy]                             # API route: certify first (`forge assets certify meshy`)
+# key_file = "~/.config/game-forge/meshy.key"
+# credit_usd = 0.02
+# credits = { text_to_3d = 20, image_to_3d = 30, rig = 5 }
+# [assets.routes.stock-animation]
+# path = "~/licensed/archer-anim-pack"               # library.json records the licence and receipt id
+
+[forge]
+data_dir = "../../.forge"             # game-forge/.forge (git-ignored): db, artifacts, worktrees
+transport_retries = 2
+backoff_s = 2.0
+lease_ttl_s = 900

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compiles unity/Assets/Scripts/Online/Protocol as its asmdef declares (noEngineReferences, rules
+    only). The match service (server/AstraKingdoms.Server) references this same assembly, so the
+    client and the server share one message schema.
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.Client.Online.Protocol</AssemblyName>
+    <RootNamespace>AstraKingdoms.Client.Online.Protocol</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Scripts/Online/Protocol/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+  </ItemGroup>
+
+</Project>

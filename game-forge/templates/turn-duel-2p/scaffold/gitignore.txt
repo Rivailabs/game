@@ -1,0 +1,6 @@
+.build/
+.forge/
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/Builds/

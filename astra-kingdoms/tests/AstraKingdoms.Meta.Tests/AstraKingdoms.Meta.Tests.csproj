@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for src/AstraKingdoms.Meta (V1 tickets 57-64): XP and unlocks, guest migration, daily
+    tasks, cosmetics, shop eligibility, Play Billing entitlements (with a fake Play API and locally
+    generated RSA keys), ad policy, SSV signature verification (locally generated P-256 keys),
+    analytics schema/consent, decision metrics, reconciliation, retention and deletion, and the
+    client-side flows. Time-dependent rules run on ManualClock.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AstraKingdoms.Rules\AstraKingdoms.Rules.csproj" />
+    <ProjectReference Include="..\..\src\AstraKingdoms.Meta\AstraKingdoms.Meta.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile check of unity/Assets/Tests (Edit Mode and Play Mode suites) against tools/UnityStubs
+    and real NUnit. These tests only RUN inside the Unity Test Runner; here they are compiled only.
+  -->
+  <Import Project="../UnityCheck.props" />
+
+  <PropertyGroup>
+    <AssemblyName>AstraKingdoms.UnityTests.Check</AssemblyName>
+    <RootNamespace>AstraKingdoms.Tests</RootNamespace>
+    <DefineConstants>$(DefineConstants);UNITY_EDITOR;UNITY_INCLUDE_TESTS;DEVELOPMENT_BUILD;ENABLE_INPUT_SYSTEM;UNITY_6000_0_OR_NEWER</DefineConstants>
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AkUnityAssets)Tests/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(AkRules)" />
+    <ProjectReference Include="$(AkStubs)" />
+    <ProjectReference Include="../Core/AstraKingdoms.Client.Core.Check.csproj" />
+    <ProjectReference Include="../RuntimeEditor/AstraKingdoms.Client.RuntimeEditor.Check.csproj" />
+    <ProjectReference Include="../Editor/AstraKingdoms.Editor.Check.csproj" />
+  </ItemGroup>
+
+</Project>
